@@ -314,3 +314,187 @@ Every existing tool covers a subset of what UX Reviewer covers. None combines:
    already work
 4. **Carbon MCP as the living rule source** — the rule set cannot go stale
    because it is Carbon's own documentation queried in real time
+
+---
+
+## IBM-internal experience — what we can achieve with Bob and existing IBM infrastructure
+
+The competitive analysis surfaces six gaps that no market tool addresses. This section maps each gap to what is achievable *inside IBM today* using Bob, Carbon MCP, Figma MCP, and the Jira MCP — and where inspiration from each external tool informs the UX Reviewer design.
+
+---
+
+### What we take from each competitor — and how we go further
+
+| Competitor | Their best idea | What limits them | What UX Reviewer does instead |
+|---|---|---|---|
+| **FigmaLint** | Hardcoded-value detection per node in Figma; AI-powered auto-fix | Figma-only; no Carbon knowledge; no code inspection; bring-your-own API key | UX Reviewer applies the same token-detection pattern but cross-references against **Carbon MCP** — so `#f4f4f4` is identified as `$layer-01` specifically, not just "a hardcoded colour" |
+| **Chromatic** | Merge-blocking PR gate; snapshot diff as a formal review artifact | Visual regression only; cannot distinguish Carbon `Button` from a pixel-identical custom button | UX Reviewer brings the *intent* of a PR gate — a structured report that creates a "we reviewed this" artifact — but adds Carbon semantic awareness to the findings |
+| **Supernova** | Code adoption tracking (which design system components are used in the codebase); MCP context distribution | Enterprise-only; not Carbon-specific; does not flag wrong components at branch level | UX Reviewer reads source code in a branch and uses Carbon MCP to reason whether imported components are Carbon components or non-Carbon replacements, then suggests the correct Carbon / Web Component alternative |
+| **Tokens Studio** | Bidirectional Figma–code token sync; ensures tokens exist in the codebase | Only ensures supply; cannot detect whether a developer used the token or bypassed it with a hardcoded value | `stylelint-plugin-carbon-tokens` (open source, IBM-endorsed) fills this at the SCSS layer; UX Reviewer interprets its output in Carbon terms and explains which token was expected and why |
+| **Zeroheight** | Living documentation queryable by AI via MCP; adoption analytics | Documentation-level only; adoption measured by doc page views, not code usage | Carbon MCP already provides this queryable knowledge layer. UX Reviewer uses it as the live rule source, not as a separate platform to maintain |
+
+---
+
+### Capability map — what UX Reviewer can deliver IBM-internally
+
+Each capability is mapped to the Bob/IBM infrastructure that enables it. Nothing below requires procurement.
+
+---
+
+#### C1 — Carbon component compliance on a Figma frame
+**Inspired by:** FigmaLint (component audit scoring), Supernova (code adoption tracking)
+**What it does:** Given a Figma URL, identify every component in the frame, determine whether it is a Carbon component or a custom/detached variant, and evaluate whether it is used correctly per Carbon's usage guidelines.
+
+**How it works inside Bob:**
+```
+1. mcp__figma-mcp__get_code_connect_map   → which nodes are Carbon vs. custom
+2. mcp__figma-mcp__get_design_context     → component structure, variants, props
+3. mcp__carbon-mcp__docs_search           → usage guidelines for each component
+4. LLM reasons: correct component? correct variant? Carbon alternative exists?
+```
+
+**IBM-specific advantage:** The Carbon MCP is Carbon's own live documentation — not a scraped copy. When Carbon updates a usage guideline, UX Reviewer picks it up automatically. No static rule file to maintain.
+
+**Output:** A list of components with: ✅ Carbon-compliant / ⚠️ wrong variant / ❌ non-Carbon (Carbon alternative: `<cds-dropdown>`)
+
+---
+
+#### C2 — Token compliance in a Figma frame
+**Inspired by:** FigmaLint (hardcoded value detection), Tokens Studio (token supply pipeline)
+**What it does:** For every node in the frame, identify whether colour, spacing, and typography values are sourced from Carbon tokens or hardcoded. Flag hardcoded values and name the Carbon token that should be used.
+
+**How it works inside Bob:**
+```
+1. mcp__figma-mcp__get_variable_defs      → returns token assignments per node
+                                            (e.g., background: $layer-01 OR #f4f4f4)
+2. mcp__carbon-mcp__docs_search           → retrieves the correct token for the
+                                            context (e.g., layer, interactive, danger)
+3. LLM flags: hardcoded hex where token exists; semantically wrong token for context
+```
+
+**IBM-specific advantage:** Tokens Studio shows tokens exist in code; FigmaLint finds hardcoded values in Figma. UX Reviewer does both and adds the *why* — explaining which Carbon semantic token should replace each hardcoded value and in what context.
+
+**Output:** Per-node token report with: token name / hardcoded value / Carbon replacement / severity
+
+---
+
+#### C3 — Token compliance in code (developer branch)
+**Inspired by:** FigmaLint (Figma-side detection) + Tokens Studio (token pipeline) — combined into a code-side check
+**What it does:** Scan a developer's code branch for hardcoded hex/px values that should be Carbon tokens. Identify non-Carbon component imports.
+
+**How it works inside Bob:**
+```
+1. Bob reads the source files (JSX, SCSS, CSS) in the branch
+2. Regex/AST scan: flag color: #XXXXXX, padding: Npx, margin: Npx
+3. mcp__carbon-mcp__docs_search → identify the correct Carbon token for each value
+4. Scan import statements: flag non-Carbon component imports
+   (e.g., import { Dropdown } from 'primeng/dropdown' instead of '@carbon/react')
+5. mcp__carbon-mcp__code_search → find the correct Carbon/Web Component equivalent
+```
+
+**IBM-specific advantage:** The `stylelint-plugin-carbon-tokens` (official Carbon tooling) can be invoked for SCSS files. Bob interprets its output and adds Carbon-aware explanation. For React component imports, Carbon MCP code_search maps each non-Carbon component to its Carbon or `@carbon/web-components` replacement — including Web Component alternatives for Angular/PrimeNG migrations.
+
+**Output:** File-by-file list of hardcoded values + wrong imports, with Carbon replacement for each.
+
+---
+
+#### C4 — Figma vs. implementation delta comparison
+**Inspired by:** Chromatic (visual diff), Applitools (Figma-as-baseline comparison) — both require procurement or lose Carbon awareness
+**What it does:** Compare what was designed in Figma against what was implemented, identifying visual and structural drift.
+
+**How it works inside Bob (Phase 1 — AI vision):**
+```
+1. mcp__figma-mcp__get_screenshot         → renders the Figma frame as an image
+2. User provides screenshot of live implementation
+3. Claude vision compares both images
+4. LLM produces a structured Visual Drift Report with Carbon-aware explanations
+```
+
+**How it works inside Bob (Phase 2 — pixel-precise):**
+```
+1. Figma MCP reads exact design spec values per element
+2. Bob generates a Playwright script targeting the team's Storybook/staging URL
+3. Script extracts computed CSS values via getComputedStyle() / getBoundingClientRect()
+4. Bob diffs Figma spec vs. rendered values and interprets in Carbon terms:
+   "Button padding is 12px; Carbon $spacing-04 (16px) was specified — missing 4px"
+```
+
+**IBM-specific advantage:** Neither Chromatic nor Applitools knows whether a visual difference is a Carbon violation or an intentional deviation. Bob does — because it can cross-reference the visual delta against Carbon MCP guidelines in the same conversation.
+
+---
+
+#### C5 — Structured compliance report auto-posted as a Jira ticket
+**Inspired by:** Chromatic (PR artifact as gate) + Supernova (adoption reporting) — neither creates actionable Jira tickets
+**What it does:** When compliance findings exist, UX Reviewer auto-creates a Jira ticket with structured description, severity-ranked findings, and Carbon-specific acceptance criteria.
+
+**How it works inside Bob:**
+```
+1. UX Review Report is generated (from any of C1–C4 above)
+2. Bob uses the Jira MCP to create a ticket:
+   - Title: "UX Review findings — [screen/component name]"
+   - Description: full structured report with finding, severity, Carbon reference
+   - Acceptance criteria: one per Critical/Major finding — what "fixed" looks like
+   - Labels: ux-review, carbon-compliance, [product team]
+3. Ticket is assigned to the developer; linked to the Figma frame and/or PR
+```
+
+**IBM-specific advantage:** This closes the loop that every market tool leaves open. The findings do not sit in a chat transcript or a Markdown file — they become a tracked, assignable work item. Developers can take the ticket directly to Bob and say "fix the issues in this ticket" — the acceptance criteria are already machine-readable.
+
+**Bob infrastructure required:** Jira MCP (already available as a Bob skill).
+
+---
+
+#### C6 — Carbon as the pre-loaded rule set (no configuration required)
+**Inspired by:** Every tool surveyed — all are design-system-agnostic and require teams to configure their own rules
+**What it does:** UX Reviewer ships with Carbon's component inventory, token taxonomy, and usage guidelines pre-loaded via Carbon MCP. Teams do not configure anything.
+
+**How it works inside Bob:**
+```
+No configuration step. Carbon MCP is the rule source.
+- Component rules:   mcp__carbon-mcp__docs_search ("When should I use Select vs Dropdown?")
+- Token rules:       mcp__carbon-mcp__docs_search ("What token should be used for interactive text?")
+- Code examples:     mcp__carbon-mcp__code_search ("Show me the Carbon Button with danger variant")
+- Web Components:    mcp__carbon-mcp__code_search ("Show me <cds-dropdown> usage")
+```
+
+**IBM-specific advantage:** Carbon MCP is Carbon's own documentation — maintained by the Carbon team, updated with every release. The UX Reviewer skill never has a stale rule set. This is what every competitor lacks and cannot easily replicate for Carbon specifically.
+
+---
+
+### IBM experience summary — what the full tool feels like
+
+The experience for IBM designers and developers is a single natural-language interface in Bob — no new dashboards, no plugins to install, no API keys to manage.
+
+**For a designer:**
+> "Review this Figma frame for Carbon compliance"
+> → Pastes Figma URL
+> → Gets a structured report: which components are wrong, which tokens are hardcoded, which spacing values are off — all with Carbon references and severity ratings
+
+**For a developer:**
+> "Check my branch for Carbon compliance before I raise a PR"
+> → Bob scans imports and SCSS for non-Carbon components and hardcoded values
+> → Returns a file-by-file findings list with Carbon replacements
+> → Optionally: "Create a Jira ticket from these findings" → ticket created automatically
+
+**For a tech lead / designer auditing another team's work:**
+> "Compare this Figma frame against this screenshot of the staging build"
+> → Bob compares both visually, names Carbon violations in the drift, creates a Jira ticket
+
+**What is never required:**
+- No procurement
+- No new tool to learn
+- No Carbon rule files to write or maintain
+- No separate dashboard or subscription
+- No manual copy-paste of findings into Jira
+
+---
+
+### Phased experience rollout
+
+| Phase | What IBM designers/devs can do | Infrastructure |
+|---|---|---|
+| **Phase 1** (now) | Figma frame compliance review; token audit; AI vision Figma–vs–screenshot comparison; Jira ticket creation from findings | Bob + Carbon MCP + Figma MCP + Jira MCP |
+| **Phase 2** (team setup required) | Pixel-precise Figma–vs–implementation diff via Bob-generated Playwright script in CI | Bob + Playwright (team-run) + Carbon MCP |
+| **Phase 3** (procurement decision) | Enterprise visual regression gate with Figma as baseline, cross-browser, collaborative dashboard | Applitools Eyes (separate investment) |
+
+The Phase 1 experience is available to every IBM team on Bob today — the only requirement is a Figma URL.
