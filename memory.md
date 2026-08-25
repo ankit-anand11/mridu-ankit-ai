@@ -8,11 +8,11 @@
 ## My Product
 - Product: UX Reviewer — an AI-powered design quality assistant; delivery format is open (not necessarily limited to a Bob skill)
 - Users: IBM product designers, developers, and product owners building on Carbon Design System
-- Stage: Design sprint — currently at end of Day 6 (design challenges + opportunities defined); prototype not yet started
+- Stage: Design sprint — currently at end of Day 6 (Mon 24 Aug 2026); design challenges + opportunities defined; prototype not yet started
 
 ## What I'm Working On
-- Sprint is 10 days total (2 weeks); we are at end of Day 6 and only at design challenges + opportunities stage (scheduled for Day 3)
-- Remaining days: Day 7 (Figma prototype 4–5 screens), Day 8 (AI critique + revised prototype), Day 9 (reflections written), Day 10 (polish + rehearse for 8-min showcase), Day 11 (showcase)
+- Sprint is 10 working days (Mon 17 Aug – Fri 28 Aug 2026); we are at end of Day 6 and only at design challenges + opportunities stage (scheduled for Day 3)
+- Remaining days: Day 7 Tue 25 Aug (Figma prototype 4–5 screens), Day 8 Wed 26 Aug (AI critique + revised prototype), Day 9 Thu 27 Aug (reflections written), Day 10 Fri 28 Aug (polish + 8-min showcase)
 - Time constraint: each person (Mridusmita + Ankit) can spend no more than 30 minutes per session on this project; Bob has no time limit
 - Research completed: 3 developer interviews (Sahana, Senthil, Hariharan) + 1 designer group session (Nagaraj, Diya, Animesh) — all synthesised in interview-findings.md and interview-summary
 - Design challenges and opportunities are defined — next action is 4–5 screen Figma prototype
