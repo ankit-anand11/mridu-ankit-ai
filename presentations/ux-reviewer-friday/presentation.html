@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>UX Reviewer — Friday Showcase</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #ffffff;
+    --surface: #f4f4f4;
+    --border: #e0e0e0;
+    --text: #161616;
+    --muted: #525252;
+    --accent: #0f62fe;
+    --accent-light: #edf5ff;
+    --critical: #da1e28;
+    --critical-bg: #fff1f1;
+    --major: #ff832b;
+    --major-bg: #fff8f1;
+    --minor: #f1c21b;
+    --minor-bg: #fdfce5;
+    --green: #198038;
+    --green-bg: #defbe6;
+    --font: 'IBM Plex Sans', -apple-system, 'Segoe UI', system-ui, sans-serif;
+    --mono: 'IBM Plex Mono', 'Fira Code', monospace;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font);
+    background: #000;
+    color: var(--text);
+    line-height: 1.6;
+    font-size: 15px;
+  }
+
+  /* ── SLIDE ENGINE ─────────────────────────────────────────────────────── */
+  .slide {
+    width: 100vw;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 64px 80px;
+    position: relative;
+    background: var(--bg);
+    border-bottom: 1px solid #000;
+  }
+
+  .slide--dark {
+    background: #161616;
+    color: #f4f4f4;
+    --text: #f4f4f4;
+    --muted: #a8a8a8;
+    --border: #393939;
+    --surface: #262626;
+  }
+
+  .slide--accent {
+    background: #0f62fe;
+    color: #ffffff;
+    --text: #ffffff;
+    --muted: #d0e2ff;
+    --border: #4589ff;
+    --surface: #0050e6;
+  }
+
+  .slide-number {
+    position: absolute;
+    top: 28px;
+    right: 40px;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    font-family: var(--mono);
+  }
+
+  .slide-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+
+  .slide--dark .slide-label,
+  .slide--accent .slide-label {
+    color: #78a9ff;
+  }
+
+  /* ── TYPOGRAPHY ────────────────────────────────────────────────────────── */
+  h1 { font-size: clamp(36px, 5vw, 60px); font-weight: 300; line-height: 1.1; letter-spacing: -0.02em; }
+  h2 { font-size: clamp(28px, 3.5vw, 44px); font-weight: 300; line-height: 1.15; letter-spacing: -0.015em; }
+  h3 { font-size: clamp(20px, 2.5vw, 28px); font-weight: 400; line-height: 1.25; }
+  h4 { font-size: 15px; font-weight: 600; }
+
+  .subtitle {
+    font-size: clamp(16px, 2vw, 20px);
+    color: var(--muted);
+    margin-top: 16px;
+    max-width: 680px;
+    font-weight: 300;
+  }
+
+  .big-stat {
+    font-size: clamp(56px, 8vw, 96px);
+    font-weight: 200;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    color: var(--accent);
+  }
+
+  .slide--accent .big-stat { color: #fff; }
+
+  .quote {
+    font-size: clamp(18px, 2.5vw, 26px);
+    font-weight: 300;
+    line-height: 1.5;
+    font-style: italic;
+    border-left: 3px solid var(--accent);
+    padding-left: 24px;
+    max-width: 780px;
+  }
+
+  .slide--dark .quote { border-color: #4589ff; }
+
+  .attribution {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 12px;
+    padding-left: 27px;
+  }
+
+  /* ── LAYOUT HELPERS ────────────────────────────────────────────────────── */
+  .cols-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; margin-top: 40px; }
+  .cols-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 32px; margin-top: 40px; }
+  .cols-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 24px; margin-top: 40px; }
+  .mt-8  { margin-top: 8px; }
+  .mt-16 { margin-top: 16px; }
+  .mt-24 { margin-top: 24px; }
+  .mt-32 { margin-top: 32px; }
+  .mt-40 { margin-top: 40px; }
+  .mt-48 { margin-top: 48px; }
+  .max-720 { max-width: 720px; }
+  .max-860 { max-width: 860px; }
+
+  /* ── CARDS ─────────────────────────────────────────────────────────────── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 24px;
+    border-radius: 2px;
+  }
+
+  .card h4 { margin-bottom: 8px; }
+  .card p  { font-size: 14px; color: var(--muted); line-height: 1.55; }
+
+  .card--critical { border-top: 3px solid var(--critical); background: var(--critical-bg); }
+  .card--major    { border-top: 3px solid var(--major);    background: var(--major-bg); }
+  .card--minor    { border-top: 3px solid var(--minor);    background: var(--minor-bg); }
+  .card--green    { border-top: 3px solid var(--green);    background: var(--green-bg); }
+  .card--accent   { border-top: 3px solid var(--accent);   background: var(--accent-light); }
+
+  /* ── TAGS ─────────────────────────────────────────────────────────────── */
+  .tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 2px;
+    margin-bottom: 10px;
+  }
+  .tag--critical { background: var(--critical); color: #fff; }
+  .tag--major    { background: var(--major);    color: #fff; }
+  .tag--minor    { background: #f1c21b;         color: #161616; }
+  .tag--now      { background: var(--green);    color: #fff; }
+  .tag--soon     { background: var(--accent);   color: #fff; }
+  .tag--later    { background: #8a3ffc;         color: #fff; }
+  .tag--procurement { background: #393939; color: #f4f4f4; }
+
+  /* ── DIVIDER ────────────────────────────────────────────────────────────── */
+  hr { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
+
+  /* ── TABLE ──────────────────────────────────────────────────────────────── */
+  table { width: 100%; border-collapse: collapse; margin-top: 24px; font-size: 14px; }
+  th {
+    text-align: left;
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 10px 16px;
+    border-bottom: 2px solid var(--border);
+    color: var(--muted);
+  }
+  td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    line-height: 1.5;
+  }
+  tr:last-child td { border-bottom: none; }
+  .td-check { color: var(--green); font-weight: 700; text-align: center; }
+  .td-cross { color: var(--critical); font-weight: 700; text-align: center; }
+
+  /* ── CODE BLOCK ─────────────────────────────────────────────────────────── */
+  .code-block {
+    background: #161616;
+    color: #78a9ff;
+    font-family: var(--mono);
+    font-size: 13px;
+    padding: 20px 24px;
+    border-radius: 2px;
+    line-height: 1.7;
+    overflow-x: auto;
+    margin-top: 16px;
+  }
+  .code-block .comment { color: #6f6f6f; }
+  .code-block .token   { color: #42be65; }
+  .code-block .import  { color: #ff7eb6; }
+  .code-block .delta   { color: #f1c21b; }
+
+  /* ── FLOW STEPS ─────────────────────────────────────────────────────────── */
+  .flow {
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+    margin-top: 40px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+  }
+
+  .flow-step {
+    flex: 1;
+    min-width: 140px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+  }
+
+  .flow-step:not(:last-child)::after {
+    content: '→';
+    position: absolute;
+    right: -14px;
+    top: 18px;
+    font-size: 20px;
+    color: var(--muted);
+    z-index: 1;
+  }
+
+  .flow-dot {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    flex-shrink: 0;
+  }
+
+  .flow-step h4 { font-size: 13px; margin-bottom: 6px; }
+  .flow-step p  { font-size: 12px; color: var(--muted); line-height: 1.4; }
+
+  .slide--dark .flow-dot { background: #4589ff; }
+
+  /* ── STAT ROW ────────────────────────────────────────────────────────────── */
+  .stat-row { display: flex; gap: 48px; margin-top: 40px; flex-wrap: wrap; }
+  .stat-item { display: flex; flex-direction: column; gap: 4px; }
+  .stat-num  { font-size: 48px; font-weight: 200; line-height: 1; color: var(--accent); }
+  .slide--dark .stat-num { color: #78a9ff; }
+  .stat-label { font-size: 13px; color: var(--muted); max-width: 180px; line-height: 1.4; }
+
+  /* ── NAV ────────────────────────────────────────────────────────────────── */
+  .nav {
+    position: fixed;
+    bottom: 24px;
+    right: 32px;
+    display: flex;
+    gap: 8px;
+    z-index: 100;
+  }
+
+  .nav a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: rgba(22,22,22,0.85);
+    color: #f4f4f4;
+    text-decoration: none;
+    font-size: 16px;
+    border-radius: 2px;
+    transition: background 0.15s;
+  }
+
+  .nav a:hover { background: #0f62fe; }
+
+  /* ── INDEX DOTS ─────────────────────────────────────────────────────────── */
+  .index-dots {
+    position: fixed;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 100;
+  }
+
+  .dot-link {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.3);
+    text-decoration: none;
+    transition: background 0.15s, transform 0.15s;
+  }
+
+  .dot-link:hover {
+    background: #0f62fe;
+    transform: scale(1.5);
+  }
+
+  /* ── COVER EXTRAS ────────────────────────────────────────────────────────── */
+  .byline {
+    display: flex;
+    gap: 32px;
+    margin-top: 40px;
+    flex-wrap: wrap;
+  }
+
+  .byline-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .byline-name  { font-size: 15px; font-weight: 400; }
+  .byline-role  { font-size: 12px; color: var(--muted); }
+
+  .section-tag {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  /* ── PILL LIST ───────────────────────────────────────────────────────────── */
+  .pill-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+  .pill {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 6px 12px;
+    border-radius: 16px;
+    font-size: 13px;
+    color: var(--text);
+  }
+  .slide--dark .pill { background: #262626; border-color: #393939; color: #f4f4f4; }
+
+  /* ── INLINE MONO ─────────────────────────────────────────────────────────── */
+  code {
+    font-family: var(--mono);
+    font-size: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 1px 5px;
+    border-radius: 2px;
+    color: var(--accent);
+  }
+  .slide--dark code { background: #262626; border-color: #393939; }
+
+  /* ── RESPONSIVE ──────────────────────────────────────────────────────────── */
+  @media (max-width: 768px) {
+    .slide { padding: 40px 32px; }
+    .cols-2, .cols-3, .cols-4 { grid-template-columns: 1fr; }
+    .flow { flex-direction: column; }
+    .flow-step::after { display: none; }
+    .stat-row { gap: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── NAV ──────────────────────────────────────────────────────────────── -->
+<div class="index-dots">
+  <a class="dot-link" href="#s1" title="Cover"></a>
+  <a class="dot-link" href="#s2" title="Problem"></a>
+  <a class="dot-link" href="#s3" title="Research"></a>
+  <a class="dot-link" href="#s4" title="Compliance spectrum"></a>
+  <a class="dot-link" href="#s5" title="What the market does well"></a>
+  <a class="dot-link" href="#s6a" title="Why none of it works for Carbon"></a>
+  <a class="dot-link" href="#s6" title="What UX Reviewer is"></a>
+  <a class="dot-link" href="#s7" title="How it works"></a>
+  <a class="dot-link" href="#s8" title="MVP — what it covers"></a>
+  <a class="dot-link" href="#s9" title="Sample report"></a>
+  <a class="dot-link" href="#s10" title="Why it works today"></a>
+  <a class="dot-link" href="#s11" title="Roadmap"></a>
+  <a class="dot-link" href="#s12" title="Why defensible"></a>
+  <a class="dot-link" href="#s13" title="Next steps"></a>
+  <a class="dot-link" href="#s14" title="The ask"></a>
+</div>
+
+<!-- ── SLIDE 1 — COVER ─────────────────────────────────────────────────── -->
+<section class="slide slide--dark" id="s1">
+  <span class="slide-number">01 / 15</span>
+  <span class="slide-label">IBM webMethods · August 2026</span>
+
+  <h1>UX Reviewer</h1>
+  <p class="subtitle">
+    An AI-powered Carbon compliance assistant — from Figma frame to code branch to Jira ticket, delivered as a conversation in Bob.
+  </p>
+
+  <hr />
+
+  <div class="byline">
+    <div class="byline-item">
+      <span class="byline-name">Mridusmita Nath</span>
+      <span class="byline-role">UX Designer</span>
+    </div>
+    <div class="byline-item">
+      <span class="byline-name">Ankit Anand</span>
+      <span class="byline-role">UX Designer</span>
+    </div>
+  </div>
+
+  <div class="pill-list" style="margin-top: 40px;">
+    <span class="pill">Discovery complete</span>
+    <span class="pill">MVP scoped</span>
+    <span class="pill">Pilot team identified</span>
+  </div>
+</section>
+
+<!-- ── SLIDE 2 — THE PROBLEM ────────────────────────────────────────────── -->
+<section class="slide" id="s2">
+  <span class="slide-number">02 / 15</span>
+  <span class="slide-label">The problem</span>
+
+  <h2>IBM product teams have no way to continuously verify Carbon compliance</h2>
+
+  <div class="cols-3" style="margin-top: 40px;">
+    <div class="card card--critical">
+      <div class="tag tag--critical">Invisible</div>
+      <h4>Token violations hide in plain sight</h4>
+      <p>A screen can look perfectly correct while the underlying code uses <code>#0f62fe</code> instead of <code>$interactive-01</code>. No visual check catches this.</p>
+    </div>
+    <div class="card card--critical">
+      <div class="tag tag--critical">Late</div>
+      <h4>Issues surface after merge</h4>
+      <p>Reviews are manual, ad hoc, and happen post-PR — or not at all. Teams have no gate. Non-compliant code ships silently with no accountability.</p>
+    </div>
+    <div class="card card--critical">
+      <div class="tag tag--critical">Expensive</div>
+      <h4>Rework is the only remedy</h4>
+      <p>A designer spent 2 hours annotating a single screen's issues, then waited 2 weeks for implementation. Then reviewed again. This repeats every sprint.</p>
+    </div>
+  </div>
+
+  <div class="mt-48">
+    <p class="quote">
+      "If they are really using the Carbon component, are they really using the tokens? No one has any idea. So that gap is still there."
+    </p>
+    <p class="attribution">— Tech Lead, IBM API (webMethods)</p>
+  </div>
+</section>
+
+<!-- ── SLIDE 3 — RESEARCH ────────────────────────────────────────────────── -->
+<section class="slide slide--dark" id="s3">
+  <span class="slide-number">03 / 15</span>
+  <span class="slide-label">Research · August 2026</span>
+
+  <h2>We spoke to 6 people across 4 IBM webMethods teams</h2>
+
+  <div class="cols-2" style="margin-top: 40px;">
+    <div>
+      <span class="section-tag">3 developer interviews</span>
+      <div class="card" style="margin-top: 0;">
+        <h4>Frontend Dev — Integration</h4>
+        <p>Carbon React. Falls back to hex when a token "doesn't look right". No review gate.</p>
+      </div>
+      <div class="card" style="margin-top: 12px;">
+        <h4>Tech Lead — API</h4>
+        <p>100% Carbon tokens. AI PDLC rules in place. PR gate enforced. Zero compliance violations. This is the benchmark.</p>
+      </div>
+      <div class="card" style="margin-top: 12px;">
+        <h4>Frontend Dev — Integration</h4>
+        <p>Angular / PrimeNG. No Figma dev mode. No review gate. Lowest Carbon maturity surveyed.</p>
+      </div>
+    </div>
+    <div>
+      <span class="section-tag">1 designer group session</span>
+      <div class="card" style="margin-top: 0;">
+        <h4>Designer — webMethods B2B</h4>
+        <p>6 years. High custom component debt from Delight → Carbon migration. Components orphaned.</p>
+      </div>
+      <div class="card" style="margin-top: 12px;">
+        <h4>Designer — API Management</h4>
+        <p>Full Carbon. PR review gate: designer must approve before merge. It works.</p>
+      </div>
+      <div class="card" style="margin-top: 12px;">
+        <h4>Designer — webMethods Integration</h4>
+        <p>~1.5 years. Severe design–dev drift. 2 hours annotating one screen. 2-week turnaround.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SLIDE 4 — COMPLIANCE SPECTRUM ───────────────────────────────────── -->
+<section class="slide" id="s4">
+  <span class="slide-number">04 / 15</span>
+  <span class="slide-label">Research finding</span>
+
+  <h2>The compliance spectrum — and what good looks like</h2>
+
+  <div class="cols-3" style="margin-top: 40px;">
+    <div class="card card--critical">
+      <div class="tag tag--critical">Low</div>
+      <h4>Developer · Designer — Integration</h4>
+      <p>Angular / PrimeNG. No Figma dev mode. No review gate. Custom components accumulating with no path to Carbon.</p>
+    </div>
+    <div class="card card--major">
+      <div class="tag tag--major">Mid</div>
+      <h4>Developer · Designer — Integration / B2B</h4>
+      <p>Carbon React but hex fallbacks. Components from legacy migration still in use. No formal review gate.</p>
+    </div>
+    <div class="card card--green">
+      <div class="tag tag--now">High</div>
+      <h4>Tech Lead · Designer — API</h4>
+      <p>100% Carbon tokens. PR gate enforced. Designer must approve before merge. Zero compliance violations. <strong>This is achievable.</strong></p>
+    </div>
+  </div>
+
+  <div class="mt-40 max-720">
+    <p class="quote">
+      "Unless you approve, it can't get merged — so they will get pulled up for it. So they will do it fast so that you review it."
+    </p>
+    <p class="attribution">— Designer, IBM API Management (webMethods)</p>
+  </div>
+
+  <p class="mt-24" style="color: var(--muted); font-size: 14px;">
+    UX Reviewer gives teams at the left end a path toward that standard — without requiring them to build the culture and discipline from scratch first.
+  </p>
+</section>
+
+<!-- ── SLIDE 5 — WHAT THE MARKET DOES WELL ────────────────────────────── -->
+<section class="slide" id="s5">
+  <span class="slide-number">05 / 15</span>
+  <span class="slide-label">Market analysis · what these tools get right</span>
+
+  <h2>These are genuinely good tools — each solves a real problem well</h2>
+
+  <div class="cols-3" style="margin-top: 40px;">
+    <div class="card card--accent">
+      <h4>FigmaLint</h4>
+      <p style="margin-top: 8px; font-size: 14px; line-height: 1.65;">
+        <strong>What it does well:</strong> Scans every node in a Figma file for detached instances, hardcoded hex values, and raw px spacing — before handoff even starts. Gives designers instant, in-canvas feedback with no developer involvement.<br/><br/>
+        <strong>Why it's good:</strong> Catches the most common Figma sloppiness at source. Fast and zero-setup for designers already in Figma.
+      </p>
+    </div>
+    <div class="card card--accent">
+      <h4>Chromatic</h4>
+      <p style="margin-top: 8px; font-size: 14px; line-height: 1.65;">
+        <strong>What it does well:</strong> Production-proven PR merge gate that blocks on any pixel-level visual regression across every Storybook story. Cross-browser, cross-viewport, automated on every commit.<br/><br/>
+        <strong>Why it's good:</strong> Prevents accidental UI regressions from shipping. Used at scale by some of the largest design systems in the industry.
+      </p>
+    </div>
+    <div class="card card--accent">
+      <h4>Supernova</h4>
+      <p style="margin-top: 8px; font-size: 14px; line-height: 1.65;">
+        <strong>What it does well:</strong> Tracks which design system components are actually used across a codebase — giving design system teams adoption metrics and code health dashboards at the enterprise level.<br/><br/>
+        <strong>Why it's good:</strong> Gives design system owners real data on where teams are and aren't adopting components.
+      </p>
+    </div>
+    <div class="card card--accent">
+      <h4>Tokens Studio</h4>
+      <p style="margin-top: 8px; font-size: 14px; line-height: 1.65;">
+        <strong>What it does well:</strong> Creates a bidirectional sync between Figma design tokens and the codebase — ensuring that when a token changes in Figma, it propagates to code automatically.<br/><br/>
+        <strong>Why it's good:</strong> Eliminates a major source of token drift between design and code for teams that set it up correctly.
+      </p>
+    </div>
+    <div class="card card--accent">
+      <h4>Zeroheight</h4>
+      <p style="margin-top: 8px; font-size: 14px; line-height: 1.65;">
+        <strong>What it does well:</strong> Turns design system documentation into a living, queryable knowledge base — and now exposes it via MCP so AI assistants can reference guidelines directly.<br/><br/>
+        <strong>Why it's good:</strong> Makes design system documentation accessible to AI tools. The MCP approach is genuinely forward-looking.
+      </p>
+    </div>
+    <div class="card" style="border: 1px dashed var(--border); background: transparent;">
+      <h4 style="color: var(--muted);">The shared limitation</h4>
+      <p style="margin-top: 8px; font-size: 14px; line-height: 1.65; color: var(--muted);">
+        Every one of these tools is designed to work for <em>any</em> design system. Their business model depends on it.<br/><br/>
+        That means none of them ships with Carbon rules, Carbon token names, Carbon component inventory, or Carbon-specific guidance pre-loaded. Teams must configure everything from scratch — or get nothing.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ── SLIDE 6 — MARKET GAPS ──────────────────────────────────────────── -->
+<section class="slide slide--dark" id="s6a">
+  <span class="slide-number">06 / 15</span>
+  <span class="slide-label">Market analysis · why none of this works for us</span>
+
+  <h2>Five tools cover parts of the problem — none covers it for Carbon</h2>
+
+  <table style="margin-top: 32px;">
+    <thead>
+      <tr>
+        <th>Tool</th>
+        <th>What it does</th>
+        <th style="text-align:center;">Carbon-aware</th>
+        <th style="text-align:center;">Code + Figma</th>
+        <th style="text-align:center;">Auto Jira</th>
+        <th style="text-align:center;">No procurement</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>FigmaLint</td><td>Token &amp; component audit in Figma</td><td class="td-cross">✗</td><td class="td-cross">✗</td><td class="td-cross">✗</td><td class="td-cross">✗</td></tr>
+      <tr><td>Chromatic</td><td>Visual regression CI gate</td><td class="td-cross">✗</td><td class="td-cross">✗</td><td class="td-cross">✗</td><td class="td-cross">✗</td></tr>
+      <tr><td>Supernova</td><td>Design system management (Enterprise)</td><td class="td-cross">✗</td><td class="td-cross">✗</td><td class="td-cross">✗</td><td class="td-cross">✗</td></tr>
+      <tr><td>Tokens Studio</td><td>Figma-to-code token pipeline</td><td class="td-cross">✗</td><td class="td-cross">✗</td><td class="td-cross">✗</td><td class="td-cross">✗</td></tr>
+      <tr><td>Zeroheight</td><td>Design system docs with MCP</td><td class="td-cross">✗</td><td class="td-cross">✗</td><td class="td-cross">✗</td><td class="td-cross">✗</td></tr>
+      <tr style="background: rgba(65,137,255,0.12); border-top: 2px solid #4589ff;">
+        <td><strong>UX Reviewer</strong></td>
+        <td>Carbon compliance workflow — Figma + code + Jira</td>
+        <td class="td-check">✓</td>
+        <td class="td-check">✓</td>
+        <td class="td-check">✓</td>
+        <td class="td-check">✓</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p style="font-size: 13px; color: var(--muted); margin-top: 16px;">
+    Every market tool is design-system-agnostic — their business model requires it. That is the gap UX Reviewer fills.
+  </p>
+</section>
+
+<!-- ── SLIDE 7 — WHAT UX REVIEWER IS ──────────────────────────────────── -->
+<section class="slide slide--accent" id="s6">
+  <span class="slide-number">07 / 15</span>
+  <span class="slide-label">The solution</span>
+
+  <h2>UX Reviewer closes all six gaps — inside Bob, using infrastructure IBM teams already have</h2>
+
+  <p class="subtitle" style="color: var(--muted);">
+    Not a linter. Not a visual regression tool. Not a documentation platform.
+  </p>
+
+  <div class="cols-3" style="margin-top: 48px;">
+    <div class="card" style="background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.2);">
+      <h4 style="color: #fff;">Carbon MCP as the rule source</h4>
+      <p style="color: rgba(255,255,255,0.75);">Live Carbon documentation, maintained by the Carbon team. Always current. Never configured. Never stale.</p>
+    </div>
+    <div class="card" style="background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.2);">
+      <h4 style="color: #fff;">Works where teams already work</h4>
+      <p style="color: rgba(255,255,255,0.75);">Inside Bob, via natural language. No new tools to learn. No plugins to install. No API keys to manage.</p>
+    </div>
+    <div class="card" style="background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.2);">
+      <h4 style="color: #fff;">Findings become tickets</h4>
+      <p style="color: rgba(255,255,255,0.75);">Figma MCP + Carbon MCP + Jira MCP in one workflow. Run the check, review the report, create the ticket — one conversation.</p>
+    </div>
+  </div>
+
+  <div class="stat-row" style="margin-top: 48px;">
+    <div class="stat-item">
+      <span class="big-stat">0</span>
+      <span class="stat-label" style="color: rgba(255,255,255,0.65);">new tools required</span>
+    </div>
+    <div class="stat-item">
+      <span class="big-stat">0</span>
+      <span class="stat-label" style="color: rgba(255,255,255,0.65);">procurement needed</span>
+    </div>
+    <div class="stat-item">
+      <span class="big-stat">6</span>
+      <span class="stat-label" style="color: rgba(255,255,255,0.65);">market gaps closed simultaneously</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── SLIDE 8 — HOW IT WORKS ─────────────────────────────────────────── -->
+<section class="slide" id="s7">
+  <span class="slide-number">08 / 15</span>
+  <span class="slide-label">The process · how a review happens</span>
+
+  <h2>One Bob conversation. Two screenshots. One structured report.</h2>
+
+  <div class="flow">
+    <div class="flow-step">
+      <div class="flow-dot">1</div>
+      <h4>Trigger</h4>
+      <p>"I want to run a UI review"</p>
+    </div>
+    <div class="flow-step">
+      <div class="flow-dot">2</div>
+      <h4>Share design</h4>
+      <p>Figma URL or screenshot</p>
+    </div>
+    <div class="flow-step">
+      <div class="flow-dot">3</div>
+      <h4>Share build</h4>
+      <p>Dev screenshot, GitHub link, or skip</p>
+    </div>
+    <div class="flow-step">
+      <div class="flow-dot">4</div>
+      <h4>Bob analyses</h4>
+      <p>Figma MCP + Carbon MCP + AI vision run in parallel</p>
+    </div>
+    <div class="flow-step">
+      <div class="flow-dot">5</div>
+      <h4>Report</h4>
+      <p>Downloadable HTML, severity-ranked findings with inline fixes</p>
+    </div>
+    <div class="flow-step">
+      <div class="flow-dot">6</div>
+      <h4>Action</h4>
+      <p>Jira tickets created on request — pre-filled with acceptance criteria</p>
+    </div>
+  </div>
+
+  <div class="cols-2" style="margin-top: 48px;">
+    <div>
+      <h4 style="margin-bottom: 12px;">Designer flow</h4>
+      <div class="code-block">
+<span class="comment">— Before handoff —</span>
+"Review this Figma frame for Carbon compliance"
+→ Which components are wrong or custom
+→ Which tokens are hardcoded
+→ Which spacing values are off-grid
+→ All findings with severity + Carbon reference
+      </div>
+    </div>
+    <div>
+      <h4 style="margin-bottom: 12px;">Developer flow</h4>
+      <div class="code-block">
+<span class="comment">— Before PR merge —</span>
+"Check my branch for Carbon compliance"
+→ Non-Carbon imports named + replacement given
+→ Hardcoded SCSS values + correct token named
+"Create a Jira ticket from these findings"
+→ Structured ticket, auto-created + assigned
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SLIDE 9 — MVP ──────────────────────────────────────────────────── -->
+<section class="slide slide--dark" id="s8">
+  <span class="slide-number">09 / 15</span>
+  <span class="slide-label">MVP — what ships first</span>
+
+  <h2>Phase 1 covers everything a team needs for pre-handoff and pre-PR reviews</h2>
+
+  <div class="cols-3" style="margin-top: 40px;">
+    <div class="card">
+      <div class="tag tag--critical">Carbon compliance</div>
+      <h4>Components</h4>
+      <p>Custom components where a Carbon one exists. Wrong variants. Deprecated patterns. Names the exact Carbon alternative.</p>
+    </div>
+    <div class="card">
+      <div class="tag tag--major">Token &amp; spacing</div>
+      <h4>Hardcoded values</h4>
+      <p>Hex colours and px values where Carbon tokens should be used. Maps every violation to the correct token name.</p>
+    </div>
+    <div class="card">
+      <div class="tag tag--minor">Typography</div>
+      <h4>Type system</h4>
+      <p>Non-IBM Plex fonts. Sizes off the Carbon type scale. Hardcoded font-size values instead of type tokens.</p>
+    </div>
+    <div class="card">
+      <div class="tag tag--critical">Accessibility</div>
+      <h4>Carbon patterns</h4>
+      <p>Missing focus indicators. Icon buttons without labels. Form inputs without accessible names. Carbon pattern-level only — not WCAG mechanical checks.</p>
+    </div>
+    <div class="card">
+      <div class="tag tag--major">Handoff completeness</div>
+      <h4>Missing states</h4>
+      <p>Interactive components without hover, focus, error, or disabled states designed. Caught before implementation starts.</p>
+    </div>
+    <div class="card">
+      <div class="tag tag--now">Design-to-dev delta</div>
+      <h4>Visual comparison</h4>
+      <p>AI vision comparison of Figma design vs. dev screenshot. Flags drift with Carbon-aware interpretation — not just "it's different".</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── SLIDE 9 — SAMPLE REPORT ────────────────────────────────────────── -->
+<section class="slide" id="s9">
+  <span class="slide-number">10 / 15</span>
+  <span class="slide-label">Output · what the report looks like</span>
+
+  <h2>Every finding has a severity, a description, and an inline Carbon fix</h2>
+
+  <div class="cols-2" style="margin-top: 32px;">
+    <div>
+      <div class="card card--critical" style="margin-bottom: 12px;">
+        <div class="tag tag--critical">🔴 Critical</div>
+        <h4>Custom dropdown detected</h4>
+        <p>Replace with <code>&lt;Dropdown&gt;</code> from <code>@carbon/react</code>. Token used: none — custom CSS <code>border: 1px solid #8d8d8d</code>. Carbon standard: use <code>$border-subtle-01</code>.</p>
+      </div>
+      <div class="card card--critical" style="margin-bottom: 12px;">
+        <div class="tag tag--critical">🔴 Critical</div>
+        <h4>Interactive element unreachable by keyboard</h4>
+        <p>Filter button has no visible focus ring. Carbon standard: all interactive elements must use <code>$focus</code> token on <code>:focus-visible</code>.</p>
+      </div>
+      <div class="card card--major" style="margin-bottom: 12px;">
+        <div class="tag tag--major">🟠 Major</div>
+        <h4>Hardcoded spacing: 20px</h4>
+        <p>Gap between cards is <code>20px</code>. Should be <code>$spacing-05</code> (16px). Theme-switch will break silently.</p>
+      </div>
+      <div class="card card--minor">
+        <div class="tag tag--minor">🟡 Minor</div>
+        <h4>Table row hover — wrong token</h4>
+        <p>Row hover uses <code>#e8e8e8</code>. Should be <code>$layer-hover-01</code>.</p>
+      </div>
+    </div>
+
+    <div>
+      <h4 style="margin-bottom: 12px;">Design-to-implementation delta</h4>
+      <div class="code-block">
+<span class="delta">3 discrepancies found vs dev screenshot</span>
+
+Figma: Blue-60 primary button
+Dev:   Blue-70 ← wrong token
+
+Figma: 48px header height
+Dev:   56px   ← extra padding ($spacing-05 missing)
+
+Figma: Tag component (Carbon)
+Dev:   Custom pill ← non-Carbon component
+      </div>
+
+      <div class="card card--accent" style="margin-top: 16px;">
+        <h4>What Bob offers next</h4>
+        <p style="margin-top: 8px; font-size: 13px; line-height: 1.7;">
+          [A] Create Jira tickets for Critical findings<br/>
+          [B] Export report as downloadable HTML<br/>
+          [C] Show code fix for any finding<br/>
+          [D] Done for now
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SLIDE 10 — WHY TODAY ───────────────────────────────────────────── -->
+<section class="slide slide--dark" id="s10">
+  <span class="slide-number">11 / 15</span>
+  <span class="slide-label">Feasibility · why this is buildable now</span>
+
+  <h2>Everything in Phase 1 runs on infrastructure IBM teams already have in Bob</h2>
+
+  <div class="cols-2" style="margin-top: 40px;">
+    <div>
+      <table style="margin-top: 0;">
+        <thead>
+          <tr>
+            <th>Capability</th>
+            <th>Bob infrastructure</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Carbon component compliance — Figma</td>
+            <td><code>figma-mcp get_design_context</code><br/><code>carbon-mcp docs_search</code></td>
+          </tr>
+          <tr>
+            <td>Token compliance — Figma</td>
+            <td><code>figma-mcp get_variable_defs</code></td>
+          </tr>
+          <tr>
+            <td>Figma vs. dev screenshot delta</td>
+            <td><code>figma-mcp get_screenshot</code> + Claude vision</td>
+          </tr>
+          <tr>
+            <td>Auto-create Jira ticket</td>
+            <td>Jira MCP</td>
+          </tr>
+          <tr>
+            <td>Carbon rule source</td>
+            <td>Carbon MCP — live, maintained by Carbon team</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div>
+      <div class="stat-row" style="flex-direction: column; gap: 32px; margin-top: 0;">
+        <div class="stat-item">
+          <span class="stat-num">0</span>
+          <span class="stat-label">new tools required — everything runs through Bob infrastructure IBM teams already use</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num">0</span>
+          <span class="stat-label">procurement needed — Carbon MCP, Figma MCP, and Jira MCP available to all IBM teams today</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num">Live</span>
+          <span class="stat-label">Carbon MCP rule source — maintained by the Carbon team, updated with every release</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SLIDE 11 — ROADMAP ─────────────────────────────────────────────── -->
+<section class="slide" id="s11">
+  <span class="slide-number">12 / 15</span>
+  <span class="slide-label">Roadmap · four phases</span>
+
+  <h2>Phase 1 ships today. Each phase adds capability without new procurement.</h2>
+
+  <div class="cols-4" style="margin-top: 40px;">
+    <div class="card card--accent">
+      <div class="tag tag--now">Phase 1 · Now</div>
+      <h4>MVP — screenshot comparison</h4>
+      <p style="margin-top: 8px; font-size: 13px; line-height: 1.65;">
+        Screenshot or Figma URL + dev screenshot<br/>
+        Carbon component and token check<br/>
+        AI vision design delta<br/>
+        Downloadable HTML report<br/>
+        User-initiated Jira ticket offer<br/><br/>
+        <strong>Stack:</strong> Bob + Carbon MCP + Figma MCP + Claude vision<br/>
+        <strong>Who can use it:</strong> Any IBMer with Bob access
+      </p>
+    </div>
+    <div class="card">
+      <div class="tag tag--soon">Phase 2 · Next</div>
+      <h4>Code branch scanning</h4>
+      <p style="margin-top: 8px; font-size: 13px; line-height: 1.65;">
+        Share a GitHub branch — Bob reads source files directly<br/>
+        Flags non-Carbon imports (named replacement)<br/>
+        Catches hardcoded hex/px in SCSS<br/>
+        Closes the silent failure where Bob reuses legacy components<br/><br/>
+        <strong>Stack:</strong> Bob file reading + Carbon MCP <code>code_search</code><br/>
+        <strong>Pre-requisite:</strong> None
+      </p>
+    </div>
+    <div class="card">
+      <div class="tag tag--later">Phase 3 · Later</div>
+      <h4>Pixel-precise CI comparison</h4>
+      <p style="margin-top: 8px; font-size: 13px; line-height: 1.65;">
+        Bob generates a Playwright script for the team's CI pipeline<br/>
+        Extracts computed CSS from live build<br/>
+        Compares element-by-element against Figma spec<br/>
+        Bob interprets delta in Carbon terms<br/><br/>
+        <strong>Stack:</strong> Bob-generated Playwright + Carbon MCP<br/>
+        <strong>Pre-requisite:</strong> Storybook or staging env (~1 sprint to wire up)
+      </p>
+    </div>
+    <div class="card">
+      <div class="tag tag--procurement">Phase 4 · Procurement</div>
+      <h4>Enterprise visual regression</h4>
+      <p style="margin-top: 8px; font-size: 13px; line-height: 1.65;">
+        Applitools Eyes — AI noise filtering, no false positives<br/>
+        Cross-browser, cross-device at CI scale<br/>
+        Collaborative dashboard for design/dev/QA<br/><br/>
+        <strong>What it adds over Phase 3:</strong> AI noise filtering and enterprise scale. Does not add Carbon awareness.<br/><br/>
+        <strong>Status:</strong> Requires procurement. Evaluated separately.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ── SLIDE 12 — WHY DEFENSIBLE ──────────────────────────────────────── -->
+<section class="slide slide--dark" id="s12">
+  <span class="slide-number">13 / 15</span>
+  <span class="slide-label">Competitive advantage</span>
+
+  <h2>Carbon-specific by design — that is not a constraint, it is the entire advantage</h2>
+
+  <table style="margin-top: 32px;">
+    <thead>
+      <tr>
+        <th></th>
+        <th>Market tools</th>
+        <th>UX Reviewer</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Rule source</strong></td>
+        <td>Team-configured, static, goes stale</td>
+        <td>Carbon MCP — live, maintained by the Carbon team, never stale</td>
+      </tr>
+      <tr>
+        <td><strong>Component knowledge</strong></td>
+        <td>Generic design system abstractions</td>
+        <td>Carbon's full component inventory, usage guidelines, and variant rules</td>
+      </tr>
+      <tr>
+        <td><strong>Token knowledge</strong></td>
+        <td>Whatever the team loaded</td>
+        <td>Carbon's full token taxonomy and semantic intent</td>
+      </tr>
+      <tr>
+        <td><strong>Web component alternatives</strong></td>
+        <td>Not provided</td>
+        <td>Carbon Web Components named for every non-Carbon import</td>
+      </tr>
+      <tr>
+        <td><strong>Jira integration</strong></td>
+        <td>Not available in any surveyed tool</td>
+        <td>Built-in via Jira MCP</td>
+      </tr>
+      <tr>
+        <td><strong>Procurement</strong></td>
+        <td>Most require it or a BYOAK</td>
+        <td>Zero — everything runs through Bob</td>
+      </tr>
+      <tr>
+        <td><strong>Learning curve</strong></td>
+        <td>Plugin installs, dashboards, onboarding</td>
+        <td>Zero — same Bob conversation the team already uses</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ── SLIDE 13 — NEXT STEPS ─────────────────────────────────────────── -->
+<section class="slide" id="s13">
+  <span class="slide-number">14 / 15</span>
+  <span class="slide-label">Next steps · pilot plan</span>
+
+  <h2>Three steps to get from today's proof of concept to a live pilot</h2>
+
+  <div class="cols-3" style="margin-top: 40px;">
+    <div class="card card--accent">
+      <div class="tag tag--now">Step 1</div>
+      <h4>Validate the report format</h4>
+      <p style="margin-top: 8px; font-size: 14px; line-height: 1.65;">
+        30-min session with one designer from the API team<br/>
+        30-min session with one developer from the API team<br/>
+        Show a sample report generated from a real Figma frame<br/><br/>
+        <strong>Goal:</strong> Confirm the finding format is specific enough for a developer to act on without a follow-up conversation.
+      </p>
+    </div>
+    <div class="card card--accent">
+      <div class="tag tag--now">Step 2</div>
+      <h4>Set up pilot frame + Jira config</h4>
+      <p style="margin-top: 8px; font-size: 14px; line-height: 1.65;">
+        Set up Code Connect on a pilot Figma frame with the API team<br/>
+        Confirm Jira board ID, label taxonomy, assignee mapping<br/>
+        Build the Bob skill scaffold and report template<br/><br/>
+        <strong>Timeline:</strong> One sprint. No procurement required.
+      </p>
+    </div>
+    <div class="card card--accent">
+      <div class="tag tag--now">Step 3</div>
+      <h4>Run the live demo</h4>
+      <p style="margin-top: 8px; font-size: 14px; line-height: 1.65;">
+        Run UX Reviewer on one real Figma frame from the API team's current sprint<br/>
+        The tech lead reviews: does this match what I'd catch manually?<br/>
+        Generate Jira ticket output and show<br/><br/>
+        <strong>Success signal:</strong> The tech lead can run a compliance check on a branch themselves — without waiting for a designer.
+      </p>
+    </div>
+  </div>
+
+  <div class="mt-32">
+    <p style="font-size: 14px; color: var(--muted);">
+      <strong>Recommended pilot team:</strong> The API team (webMethods) — highest Carbon maturity, most articulate about what the tool should do, and the only team with an existing PR review gate to measure against.
+    </p>
+  </div>
+</section>
+
+<!-- ── SLIDE 14 — THE ASK ─────────────────────────────────────────────── -->
+<section class="slide slide--dark" id="s14">
+  <span class="slide-number">15 / 15</span>
+  <span class="slide-label">The ask</span>
+
+  <h2 style="max-width: 840px;">Run UX Reviewer on one real sprint item with the API team.</h2>
+
+  <div class="cols-3" style="margin-top: 48px;">
+    <div style="text-align: center;">
+      <div style="font-size: 48px; font-weight: 200; color: #78a9ff; line-height: 1;">One</div>
+      <p style="color: var(--muted); font-size: 14px; margin-top: 8px;">Figma frame from a live sprint</p>
+    </div>
+    <div style="text-align: center;">
+      <div style="font-size: 48px; font-weight: 200; color: #78a9ff; line-height: 1;">One</div>
+      <p style="color: var(--muted); font-size: 14px; margin-top: 8px;">Compliance report with severity-ranked findings</p>
+    </div>
+    <div style="text-align: center;">
+      <div style="font-size: 48px; font-weight: 200; color: #78a9ff; line-height: 1;">One</div>
+      <p style="color: var(--muted); font-size: 14px; margin-top: 8px;">Jira ticket auto-created with acceptance criteria</p>
+    </div>
+  </div>
+
+  <hr style="margin-top: 48px;" />
+
+  <p class="mt-24 quote" style="max-width: 600px;">
+    That is the proof of concept.
+  </p>
+
+  <div class="byline" style="margin-top: 40px;">
+    <div class="byline-item">
+      <span class="byline-name">Mridusmita Nath</span>
+      <span class="byline-role">UX Designer · IBM webMethods</span>
+    </div>
+    <div class="byline-item">
+      <span class="byline-name">Ankit Anand</span>
+      <span class="byline-role">UX Designer · IBM webMethods</span>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>
