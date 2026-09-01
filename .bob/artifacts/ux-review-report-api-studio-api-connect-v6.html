@@ -1,0 +1,923 @@
+
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>UX Review Report</title>
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'IBM Plex Sans', sans-serif; font-size: 14px; line-height: 1.6; background: #f4f4f4; color: #161616; }
+  code { font-family: 'IBM Plex Mono', monospace; font-size: 12px; background: #e8e8e8; padding: 1px 5px; border-radius: 3px; color: #161616; }
+  a { color: #0f62fe; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .wrapper { max-width: 920px; margin: 0 auto; padding: 40px 28px 80px; }
+
+  /* ── PAGE HEADER ── */
+  .page-header { background: #ffffff; border-radius: 0; border-left: 4px solid #0f62fe; padding: 24px 28px; margin-bottom: 2px; }
+  .page-header h1 { font-size: 22px; font-weight: 600; color: #161616; margin-bottom: 4px; }
+  .page-header .sub { font-size: 12px; color: #6f6f6f; margin-bottom: 16px; }
+  .pill-row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .pill { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; padding: 3px 11px; border-radius: 20px; border: 1.5px solid; }
+  .pill-c  { background:#fff1f1; border-color:#da1e28; color:#da1e28; }
+  .pill-m  { background:#fff8e1; border-color:#f1620d; color:#f1620d; }
+  .pill-n  { background:#f4f4f4; border-color:#8d8d8d; color:#6f6f6f; }
+  .pill-i  { background:#edf5ff; border-color:#0f62fe; color:#0043ce; }
+  .pill-w  { background:#f6f2ff; border-color:#8a3ffc; color:#6929c4; }
+
+  /* ── CARBON TAG styles ── */
+  .ctag {
+    display: inline-flex; align-items: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; font-weight: 500;
+    padding: 0 8px; height: 20px;
+    border-radius: 24px;
+    white-space: nowrap; flex-shrink: 0;
+  }
+  .ctag-c  { background: #fff1f1; color: #da1e28; outline: 1.5px solid #da1e28; }
+  .ctag-m  { background: #fff8e1; color: #b5430a; outline: 1.5px solid #f1620d; }
+  .ctag-n  { background: #f4f4f4; color: #525252; outline: 1.5px solid #8d8d8d; }
+  .ctag-ok { background: #defbe6; color: #0e6027; outline: 1.5px solid #198038; }
+
+  /* ── WHITE CARD / SECTION ── */
+  .section { background: #ffffff; padding: 24px 28px; margin-bottom: 2px; }
+  .section:first-of-type { border-radius: 0; }
+  .section-heading { font-size: 14px; font-weight: 600; color: #161616; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #e0e0e0; }
+
+  /* ── GROUP SPACING: gap between ToC groups ── */
+  .toc-group { margin-bottom: 24px; }
+  .toc-group:last-child { margin-bottom: 0; }
+  .toc-group-label {
+    font-size: 11px; font-weight: 600; color: #6f6f6f;
+    text-transform: uppercase; letter-spacing: 0.07em;
+    margin-bottom: 8px;
+  }
+
+  /* ── CARBON TILE rows ── */
+  .toc-tile {
+    display: flex; align-items: center; gap: 14px;
+    padding: 12px 16px;
+    background: #f4f4f4;
+    border: 1px solid #e0e0e0;
+    border-bottom: none;
+    text-decoration: none; color: #161616;
+    transition: background 0.12s, border-color 0.12s;
+    cursor: pointer;
+  }
+  .toc-tile:first-of-type { border-radius: 4px 4px 0 0; }
+  .toc-tile:last-of-type  { border-bottom: 1px solid #e0e0e0; border-radius: 0 0 4px 4px; }
+  .toc-tile:only-of-type  { border-radius: 4px; border-bottom: 1px solid #e0e0e0; }
+  .toc-tile:hover { background: #e8e8e8; border-color: #c6c6c6; z-index: 1; }
+  .toc-tile:hover + .toc-tile { border-top-color: #c6c6c6; }
+  .toc-tile-text { flex: 1; font-size: 13px; font-weight: 400; line-height: 1.4; }
+  .toc-tile-sub  { font-size: 11px; color: #6f6f6f; margin-top: 2px; }
+  .toc-arrow { font-size: 14px; color: #8d8d8d; flex-shrink: 0; }
+
+  /* ── ZONE MAP ── */
+  .zone-caption { font-size: 11px; font-weight: 600; color: #6f6f6f; margin-bottom: 6px; }
+  .zone-map {
+    font-family: 'IBM Plex Mono', monospace; font-size: 11px; line-height: 1.6;
+    background: #f4f4f4; border: 1px solid #e0e0e0;
+    padding: 14px 16px; white-space: pre; overflow-x: auto;
+    color: #393939; margin-bottom: 6px;
+  }
+  .zc  { color: #da1e28; font-weight: 600; }
+  .zm  { color: #c45000; font-weight: 600; }
+  .zn  { color: #6f6f6f; font-weight: 600; }
+  .zok { color: #198038; font-weight: 600; }
+
+  /* ── FINDING CARD ── */
+  .card { border: 1px solid #e0e0e0; overflow: hidden; margin-bottom: 16px; background: #ffffff; scroll-margin-top: 24px; }
+  .card:last-of-type { margin-bottom: 0; }
+
+  .card-header { padding: 12px 20px; border-bottom: 1px solid #e0e0e0; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .card-header-c { background: #fff1f1; }
+  .card-header-m { background: #fff8e1; }
+  .card-header-n { background: #f9f9f9; }
+  .card-title { font-size: 13px; font-weight: 600; color: #161616; flex: 1; }
+  .inferred-tag { font-size: 10px; color: #6929c4; background: #f6f2ff; padding: 2px 8px; border-radius: 10px; font-weight: 500; white-space: nowrap; }
+
+  /* 4-col grid body */
+  .card-body { display: grid; grid-template-columns: 80px 1fr 1fr 1fr; }
+
+  .col-head-blank { background: #fafafa; border-bottom: 1px solid #e0e0e0; padding: 8px 14px; }
+  .col-head { background: #fafafa; border-bottom: 1px solid #e0e0e0; padding: 8px 14px; font-size: 11px; font-weight: 600; color: #6f6f6f; border-left: 1px solid #f0f0f0; }
+
+  .col-sev  { padding: 16px 14px; border-right: 1px solid #f0f0f0; display: flex; align-items: flex-start; }
+  .col-cell { padding: 16px; border-right: 1px solid #f0f0f0; font-size: 13px; line-height: 1.65; color: #161616; vertical-align: top; }
+  .col-cell:last-child { border-right: none; }
+
+  /* location chips */
+  .loc-chip { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 4px; border: 1px solid; }
+  .loc-s1   { background: #edf5ff; color: #0043ce; border-color: #0f62fe; }
+  .loc-s2   { background: #defbe6; color: #0e6027; border-color: #198038; }
+  .loc-both { background: #f6f2ff; color: #4f2196; border-color: #8a3ffc; }
+  .loc-pos  { font-size: 12px; color: #525252; margin-top: 6px; line-height: 1.5; }
+
+  /* fix column */
+  .fix-cell { padding: 0; background: #001141; }
+  .fix-inner { padding: 14px 16px; }
+  .fix-instruction { font-size: 12px; color: #c6c6c6; margin-bottom: 10px; font-style: italic; line-height: 1.5; }
+  .fix-code { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #f4f4f4; line-height: 1.75; white-space: pre-wrap; word-break: break-word; }
+  .fc { color: #78a9ff; }
+
+  /* ── COMPARISON TABLE ── */
+  .ctable { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .ctable th { background: #f4f4f4; padding: 8px 12px; text-align: left; font-weight: 600; font-size: 12px; color: #525252; border-bottom: 2px solid #e0e0e0; }
+  .ctable td { padding: 10px 12px; border-bottom: 1px solid #f0f0f0; vertical-align: top; }
+  .ctable tr:last-child td { border-bottom: none; }
+  .diff { color: #da1e28; font-weight: 500; }
+  .good { color: #198038; font-weight: 500; }
+
+  /* ── NOTES ── */
+  .inferred-note { font-size: 12px; color: #4f2196; background: #f6f2ff; border: 1px solid #d4bbff; padding: 10px 14px; margin-top: 14px; line-height: 1.6; }
+  .ceil { background: #fff8e1; border: 1px solid #f1620d; padding: 10px 14px; font-size: 12px; color: #3d3d3d; margin-top: 14px; line-height: 1.6; }
+
+  /* ── ACTION LIST ── */
+  .action-group-label { font-size: 13px; font-weight: 600; margin: 20px 0 10px; display: flex; align-items: center; gap: 8px; }
+  .action-group-label:first-of-type { margin-top: 0; }
+  .action-item { display: flex; gap: 12px; padding: 9px 0; border-bottom: 1px solid #f0f0f0; font-size: 13px; align-items: flex-start; }
+  .action-item:last-child { border-bottom: none; }
+  .anum { font-weight: 600; min-width: 22px; color: #8d8d8d; padding-top: 1px; }
+
+  /* ── SECTION GROUP SPACING ── */
+  .section-group { margin-bottom: 28px; }
+  .section-group:last-child { margin-bottom: 0; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 680px) {
+    .card-body { grid-template-columns: 1fr; }
+    .col-head, .col-head-blank { display: none; }
+    .col-cell, .col-sev { border-right: none; border-bottom: 1px solid #f0f0f0; }
+    .fix-cell { border-bottom: none; }
+  }
+
+  .report-footer { text-align: center; font-size: 12px; color: #8d8d8d; padding-top: 24px; border-top: 1px solid #e0e0e0; margin-top: 56px; }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  
+  <div class="page-header">
+    <h1>UX Review Report</h1>
+    <div class="sub">IBM API Studio (Test detail)  &amp;  IBM API Connect (API Manager path detail)  ·  August 2026</div>
+    <div class="pill-row">
+      <span class="pill pill-c">● 2 Critical</span>
+      <span class="pill pill-m">● 7 Major</span>
+      <span class="pill pill-n">● 4 Minor</span>
+      <span class="pill pill-i">📷 Screenshot input</span>
+      <span class="pill pill-w">⚠ Image-inferred</span>
+    </div>
+  </div>
+
+  
+  <div class="section" style="margin-bottom:28px">
+    <div class="section-heading">Table of Contents</div>
+
+    
+    <div class="toc-group">
+      <div class="toc-group-label">Carbon Compliance</div>
+      <a class="toc-tile" href="#f2">
+        <span class="ctag ctag-c">F2</span>
+        <div class="toc-tile-text">Left navigation tree — custom implementation in both products<div class="toc-tile-sub">Both screens  ·  Critical</div></div>
+        <span class="toc-arrow">→</span>
+      </a>
+      <a class="toc-tile" href="#f3">
+        <span class="ctag ctag-c">F3</span>
+        <div class="toc-tile-text">Tabs — two different Carbon variants across the same suite<div class="toc-tile-sub">Both screens  ·  Critical</div></div>
+        <span class="toc-arrow">→</span>
+      </a>
+      <a class="toc-tile" href="#f4">
+        <span class="ctag ctag-m">F4</span>
+        <div class="toc-tile-text">"Refer to existing assertion" — not a Carbon Dropdown, missing label<div class="toc-tile-sub">Screen 1 — API Studio  ·  Major</div></div>
+        <span class="toc-arrow">→</span>
+      </a>
+      <a class="toc-tile" href="#f5">
+        <span class="ctag ctag-m">F5</span>
+        <div class="toc-tile-text">Breadcrumb — current page item rendered as a link<div class="toc-tile-sub">Both screens  ·  Major</div></div>
+        <span class="toc-arrow">→</span>
+      </a>
+      <a class="toc-tile" href="#f6">
+        <span class="ctag ctag-m">F6</span>
+        <div class="toc-tile-text">"Get Started" floating card — not a Carbon component<div class="toc-tile-sub">Screen 2 — API Connect  ·  Major</div></div>
+        <span class="toc-arrow">→</span>
+      </a>
+    </div>
+
+    
+    <div class="toc-group">
+      <div class="toc-group-label">Token &amp; Spacing</div>
+      <a class="toc-tile" href="#f7">
+        <span class="ctag ctag-m">F7</span>
+        <div class="toc-tile-text">Active nav item uses custom border instead of <code>$layer-selected-01</code><div class="toc-tile-sub">Screen 1 — API Studio  ·  Major</div></div>
+        <span class="toc-arrow">→</span>
+      </a>
+      <a class="toc-tile" href="#f8">
+        <span class="ctag ctag-m">F8</span>
+        <div class="toc-tile-text">Header background colour inconsistent — possible hardcoded hex<div class="toc-tile-sub">Both screens  ·  Major</div></div>
+        <span class="toc-arrow">→</span>
+      </a>
+      <a class="toc-tile" href="#f9">
+        <span class="ctag ctag-n">F9</span>
+        <div class="toc-tile-text">Vertical spacing between sections is inconsistent<div class="toc-tile-sub">Screen 2 — API Connect  ·  Minor</div></div>
+        <span class="toc-arrow">→</span>
+      </a>
+    </div>
+
+    
+    <div class="toc-group">
+      <div class="toc-group-label">Typography</div>
+      <a class="toc-tile" href="#f10">
+        <span class="ctag ctag-m">F10</span>
+        <div class="toc-tile-text">Page title size inconsistent — ~30px on Screen 1 vs ~22px on Screen 2<div class="toc-tile-sub">Both screens  ·  Major</div></div>
+        <span class="toc-arrow">→</span>
+      </a>
+      <a class="toc-tile" href="#f11">
+        <span class="ctag ctag-n">F11</span>
+        <div class="toc-tile-text">DataTable column headers appear lighter than Carbon's 600 weight<div class="toc-tile-sub">Both screens  ·  Minor</div></div>
+        <span class="toc-arrow">→</span>
+      </a>
+    </div>
+
+    
+    <div class="toc-group">
+      <div class="toc-group-label">Accessibility</div>
+      <a class="toc-tile" href="#f12">
+        <span class="ctag ctag-m">F12</span>
+        <div class="toc-tile-text">Icon-only action buttons missing accessible names<div class="toc-tile-sub">Both screens  ·  Major</div></div>
+        <span class="toc-arrow">→</span>
+      </a>
+      <a class="toc-tile" href="#f13">
+        <span class="ctag ctag-n">F13</span>
+        <div class="toc-tile-text">Tooltip ⓘ trigger missing accessible name<div class="toc-tile-sub">Screen 1 — API Studio  ·  Minor</div></div>
+        <span class="toc-arrow">→</span>
+      </a>
+    </div>
+
+    
+    <div class="toc-group">
+      <div class="toc-group-label">Handoff Completeness</div>
+      <a class="toc-tile" href="#f14">
+        <span class="ctag ctag-n">F14</span>
+        <div class="toc-tile-text">Assertions DataTable missing empty and loading states<div class="toc-tile-sub">Screen 1 — API Studio  ·  Minor</div></div>
+        <span class="toc-arrow">→</span>
+      </a>
+    </div>
+
+  </div>
+
+  
+  <div class="section" style="margin-bottom:28px">
+    <div class="section-heading">Summary</div>
+    <p style="font-size:13px;color:#393939;margin-bottom:10px"><strong>Screen 1:</strong> IBM API Studio — Test detail, GET/petId  ·  <strong>Screen 2:</strong> IBM API Connect — API Manager, Paths &amp; Operations detail.</p>
+    <p style="font-size:13px;color:#393939">Both inputs are live dev builds from related IBM API management products. 13 findings identified. The most significant are structural Carbon violations shared across both products — custom tree navigation and inconsistent tab variants — creating a cross-product consistency problem for every user navigating between the two tools.</p>
+    <div class="inferred-note">⚠ <strong>Image-inferred.</strong> All findings are based on visual inspection — no Figma URL or Code Connect data was provided. Token-level violations cannot be confirmed from screenshots alone. One false positive was corrected this session: F1 (Create new assertion button) was confirmed as Carbon Tertiary via the Figma panel.</div>
+  </div>
+
+  
+  <div class="section" style="margin-bottom:28px">
+    <div class="section-heading">Screen Zone Maps</div>
+    <p style="font-size:12px;color:#6f6f6f;margin-bottom:16px">Finding numbers are placed at their approximate location on each screen.</p>
+
+    <div class="zone-caption">Screen 1 — IBM API Studio · Test detail</div>
+    <div class="zone-map">┌──────────────────────────────────────────────────────────────────┐
+│  <span class="zm">[F8]</span>  Top header bar   IBM API Studio · Main · Stage · Publish     │
+├────────────────────┬─────────────────────────────────────────────┤
+│ <span class="zc">[F2]</span>  Left nav tree   │  <span class="zm">[F5]</span>  Breadcrumb   Test 1 / GET/petId        │
+│  APIs              │  <span class="zm">[F10]</span>  Page title   GET/petId                  │
+│  Policy sequences  │                                             │
+│  Tests             │  <span class="zn">[F13]</span>  Toggle + ⓘ   Use custom endpoint       │
+│  <span class="zm">[F7]</span>  ▌Test name    │  Base URL · HTTP method · Path dropdowns    │
+│   (blue border)    │                                             │
+│                    │  <span class="zc">[F3]</span>  Tab bar   Params · Body · Assertions ··· │
+│  Outline           ├─────────────────────────────────────────────┤
+│  GET/petID         │  <span class="zm">[F4]</span>  "Refer to existing assertion" dropdown   │
+│  POST/pet          │  <span class="zm">[F12]</span>  Assertion header   ✏ 🔗 icon buttons    │
+│  GET/findBy…       │  <span class="zn">[F11]</span>  DataTable   Name / Key / Action / Value │
+│                    │  <span class="zn">[F14]</span>  (no empty / loading state visible)      │
+└────────────────────┴─────────────────────────────────────────────┘</div>
+
+    <div class="zone-caption" style="margin-top:18px">Screen 2 — IBM API Connect · API Manager path detail</div>
+    <div class="zone-map">┌──────────────────────────────────────────────────────────────────┐
+│  <span class="zm">[F8]</span>  Top header bar   API Connect · API Manager · org: ibm · 👤  │
+├────────────────────┬─────────────────────────────────────────────┤
+│ <span class="zc">[F2]</span>  Left nav tree   │  <span class="zm">[F5]</span>  Breadcrumb   Projects / jacobson…    │
+│  APIs  ⊕           │  <span class="zm">[F10]</span>  Page title   jacobson_goldner_soap_api  │
+│  Policy seqs ⊕     │  <span class="zm">[F12]</span>  ✏ 🗑  icon buttons (inline with title)  │
+│  Products ⊕        │                                             │
+│  Plans ⊕           │  <span class="zc">[F3]</span>  Top tabs   API Spec · Policy · API Set   │
+│  Tests ⊕           │  <span class="zc">[F3]</span>  Nested tabs   Gen info · Paths &amp; Ops ·· │
+│  Assertion ⊕       │                                             │
+│                    │  Summary · Description fields               │
+│                    │  <span class="zn">[F9]</span>   ↕ Spacing between sections              │
+│                    │  <span class="zn">[F11]</span>  DataTable   Name / Located in / Ref     │
+│                    │  <span class="zok">[F14✓]</span> "No parameters found" — correct model   │
+├────────────────────┴─────────────────────────────────────────────┤
+│  <span class="zm">[F6]</span>  "Get Started" floating card  ────  bottom-right corner        │
+└──────────────────────────────────────────────────────────────────┘</div>
+  </div>
+
+
+  
+  <div class="section-group">
+    <div class="section">
+      <div class="section-heading">Carbon Compliance</div>
+
+      
+      <div class="card" id="f2">
+        <div class="card-header card-header-c">
+          <span class="ctag ctag-c">F2</span>
+          <span class="card-title">Left navigation tree — custom implementation in both products</span>
+          <span class="pill pill-c" style="font-size:10px">Critical</span>
+          <span class="inferred-tag">image-inferred</span>
+        </div>
+        <div class="card-body">
+          <div class="col-head-blank"></div>
+          <div class="col-head">Location</div>
+          <div class="col-head">Issue &amp; Why it matters</div>
+          <div class="col-head">Fix</div>
+          <div class="col-sev"><span class="ctag ctag-c">F2</span></div>
+          <div class="col-cell">
+            <span class="loc-chip loc-both">● Both screens</span>
+            <div class="loc-pos"><strong>Screen 1</strong> — entire left tree panel (APIs, Policy sequences, Tests, Environment, Assertion hierarchy)<br /><br /><strong>Screen 2</strong> — same structure, different custom implementation with ⊕ add icons and chevron expand targets</div>
+          </div>
+          <div class="col-cell">Two different custom tree navigation implementations across two related products. Neither uses Carbon's <strong>TreeView</strong> component. API Studio uses custom caret icons with a blue left-border selected state. API Connect uses a separate custom pattern.<br /><br />Carbon's TreeView handles keyboard navigation, expand/collapse, and selected state automatically via <code>$layer-selected-01</code>. Two visually different navigation systems for identical content structures increase maintenance cost and confuse users moving between products.<br /><br /><a href="https://carbondesignsystem.com/components/tree-view/usage/">Carbon TreeView usage →</a></div>
+          <div class="fix-cell">
+            <div class="fix-inner">
+              <div class="fix-instruction">Replace both custom trees with Carbon TreeView. Remove all custom border/background CSS — $layer-selected-01 is applied automatically.</div>
+              <div class="fix-code">import { TreeView, TreeNode }
+  from '@carbon/react';
+
+&lt;TreeView label="Explorer"&gt;
+  &lt;TreeNode id="apis"
+    label="APIs" isExpanded&gt;
+    &lt;TreeNode id="api1"
+      label="API 1" /&gt;
+  &lt;/TreeNode&gt;
+  &lt;TreeNode id="tests"
+    label="Tests" isExpanded&gt;
+    &lt;TreeNode id="name"
+      label="Test name" selected /&gt;
+  &lt;/TreeNode&gt;
+&lt;/TreeView&gt;
+
+<span class="fc">// Remove custom active state:</span>
+<span class="fc">// .nav-item--active {</span>
+<span class="fc">//   border-left: 3px solid #0f62fe;</span>
+<span class="fc">// }</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      
+      <div class="card" id="f3">
+        <div class="card-header card-header-c">
+          <span class="ctag ctag-c">F3</span>
+          <span class="card-title">Tabs — two different Carbon variants across the same product suite</span>
+          <span class="pill pill-c" style="font-size:10px">Critical</span>
+          <span class="inferred-tag">image-inferred</span>
+        </div>
+        <div class="card-body">
+          <div class="col-head-blank"></div>
+          <div class="col-head">Location</div>
+          <div class="col-head">Issue &amp; Why it matters</div>
+          <div class="col-head">Fix</div>
+          <div class="col-sev"><span class="ctag ctag-c">F3</span></div>
+          <div class="col-cell">
+            <span class="loc-chip loc-both">● Both screens</span>
+            <div class="loc-pos"><strong>Screen 1</strong> — tab bar: Parameters / Body / Assertions (line variant)<br /><br /><strong>Screen 2</strong> — top: API Spec / Policy / API Set (contained) + nested below: Gen info / Paths &amp; Ops (line) — two tab bars on one screen</div>
+          </div>
+          <div class="col-cell">API Studio uses <strong>line tabs</strong>. API Connect uses <strong>contained tabs</strong> at the top and nests a second set of line tabs below — two tab bars on one screen.<br /><br />Carbon specifies one Tab variant per product context. Mixing <code>line</code> and <code>contained</code> falsely signals different navigation hierarchies. Carbon does not support nested tab bars.<br /><br /><a href="https://carbondesignsystem.com/components/tabs/usage/">Carbon Tabs usage →</a></div>
+          <div class="fix-cell">
+            <div class="fix-inner">
+              <div class="fix-instruction">Align both products to line tabs. Remove contained variant from API Connect. Consolidate the two tab levels on Screen 2 into one.</div>
+              <div class="fix-code">import { Tabs, TabList, Tab,
+  TabPanels, TabPanel }
+  from '@carbon/react';
+
+&lt;Tabs&gt;
+  &lt;TabList aria-label="API sections"&gt;
+    &lt;Tab&gt;Parameters&lt;/Tab&gt;
+    &lt;Tab&gt;Body&lt;/Tab&gt;
+    &lt;Tab&gt;Assertions&lt;/Tab&gt;
+  &lt;/TabList&gt;
+  &lt;TabPanels&gt;
+    &lt;TabPanel&gt;...&lt;/TabPanel&gt;
+  &lt;/TabPanels&gt;
+&lt;/Tabs&gt;
+<span class="fc">// Remove: &lt;Tabs type="contained"&gt;</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      
+      <div class="card" id="f4">
+        <div class="card-header card-header-m">
+          <span class="ctag ctag-m">F4</span>
+          <span class="card-title">"Refer to existing assertion" — not a Carbon Dropdown, missing label</span>
+          <span class="pill pill-m" style="font-size:10px">Major</span>
+          <span class="inferred-tag">image-inferred</span>
+        </div>
+        <div class="card-body">
+          <div class="col-head-blank"></div>
+          <div class="col-head">Location</div>
+          <div class="col-head">Issue &amp; Why it matters</div>
+          <div class="col-head">Fix</div>
+          <div class="col-sev"><span class="ctag ctag-m">F4</span></div>
+          <div class="col-cell">
+            <span class="loc-chip loc-s1">● Screen 1</span>
+            <div class="loc-pos">Right content panel — wide dropdown field directly below the tab bar</div>
+          </div>
+          <div class="col-cell">Bottom-border-only styling — no box border, no label above the field. Matches neither Carbon <strong>Dropdown</strong> nor Carbon <strong>Select</strong>. Placeholder text is acting as a label substitute.<br /><br />Placeholder text disappears on selection, leaving the field permanently unlabelled. The custom border style breaks under theme changes and lacks Carbon's built-in keyboard accessibility.<br /><br /><a href="https://carbondesignsystem.com/components/dropdown/usage/">Carbon Dropdown usage →</a></div>
+          <div class="fix-cell">
+            <div class="fix-inner">
+              <div class="fix-instruction">Replace with Carbon Dropdown. Move the field purpose into titleText — a visible, persistent label above the field.</div>
+              <div class="fix-code">import { Dropdown } from '@carbon/react';
+
+&lt;Dropdown
+  id="assertion-ref"
+  titleText="Refer to existing assertion"
+  label="Select assertion..."
+  items={assertionItems}
+  itemToString={
+    (item) =&gt; (item ? item.label : '')
+  }
+/&gt;</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      
+      <div class="card" id="f5">
+        <div class="card-header card-header-m">
+          <span class="ctag ctag-m">F5</span>
+          <span class="card-title">Breadcrumb — current page item is a link on both screens</span>
+          <span class="pill pill-m" style="font-size:10px">Major</span>
+          <span class="inferred-tag">image-inferred</span>
+        </div>
+        <div class="card-body">
+          <div class="col-head-blank"></div>
+          <div class="col-head">Location</div>
+          <div class="col-head">Issue &amp; Why it matters</div>
+          <div class="col-head">Fix</div>
+          <div class="col-sev"><span class="ctag ctag-m">F5</span></div>
+          <div class="col-cell">
+            <span class="loc-chip loc-both">● Both screens</span>
+            <div class="loc-pos"><strong>Screen 1</strong> — "Test 1 / GET/petId" — last item as blue link<br /><br /><strong>Screen 2</strong> — "Projects / jacobson_goldner…" — last item as blue link</div>
+          </div>
+          <div class="col-cell">Current page item in both breadcrumbs is rendered as a clickable blue link — identical to parent items. Carbon requires the current page to be non-interactive using <code>isCurrentPage</code> with no <code>href</code>.<br /><br />A clickable current-page item navigates nowhere or reloads the page. Screen readers rely on the semantic distinction to announce the user's current location correctly.<br /><br /><a href="https://carbondesignsystem.com/components/breadcrumb/usage/">Carbon Breadcrumb usage →</a></div>
+          <div class="fix-cell">
+            <div class="fix-inner">
+              <div class="fix-instruction">Add isCurrentPage to the last BreadcrumbItem and remove its href. Apply to both products.</div>
+              <div class="fix-code">import { Breadcrumb, BreadcrumbItem }
+  from '@carbon/react';
+
+&lt;Breadcrumb&gt;
+  &lt;BreadcrumbItem href="/tests"&gt;
+    Test 1
+  &lt;/BreadcrumbItem&gt;
+  &lt;BreadcrumbItem isCurrentPage&gt;
+    GET/petId
+  &lt;/BreadcrumbItem&gt;
+&lt;/Breadcrumb&gt;</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      
+      <div class="card" id="f6">
+        <div class="card-header card-header-m">
+          <span class="ctag ctag-m">F6</span>
+          <span class="card-title">"Get Started" floating card — not a Carbon component</span>
+          <span class="pill pill-m" style="font-size:10px">Major</span>
+          <span class="inferred-tag">image-inferred</span>
+        </div>
+        <div class="card-body">
+          <div class="col-head-blank"></div>
+          <div class="col-head">Location</div>
+          <div class="col-head">Issue &amp; Why it matters</div>
+          <div class="col-head">Fix</div>
+          <div class="col-sev"><span class="ctag ctag-m">F6</span></div>
+          <div class="col-cell">
+            <span class="loc-chip loc-s2">● Screen 2</span>
+            <div class="loc-pos">Bottom-right corner — white floating card with "Get Started" label and ✕ dismiss button</div>
+          </div>
+          <div class="col-cell">Custom <code>position: fixed</code> floating card used for onboarding guidance. Carbon has no floating onboarding card pattern. No visible focus trap or keyboard dismiss affordance.<br /><br />Custom overlay elements inherit none of Carbon's focus management, theme token support, or accessibility behaviours. Without a focus trap, keyboard users cannot reliably reach or dismiss the card.<br /><br /><a href="https://carbondesignsystem.com/components/notification/usage/">Carbon Notification usage →</a></div>
+          <div class="fix-cell">
+            <div class="fix-inner">
+              <div class="fix-instruction">Replace with Carbon ActionableNotification or IBM Products Coachmark for guided onboarding.</div>
+              <div class="fix-code"><span class="fc">// Option A — ActionableNotification</span>
+import { ActionableNotification }
+  from '@carbon/react';
+&lt;ActionableNotification
+  kind="info" title="Get started"
+  subtitle="Explore API Manager."
+  actionButtonLabel="Learn more"
+  onClose={() =&gt; setVisible(false)}
+/&gt;
+
+<span class="fc">// Option B — Coachmark</span>
+import { Coachmark }
+  from '@carbon/ibm-products';</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  
+  <div class="section-group">
+    <div class="section">
+      <div class="section-heading">Token &amp; Spacing</div>
+
+      
+      <div class="card" id="f7">
+        <div class="card-header card-header-m">
+          <span class="ctag ctag-m">F7</span>
+          <span class="card-title">Active nav item uses custom border instead of <code>$layer-selected-01</code></span>
+          <span class="pill pill-m" style="font-size:10px">Major</span>
+          <span class="inferred-tag">image-inferred</span>
+        </div>
+        <div class="card-body">
+          <div class="col-head-blank"></div>
+          <div class="col-head">Location</div>
+          <div class="col-head">Issue &amp; Why it matters</div>
+          <div class="col-head">Fix</div>
+          <div class="col-sev"><span class="ctag ctag-m">F7</span></div>
+          <div class="col-cell">
+            <span class="loc-chip loc-s1">● Screen 1</span>
+            <div class="loc-pos">"Test name" in left nav and "GET/petID" in Outline panel — both show a solid blue left border as selected indicator</div>
+          </div>
+          <div class="col-cell">A solid <code>#0f62fe</code> left border is used as the selected indicator. Carbon's TreeView selected state uses <code>$layer-selected-01</code> as a full-row background fill — not a border.<br /><br />The hardcoded Blue-60 value breaks under theme changes. <code>$layer-selected-01</code> adapts automatically across White, Gray 10, Gray 90, and Gray 100 themes.</div>
+          <div class="fix-cell">
+            <div class="fix-inner">
+              <div class="fix-instruction">Remove the custom border CSS. Use Carbon TreeNode's selected prop — $layer-selected-01 is applied automatically.</div>
+              <div class="fix-code"><span class="fc">// Remove</span>
+.nav-item--active {
+  border-left: 3px solid #0f62fe;
+}
+
+<span class="fc">// After</span>
+&lt;TreeNode
+  id="test-name"
+  label="Test name"
+  selected
+/&gt;</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      
+      <div class="card" id="f8">
+        <div class="card-header card-header-m">
+          <span class="ctag ctag-m">F8</span>
+          <span class="card-title">Header background inconsistent between products — possible hardcoded hex</span>
+          <span class="pill pill-m" style="font-size:10px">Major</span>
+          <span class="inferred-tag">image-inferred</span>
+        </div>
+        <div class="card-body">
+          <div class="col-head-blank"></div>
+          <div class="col-head">Location</div>
+          <div class="col-head">Issue &amp; Why it matters</div>
+          <div class="col-head">Fix</div>
+          <div class="col-sev"><span class="ctag ctag-m">F8</span></div>
+          <div class="col-cell">
+            <span class="loc-chip loc-both">● Both screens</span>
+            <div class="loc-pos"><strong>Screen 1</strong> — near-black, consistent with Carbon Gray 100 (<code>#161616</code>)<br /><br /><strong>Screen 2</strong> — visibly lighter dark (~<code>#1a1a1a</code> or custom)</div>
+          </div>
+          <div class="col-cell">The two product headers have visibly different dark background shades. At least one is likely using a hardcoded hex value rather than the Carbon shell token.<br /><br />A perceptible colour difference signals to users that they are in separate applications. The correct token <code>$background-inverse</code> adapts correctly across all Carbon themes.</div>
+          <div class="fix-cell">
+            <div class="fix-inner">
+              <div class="fix-instruction">Align both headers to the same Carbon shell token. Remove any hardcoded hex background values.</div>
+              <div class="fix-code"><span class="fc">// Before</span>
+.header { background: #1a1a1a; }
+
+<span class="fc">// After</span>
+@use '@carbon/react/scss/theme' as *;
+
+.header {
+  background: $background-inverse;
+}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      
+      <div class="card" id="f9">
+        <div class="card-header card-header-n">
+          <span class="ctag ctag-n">F9</span>
+          <span class="card-title">Vertical spacing between sections is inconsistent</span>
+          <span class="pill pill-n" style="font-size:10px">Minor</span>
+          <span class="inferred-tag">image-inferred</span>
+        </div>
+        <div class="card-body">
+          <div class="col-head-blank"></div>
+          <div class="col-head">Location</div>
+          <div class="col-head">Issue &amp; Why it matters</div>
+          <div class="col-head">Fix</div>
+          <div class="col-sev"><span class="ctag ctag-n">F9</span></div>
+          <div class="col-cell">
+            <span class="loc-chip loc-s2">● Screen 2</span>
+            <div class="loc-pos">Content area — gap above "Path parameters" (~40px) differs from gap below it to the table (~24px)</div>
+          </div>
+          <div class="col-cell">Section gaps mix <code>$spacing-08</code> (40px) and <code>$spacing-06</code> (24px) on the same screen, creating an uneven vertical rhythm.<br /><br />Inconsistent spacing creates visual noise. A single consistent token produces a calm, readable layout.</div>
+          <div class="fix-cell">
+            <div class="fix-inner">
+              <div class="fix-instruction">Pick one section-gap token and apply consistently. $spacing-07 (32px) recommended.</div>
+              <div class="fix-code">@use '@carbon/react/scss/spacing' as *;
+
+.page-section + .page-section {
+  margin-top: $spacing-07;
+}
+.section-heading {
+  margin-bottom: $spacing-05;
+}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  
+  <div class="section-group">
+    <div class="section">
+      <div class="section-heading">Typography</div>
+
+      
+      <div class="card" id="f10">
+        <div class="card-header card-header-m">
+          <span class="ctag ctag-m">F10</span>
+          <span class="card-title">Page title size inconsistent — ~30px on Screen 1 vs ~22px on Screen 2</span>
+          <span class="pill pill-m" style="font-size:10px">Major</span>
+          <span class="inferred-tag">image-inferred</span>
+        </div>
+        <div class="card-body">
+          <div class="col-head-blank"></div>
+          <div class="col-head">Location</div>
+          <div class="col-head">Issue &amp; Why it matters</div>
+          <div class="col-head">Fix</div>
+          <div class="col-sev"><span class="ctag ctag-m">F10</span></div>
+          <div class="col-cell">
+            <span class="loc-chip loc-both">● Both screens</span>
+            <div class="loc-pos"><strong>Screen 1</strong> — "GET/petId" ~28–32px, semibold<br /><br /><strong>Screen 2</strong> — "jacobson_goldner_soap_api" ~22–24px, regular weight</div>
+          </div>
+          <div class="col-cell">Two equivalent page-level titles rendered at noticeably different sizes and weights across related products.<br /><br />Page title mismatches make the UI feel unfinished and increase cognitive load for users switching between tools. Carbon's <code>$productive-heading-04</code> (28px, semibold) is the correct token for page-level titles in productive UIs.</div>
+          <div class="fix-cell">
+            <div class="fix-inner">
+              <div class="fix-instruction">Align both products' page titles to productive-heading-04.</div>
+              <div class="fix-code"><span class="fc">// Before — mismatched</span>
+<span class="fc">// S1: font-size 30px; weight 600</span>
+<span class="fc">// S2: font-size 22px; weight 400</span>
+
+<span class="fc">// After — both products</span>
+@use '@carbon/react/scss/type' as *;
+
+.page-title {
+  @include type-style(
+    'productive-heading-04'
+  );
+}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      
+      <div class="card" id="f11">
+        <div class="card-header card-header-n">
+          <span class="ctag ctag-n">F11</span>
+          <span class="card-title">DataTable column headers appear lighter than Carbon's 600 weight</span>
+          <span class="pill pill-n" style="font-size:10px">Minor</span>
+          <span class="inferred-tag">image-inferred</span>
+        </div>
+        <div class="card-body">
+          <div class="col-head-blank"></div>
+          <div class="col-head">Location</div>
+          <div class="col-head">Issue &amp; Why it matters</div>
+          <div class="col-head">Fix</div>
+          <div class="col-sev"><span class="ctag ctag-n">F11</span></div>
+          <div class="col-cell">
+            <span class="loc-chip loc-both">● Both screens</span>
+            <div class="loc-pos"><strong>Screen 1</strong> — Name / Key / Action / Value<br /><br /><strong>Screen 2</strong> — Name / Located in / Ref name</div>
+          </div>
+          <div class="col-cell">Column header text appears at ~500 weight rather than the semibold (600) of Carbon's <code>$productive-heading-01</code> token. A CSS override may be responsible.<br /><br />Correct weight creates a clear distinction from data rows — a key scannability cue in data-dense tables.</div>
+          <div class="fix-cell">
+            <div class="fix-inner">
+              <div class="fix-instruction">Remove any font-weight override. Carbon applies $productive-heading-01 (600 weight) automatically.</div>
+              <div class="fix-code"><span class="fc">// Remove any override like this:</span>
+.cds--table-header-label {
+  font-weight: 400; <span class="fc">/* ← delete */</span>
+}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  
+  <div class="section-group">
+    <div class="section">
+      <div class="section-heading">Accessibility <span style="font-size:12px;font-weight:400;color:#6f6f6f">(Carbon pattern level)</span></div>
+
+      
+      <div class="card" id="f12">
+        <div class="card-header card-header-m">
+          <span class="ctag ctag-m">F12</span>
+          <span class="card-title">Icon-only action buttons missing accessible names — both screens</span>
+          <span class="pill pill-m" style="font-size:10px">Major</span>
+          <span class="inferred-tag">image-inferred</span>
+        </div>
+        <div class="card-body">
+          <div class="col-head-blank"></div>
+          <div class="col-head">Location</div>
+          <div class="col-head">Issue &amp; Why it matters</div>
+          <div class="col-head">Fix</div>
+          <div class="col-sev"><span class="ctag ctag-m">F12</span></div>
+          <div class="col-cell">
+            <span class="loc-chip loc-both">● Both screens</span>
+            <div class="loc-pos"><strong>Screen 1</strong> — assertion header: ✏ edit + 🔗 link icons<br /><br /><strong>Screen 2</strong> — API title row: ✏ edit + 🗑 delete icons</div>
+          </div>
+          <div class="col-cell">Four icon-only buttons have no <code>iconDescription</code> prop. Their purpose is not announced to screen readers or displayed on hover.<br /><br />Carbon requires <code>hasIconOnly</code> and <code>iconDescription</code> on all icon-only Buttons. These render as an <code>aria-label</code> and a visible tooltip — without them keyboard and screen reader users cannot determine what the button does.<br /><br /><a href="https://carbondesignsystem.com/components/button/accessibility/">Carbon Button accessibility →</a></div>
+          <div class="fix-cell">
+            <div class="fix-inner">
+              <div class="fix-instruction">Add hasIconOnly and iconDescription to every icon-only Button across both screens.</div>
+              <div class="fix-code">import { Button } from '@carbon/react';
+import { Edit, TrashCan }
+  from '@carbon/icons-react';
+
+&lt;Button kind="ghost" hasIconOnly
+  renderIcon={Edit}
+  iconDescription="Edit assertion"
+  tooltipAlignment="center"
+/&gt;
+
+&lt;Button kind="ghost" hasIconOnly
+  renderIcon={TrashCan}
+  iconDescription="Delete API"
+  tooltipAlignment="center"
+/&gt;</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      
+      <div class="card" id="f13">
+        <div class="card-header card-header-n">
+          <span class="ctag ctag-n">F13</span>
+          <span class="card-title">Tooltip ⓘ trigger next to "Use custom endpoint" missing accessible name</span>
+          <span class="pill pill-n" style="font-size:10px">Minor</span>
+          <span class="inferred-tag">image-inferred</span>
+        </div>
+        <div class="card-body">
+          <div class="col-head-blank"></div>
+          <div class="col-head">Location</div>
+          <div class="col-head">Issue &amp; Why it matters</div>
+          <div class="col-head">Fix</div>
+          <div class="col-sev"><span class="ctag ctag-n">F13</span></div>
+          <div class="col-cell">
+            <span class="loc-chip loc-s1">● Screen 1</span>
+            <div class="loc-pos">Content area — ⓘ icon immediately after the "Use custom endpoint" toggle label</div>
+          </div>
+          <div class="col-cell">The toggle label placement is correct per Carbon. The ⓘ tooltip trigger has no <code>aria-label</code> — its purpose cannot be announced to a screen reader.<br /><br />Screen readers announce this as an unnamed interactive element, failing Carbon's accessible name requirement.</div>
+          <div class="fix-cell">
+            <div class="fix-inner">
+              <div class="fix-instruction">Add aria-label to the tooltip trigger button.</div>
+              <div class="fix-code">import { Tooltip } from '@carbon/react';
+import { Information }
+  from '@carbon/icons-react';
+
+&lt;Tooltip description=
+  "Overrides the default API base URL."&gt;
+  &lt;button type="button"&gt;
+    &lt;Information aria-label=
+      "More info: custom endpoint"
+    /&gt;
+  &lt;/button&gt;
+&lt;/Tooltip&gt;</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p style="font-size:12px;color:#6f6f6f;font-style:italic;margin-top:16px">Mechanical WCAG checks (contrast ratios, tab order, screen reader output) are out of scope. Use <strong>IBM Equal Access Checker</strong> for those.</p>
+    </div>
+  </div>
+
+
+  
+  <div class="section-group">
+    <div class="section">
+      <div class="section-heading">Handoff Completeness</div>
+
+      
+      <div class="card" id="f14">
+        <div class="card-header card-header-n">
+          <span class="ctag ctag-n">F14</span>
+          <span class="card-title">Assertions DataTable missing empty and loading state designs</span>
+          <span class="pill pill-n" style="font-size:10px">Minor</span>
+          <span class="inferred-tag">image-inferred</span>
+        </div>
+        <div class="card-body">
+          <div class="col-head-blank"></div>
+          <div class="col-head">Location</div>
+          <div class="col-head">Issue &amp; Why it matters</div>
+          <div class="col-head">Fix</div>
+          <div class="col-sev"><span class="ctag ctag-n">F14</span></div>
+          <div class="col-cell">
+            <span class="loc-chip loc-s1">● Screen 1</span>
+            <div class="loc-pos">Assertions DataTable — only the populated state visible. Screen 2's "No parameters found" empty state with pictogram is the correct model.</div>
+          </div>
+          <div class="col-cell">No empty state, skeleton loading, or error state designed for the assertions table. Without these, developers build ad-hoc solutions that diverge from Carbon's built-in patterns.<br /><br />API Connect already gets this right. Replicating it in API Studio costs minimal effort and ensures a consistent experience across both products.</div>
+          <div class="fix-cell">
+            <div class="fix-inner">
+              <div class="fix-instruction">Design and annotate empty and loading states. Use API Connect's "No parameters found" pattern as the model.</div>
+              <div class="fix-code">import { DataTableSkeleton }
+  from '@carbon/react';
+
+<span class="fc">// Loading state</span>
+{isLoading &amp;&amp; (
+  &lt;DataTableSkeleton
+    columnCount={4} rowCount={3}
+  /&gt;
+)}
+
+<span class="fc">// Empty state</span>
+{!isLoading &amp;&amp; rows.length === 0 &amp;&amp; (
+  &lt;p&gt;No assertions found.
+    Create one to get started.&lt;/p&gt;
+)}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  
+  <div class="section" style="margin-bottom:28px">
+    <div class="section-heading">Design-to-Implementation Comparison</div>
+    <p style="font-size:12px;color:#6f6f6f;font-style:italic;margin-bottom:16px">Both inputs are live dev builds. This comparison evaluates cross-product consistency within the IBM API management suite.</p>
+    <table class="ctable">
+      <thead><tr><th>Element</th><th>Screen 1 — API Studio</th><th>Screen 2 — API Connect</th><th>Verdict</th></tr></thead>
+      <tbody>
+        <tr><td>Header background</td><td>Near-black — Gray 100</td><td>Visibly lighter shade</td><td><span class="diff">⚠ Inconsistent — <a href="#f8">F8</a></span></td></tr>
+        <tr><td>Left nav</td><td>Custom tree, blue border active</td><td>Custom tree, chevrons + ⊕</td><td><span class="diff">⚠ Two custom implementations — <a href="#f2">F2</a></span></td></tr>
+        <tr><td>Tabs</td><td>Line tabs</td><td>Contained + nested line tabs</td><td><span class="diff">⚠ Mixed variants — <a href="#f3">F3</a></span></td></tr>
+        <tr><td>Page title</td><td>~30px semibold</td><td>~22px regular</td><td><span class="diff">⚠ Inconsistent type scale — <a href="#f10">F10</a></span></td></tr>
+        <tr><td>Breadcrumb</td><td>Current page as link</td><td>Current page as link</td><td><span class="diff">⚠ Both wrong — <a href="#f5">F5</a></span></td></tr>
+        <tr><td>Primary button</td><td>"Publish" — Carbon primary ✓</td><td>"Stage or Publish" — split button ✓</td><td><span class="good">✓ Both correct</span></td></tr>
+        <tr><td>Icon-only buttons</td><td>No iconDescription</td><td>No iconDescription</td><td><span class="diff">⚠ Both missing accessible names — <a href="#f12">F12</a></span></td></tr>
+        <tr><td>Empty state</td><td>Not designed</td><td>"No parameters found" + pictogram ✓</td><td><span class="good">✓ Screen 2 is the model — <a href="#f14">F14</a></span></td></tr>
+      </tbody>
+    </table>
+    <div class="ceil"><strong>AI vision ceiling:</strong> Hardcoded hex vs Carbon tokens in code · Sub-4px spacing differences · Hover, focus, and active states · Responsive breakpoints · Keyboard navigation · Screen reader announcements. Provide a Figma URL or code branch for token-level analysis.</div>
+  </div>
+
+
+  
+  <div class="section">
+    <div class="section-heading">Recommended Actions</div>
+
+    <div class="action-group-label">🔴 Critical — fix before next sprint review (2)</div>
+    <div class="action-item"><div class="anum">1</div><div><a href="#f2"><strong>F2</strong></a> — Replace both custom left nav trees with Carbon <code>TreeView / TreeNode</code>. Align both products to the same implementation.</div></div>
+    <div class="action-item"><div class="anum">2</div><div><a href="#f3"><strong>F3</strong></a> — Align both products to line Tabs. Remove contained variant from API Connect. Eliminate nested double tab bar on Screen 2.</div></div>
+
+    <div class="action-group-label">🟠 Major — fix before next handoff or PR (7)</div>
+    <div class="action-item"><div class="anum">3</div><div><a href="#f4"><strong>F4</strong></a> — Replace "Refer to existing assertion" with Carbon <code>Dropdown</code> + visible <code>titleText</code> label.</div></div>
+    <div class="action-item"><div class="anum">4</div><div><a href="#f5"><strong>F5</strong></a> — Add <code>isCurrentPage</code> (no <code>href</code>) to last BreadcrumbItem on both screens.</div></div>
+    <div class="action-item"><div class="anum">5</div><div><a href="#f6"><strong>F6</strong></a> — Replace custom floating card with Carbon <code>ActionableNotification</code> or IBM Products <code>Coachmark</code>.</div></div>
+    <div class="action-item"><div class="anum">6</div><div><a href="#f7"><strong>F7</strong></a> — Remove custom left-border active state. Use Carbon <code>TreeNode selected</code> prop.</div></div>
+    <div class="action-item"><div class="anum">7</div><div><a href="#f8"><strong>F8</strong></a> — Align both headers to <code>$background-inverse</code>. Remove hardcoded hex.</div></div>
+    <div class="action-item"><div class="anum">8</div><div><a href="#f10"><strong>F10</strong></a> — Align both page titles to <code>type-style('productive-heading-04')</code>.</div></div>
+    <div class="action-item"><div class="anum">9</div><div><a href="#f12"><strong>F12</strong></a> — Add <code>hasIconOnly</code> + <code>iconDescription</code> to all four icon-only Buttons.</div></div>
+
+    <div class="action-group-label">🟡 Minor — improve before next design review (4)</div>
+    <div class="action-item"><div class="anum">10</div><div><a href="#f9"><strong>F9</strong></a> — Standardise Screen 2 section spacing to <code>$spacing-07</code>.</div></div>
+    <div class="action-item"><div class="anum">11</div><div><a href="#f11"><strong>F11</strong></a> — Remove font-weight override on DataTable header labels.</div></div>
+    <div class="action-item"><div class="anum">12</div><div><a href="#f13"><strong>F13</strong></a> — Add <code>aria-label="More info: custom endpoint"</code> to ⓘ tooltip trigger.</div></div>
+    <div class="action-item"><div class="anum">13</div><div><a href="#f14"><strong>F14</strong></a> — Design empty + loading states for Screen 1 assertions table using Screen 2 as the model.</div></div>
+  </div>
+
+  <div class="report-footer">
+    Made with IBM Bob  ·  UX Reviewer v1.1.0  ·  All findings are image-inferred and advisory
+  </div>
+
+</div>
+</body>
+</html>
