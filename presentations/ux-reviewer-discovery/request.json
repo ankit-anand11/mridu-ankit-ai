@@ -1,0 +1,279 @@
+{
+  "template": "/Users/mridusmitanath/.bob/skills/draft-ibm-powerpoint/assets/IBM-Template_AI-Ready.pptx",
+  "meta": {
+    "default_footer": "IBM Confidential"
+  },
+  "deck": [
+    {
+      "slide_no": 1,
+      "id": "cover",
+      "layout_code": "COVER-01"
+    },
+    {
+      "slide_no": 5,
+      "id": "agenda",
+      "layout_code": "TOC-01"
+    },
+    {
+      "slide_no": 6,
+      "id": "section_problem",
+      "layout_code": "SECTION-01"
+    },
+    {
+      "slide_no": 7,
+      "id": "problem_statement",
+      "layout_code": "SECTION-02"
+    },
+    {
+      "slide_no": 22,
+      "id": "problem_2col",
+      "layout_code": "CONTENT-2COL"
+    },
+    {
+      "slide_no": 8,
+      "id": "senthil_quote",
+      "layout_code": "STATEMENT-01"
+    },
+    {
+      "slide_no": 6,
+      "id": "section_research",
+      "layout_code": "SECTION-01"
+    },
+    {
+      "slide_no": 24,
+      "id": "who_we_spoke_to",
+      "layout_code": "CONTENT-2COL-HEADERS"
+    },
+    {
+      "slide_no": 17,
+      "id": "dev_pain_points",
+      "layout_code": "CONTENT-3COL-DIVIDERS"
+    },
+    {
+      "slide_no": 17,
+      "id": "designer_pain",
+      "layout_code": "CONTENT-3COL-DIVIDERS"
+    },
+    {
+      "slide_no": 8,
+      "id": "diya_quote",
+      "layout_code": "STATEMENT-01"
+    },
+    {
+      "slide_no": 6,
+      "id": "section_market",
+      "layout_code": "SECTION-01"
+    },
+    {
+      "slide_no": 36,
+      "id": "market_tools",
+      "layout_code": "GRID-6UP-01"
+    },
+    {
+      "slide_no": 36,
+      "id": "market_gaps",
+      "layout_code": "GRID-6UP-01"
+    },
+    {
+      "slide_no": 6,
+      "id": "section_solution",
+      "layout_code": "SECTION-01"
+    },
+    {
+      "slide_no": 7,
+      "id": "solution_statement",
+      "layout_code": "SECTION-02"
+    },
+    {
+      "slide_no": 20,
+      "id": "what_ux_reviewer",
+      "layout_code": "SECTION-03"
+    },
+    {
+      "slide_no": 28,
+      "id": "capabilities",
+      "layout_code": "GRID-4UP-01"
+    },
+    {
+      "slide_no": 22,
+      "id": "experience_designer",
+      "layout_code": "CONTENT-2COL"
+    },
+    {
+      "slide_no": 22,
+      "id": "experience_dev",
+      "layout_code": "CONTENT-2COL"
+    },
+    {
+      "slide_no": 11,
+      "id": "why_now",
+      "layout_code": "STATS-3UP"
+    },
+    {
+      "slide_no": 6,
+      "id": "section_next",
+      "layout_code": "SECTION-01"
+    },
+    {
+      "slide_no": 19,
+      "id": "next_steps",
+      "layout_code": "CONTENT-4COL-DIVIDERS-WITH-LIST"
+    },
+    {
+      "slide_no": 48,
+      "id": "closing",
+      "layout_code": "CLOSING-01"
+    }
+  ],
+  "content": {
+    "cover": {
+      "title": "UX Reviewer — discovery findings",
+      "name_and_job_title": "Mridusmita Nath, UX Researcher / Ankit Anand, Designer",
+      "contact_details": "August 2026 | IBM webMethods"
+    },
+    "agenda": {
+      "title": "Agenda",
+      "table_of_contents_01": "01  The problem\n02  Research findings\n03  Market landscape",
+      "table_of_contents_02": "04  The solution\n05  The IBM experience\n06  Next steps"
+    },
+    "section_problem": {
+      "title": "01  The problem"
+    },
+    "problem_statement": {
+      "big_statement": "IBM teams ship non-Carbon UI every day — and no one can tell until it breaks."
+    },
+    "problem_2col": {
+      "title": "Why Carbon compliance is hard to enforce today",
+      "body_copy_01": "Teams implement from figma but have no way to verify whether the code they write uses the right carbon components, the right variants, or the right design tokens. spacing is copied as raw pixel values. colour tokens are bypassed with hex codes. wrong components are inherited from legacy codebases without any warning.\n\nAll of this looks correct on screen — until a theme switch breaks it, an accessibility audit fails, or a design review catches it post-merge.",
+      "body_copy_02": "The review process that should catch these issues is manual, ad hoc, and late. designers review a screen recording attached to a PR. QA catches issues after merge. some teams have no review gate at all.\n\nThis creates compounding UX debt: inconsistent experiences, maintenance liability, and a widening gap between what was designed and what was built — with no shared artefact to trace back to."
+    },
+    "senthil_quote": {
+      "title": "The token gap is invisible",
+      "quote": "“If they are really using the Carbon component, are they really using the tokens? No one has any idea. So that gap is still there.”",
+      "quote_name": "Senthil kumaran pattabiraman — tech lead, IBM API (webmethods)"
+    },
+    "section_research": {
+      "title": "02  What we heard — research"
+    },
+    "who_we_spoke_to": {
+      "title": "Who we spoke to",
+      "body_copy_title_01": "3 developer interviews",
+      "body_copy_01": "Sahana S — frontend dev, integration (carbon react, hex fallbacks)\nSenthil kumaran — tech lead, API (100% carbon, AI PDLC rules in place)\nHariharan SV — frontend dev, integration (angular / primeng, no figma dev mode)\n\nConducted: 21 August 2026",
+      "body_copy_title_02": "1 designer group session",
+      "body_copy_02": "Nagaraj Venkatraj — webMethods B2B (6 years, high custom component debt)\nDiya susan joseph — API management (full carbon, PR review gate enforced)\nAnimesh jain — webmethods integration (~1.5 years, severe design–dev drift)\n\nConducted: 20 August 2026"
+    },
+    "dev_pain_points": {
+      "title": "What developers told us",
+      "body_copy_title_01": "Token compliance is invisible",
+      "body_copy_01": "Spacing is copied as px values from figma inspect. colours are pasted as hex codes. the screen looks correct — but the code is not carbon-compliant. no tool can detect this.",
+      "body_copy_title_02": "No formal review gate",
+      "body_copy_02": "Non-compliant code can merge with no accountability. issues surface in QA post-merge — or are never caught. without a gate, teams have no recourse when problems surface late.",
+      "body_copy_title_03": "Bob inherits wrong components",
+      "body_copy_03": "When Bob generates UI in a repo with legacy components, it reuses them without warning. developers must explicitly say 'use carbon' — compliance is opt-in, not default."
+    },
+    "designer_pain": {
+      "title": "What designers told us",
+      "body_copy_title_01": "Custom components create debt",
+      "body_copy_01": "Components built during past migrations are now orphaned — no carbon owner, full maintenance burden on the product team. accessibility failures become the team's liability.",
+      "body_copy_title_02": "Handoff gaps cause rework",
+      "body_copy_02": "Designers forget to flag broken components verbally. developers search for a non-existent carbon component and build something incorrect. rework cycles follow every feature.",
+      "body_copy_title_03": "Review is late and labour-intensive",
+      "body_copy_03": "Animesh: 'I spent 2 hours annotating changes, then waited 2 weeks for implementation, then reviewed again.' Without a formal gate, design drift accumulates silently and is caught too late."
+    },
+    "diya_quote": {
+      "title": "The PR gate model works",
+      "quote": "“Unless you approve, it can’t get merged — so they will get pulled up for it. So they will do it fast so that you review it.”",
+      "quote_name": "Diya susan joseph — designer, IBM API management (webmethods)"
+    },
+    "section_market": {
+      "title": "03  What the market offers"
+    },
+    "market_tools": {
+      "title": "Five tools cover parts of the problem — but none covers it for Carbon",
+      "body_copy_title_01": "FigmaLint",
+      "body_copy_01": "AI token & component audit inside figma. detects hardcoded values pre-handoff. figma-only — no code inspection, no carbon knowledge.",
+      "body_copy_title_02": "Chromatic",
+      "body_copy_02": "Visual regression CI gate. blocks PR on pixel-level changes. cannot distinguish carbon button from a custom look-alike. not carbon-aware.",
+      "body_copy_title_03": "Supernova",
+      "body_copy_03": "Design system management with code adoption tracking (enterprise). framework-agnostic — does not flag specific carbon violations in a branch.",
+      "body_copy_title_04": "Tokens Studio",
+      "body_copy_04": "Figma-to-code token pipeline. ensures tokens exist in the codebase. cannot detect whether a developer bypassed them with a hardcoded value.",
+      "body_copy_title_05": "Zeroheight",
+      "body_copy_05": "Living design system documentation with MCP. Adoption measured at doc-page level, not code level. No compliance checking.",
+      "body_copy_title_06": "The gap",
+      "body_copy_06": "All five tools are design-system-agnostic. none ships with carbon rules pre-loaded. none integrates figma + code + Jira in one workflow."
+    },
+    "market_gaps": {
+      "title": "Six gaps no market tool addresses",
+      "body_copy_title_01": "G1 — Hardcoded values",
+      "body_copy_01": "No tool detects hex/px values in a developer's branch and maps them to the correct Carbon token.",
+      "body_copy_title_02": "G2 — Wrong components",
+      "body_copy_02": "No tool flags a primeng component and names the carbon web component replacement.",
+      "body_copy_title_03": "G3 — Carbon PR gate",
+      "body_copy_03": "Chromatic blocks on visual regression only. No tool blocks on Carbon compliance.",
+      "body_copy_title_04": "G4 — Figma vs. code delta",
+      "body_copy_04": "No tool compares what was designed in Figma against what was built in the branch.",
+      "body_copy_title_05": "G5 — Jira ticket output",
+      "body_copy_05": "No tool turns compliance findings into a Jira ticket with acceptance criteria.",
+      "body_copy_title_06": "G6 — Carbon rule set",
+      "body_copy_06": "All five tools are design-system-agnostic. none ships carbon-aware out of the box."
+    },
+    "section_solution": {
+      "title": "04 the solution — UX reviewer"
+    },
+    "solution_statement": {
+      "big_statement": "UX Reviewer closes all six gaps — inside Bob, using infrastructure IBM teams already have."
+    },
+    "what_ux_reviewer": {
+      "title": "UX Reviewer",
+      "number": "04",
+      "subtitle": "A carbon compliance workflow — from figma frame to code branch to Jira ticket — delivered as a conversation in Bob",
+      "body_copy": "Not a linter. not a visual regression tool. not a documentation platform.\n\nUX reviewer uses carbon MCP as its live rule source — the same documentation maintained by the carbon team, updated with every release. no static rule files. no configuration. no procurement.\n\nIt works where IBM teams already work — inside Bob, via natural language."
+    },
+    "capabilities": {
+      "header": "Six capabilities. One workflow.",
+      "title": "What UX Reviewer can do",
+      "body_copy_title_01": "C1 — Figma compliance",
+      "body_copy_01": "Identify carbon vs. custom components. flag wrong variants. name the correct carbon alternative.",
+      "body_copy_title_02": "C2 — Token audit",
+      "body_copy_02": "Detect hardcoded hex and px values per node. name the carbon token that should replace each.",
+      "body_copy_title_03": "C3 — Code compliance",
+      "body_copy_03": "Scan imports and SCSS for non-Carbon components and hardcoded values. Suggest replacements.",
+      "body_copy_title_04": "C4–C6 — Delta + ticket",
+      "body_copy_04": "Compare figma vs. implementation. generate a structured report. auto-create a Jira ticket."
+    },
+    "experience_designer": {
+      "title": "The experience — designer",
+      "body_copy_01": "\"Review this figma frame for carbon compliance\"\n→ pastes figma URL\n\nReturns:\nWhich components are wrong or custom\nWhich tokens are hardcoded\nWhich spacing values are off-grid\nAll findings with Carbon references and severity ratings",
+      "body_copy_02": "No plugins to install\nNo API keys to manage\nNo Carbon rules to configure\nNo separate dashboard or login\n\nWorks in the same Bob conversation the team already uses.\n\nPowered by: figma MCP + carbon MCP"
+    },
+    "experience_dev": {
+      "title": "The experience — developer",
+      "body_copy_01": "\"Check my branch for Carbon compliance\"\n\nReturns:\nNon-Carbon imports — with Carbon replacement named\nHardcoded SCSS values — with correct Carbon token named\nFile-by-file findings list\n\n\"Create a Jira ticket from these findings\"\n→ Structured ticket created automatically:\n  Title, description, severity-ranked findings,\n  acceptance criteria, labels, assignee",
+      "body_copy_02": "Developer takes the ticket to Bob:\n\"Fix the issues in this ticket\"\n→ Bob reads the acceptance criteria\n→ Bob fixes the code\n→ Developer reviews and approves\n\nThe compliance loop is closed — without a single manual step.\n\nPowered by: Bob file tools + Carbon MCP + Jira MCP"
+    },
+    "why_now": {
+      "title": "Why this is buildable now",
+      "statistic_01": "0",
+      "statistic_claim_01": "New tools required — everything runs through Bob infrastructure IBM teams already use",
+      "statistic_02": "0",
+      "statistic_claim_02": "Procurement needed — carbon MCP, figma MCP, and Jira MCP are available to all IBM teams today",
+      "statistic_03": "Live",
+      "statistic_claim_03": "Carbon MCP rule source — maintained by the Carbon team, never stale, no configuration required",
+      "statistic_sources": "Carbon MCP public preview, august 2026 | figma MCP connected in Bob | Jira MCP available as Bob skill"
+    },
+    "section_next": {
+      "title": "05  Next steps"
+    },
+    "next_steps": {
+      "title": "Recommended next steps",
+      "body_copy_title_01": "Validate report format",
+      "body_copy_list_01": "30-min session with one designer (diya or animesh)\n30-min session with one developer (senthil or sahana)\nShow a sample report from a real Figma frame",
+      "body_copy_title_02": "Set up pilot",
+      "body_copy_list_02": "Set up code connect on a pilot figma frame with the API team\nConfirm Jira board ID and label taxonomy\nBuild the Bob skill scaffold and report template",
+      "body_copy_title_03": "Run a live demo",
+      "body_copy_list_03": "Generate a real compliance report on the API team's current sprint work\nShow Senthil the Jira ticket output\nIterate on report format before opening to other teams"
+    },
+    "closing": {}
+  }
+}
