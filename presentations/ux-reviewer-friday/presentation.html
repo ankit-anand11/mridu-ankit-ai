@@ -27,7 +27,10 @@
     --mono: 'IBM Plex Mono', 'Fira Code', monospace;
   }
 
-  html { scroll-behavior: smooth; }
+  html, body {
+    height: 100%;
+    overflow: hidden;
+  }
 
   body {
     font-family: var(--font);
@@ -38,16 +41,38 @@
   }
 
   /* ── SLIDE ENGINE ─────────────────────────────────────────────────────── */
+  #slide-viewport {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+  }
+
+  #slide-track {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
   .slide {
+    position: absolute;
+    inset: 0;
     width: 100vw;
-    min-height: 100vh;
+    height: 100vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
     padding: 64px 80px;
-    position: relative;
     background: var(--bg);
-    border-bottom: 1px solid #000;
+    overflow-y: auto;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+    will-change: opacity;
+  }
+
+  .slide.is-active {
+    opacity: 1;
+    pointer-events: auto;
   }
 
   .slide--dark {
@@ -283,32 +308,6 @@
   .slide--dark .stat-num { color: #78a9ff; }
   .stat-label { font-size: 13px; color: var(--muted); max-width: 180px; line-height: 1.4; }
 
-  /* ── NAV ────────────────────────────────────────────────────────────────── */
-  .nav {
-    position: fixed;
-    bottom: 24px;
-    right: 32px;
-    display: flex;
-    gap: 8px;
-    z-index: 100;
-  }
-
-  .nav a {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    background: rgba(22,22,22,0.85);
-    color: #f4f4f4;
-    text-decoration: none;
-    font-size: 16px;
-    border-radius: 2px;
-    transition: background 0.15s;
-  }
-
-  .nav a:hover { background: #0f62fe; }
-
   /* ── INDEX DOTS ─────────────────────────────────────────────────────────── */
   .index-dots {
     position: fixed;
@@ -326,11 +325,14 @@
     height: 6px;
     border-radius: 50%;
     background: rgba(255,255,255,0.3);
-    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    padding: 0;
     transition: background 0.15s, transform 0.15s;
   }
 
-  .dot-link:hover {
+  .dot-link:hover,
+  .dot-link.active {
     background: #0f62fe;
     transform: scale(1.5);
   }
@@ -394,28 +396,47 @@
     .flow-step::after { display: none; }
     .stat-row { gap: 24px; }
   }
+
+  /* ── KEYBOARD HINT ───────────────────────────────────────────────────────── */
+  .key-hint {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 11px;
+    color: rgba(255,255,255,0.35);
+    font-family: var(--mono);
+    letter-spacing: 0.06em;
+    z-index: 100;
+    pointer-events: none;
+  }
 </style>
 </head>
 <body>
 
-<!-- ── NAV ──────────────────────────────────────────────────────────────── -->
-<div class="index-dots">
-  <a class="dot-link" href="#s1" title="Cover"></a>
-  <a class="dot-link" href="#s2" title="Problem"></a>
-  <a class="dot-link" href="#s3" title="Research"></a>
-  <a class="dot-link" href="#s4" title="Compliance spectrum"></a>
-  <a class="dot-link" href="#s5" title="What the market does well"></a>
-  <a class="dot-link" href="#s6a" title="Why none of it works for Carbon"></a>
-  <a class="dot-link" href="#s6" title="What UX Reviewer is"></a>
-  <a class="dot-link" href="#s7" title="How it works"></a>
-  <a class="dot-link" href="#s8" title="MVP — what it covers"></a>
-  <a class="dot-link" href="#s9" title="Sample report"></a>
-  <a class="dot-link" href="#s10" title="Why it works today"></a>
-  <a class="dot-link" href="#s11" title="Roadmap"></a>
-  <a class="dot-link" href="#s12" title="Why defensible"></a>
-  <a class="dot-link" href="#s13" title="Next steps"></a>
-  <a class="dot-link" href="#s14" title="The ask"></a>
+<!-- ── NAV DOTS ─────────────────────────────────────────────────────────── -->
+<div class="index-dots" id="index-dots">
+  <button class="dot-link active" data-index="0" title="Cover"></button>
+  <button class="dot-link" data-index="1" title="Problem"></button>
+  <button class="dot-link" data-index="2" title="Research"></button>
+  <button class="dot-link" data-index="3" title="Compliance spectrum"></button>
+  <button class="dot-link" data-index="4" title="What the market does well"></button>
+  <button class="dot-link" data-index="5" title="Why none of it works for Carbon"></button>
+  <button class="dot-link" data-index="6" title="What UX Reviewer is"></button>
+  <button class="dot-link" data-index="7" title="How it works"></button>
+  <button class="dot-link" data-index="8" title="MVP — what it covers"></button>
+  <button class="dot-link" data-index="9" title="Sample report"></button>
+  <button class="dot-link" data-index="10" title="Why it works today"></button>
+  <button class="dot-link" data-index="11" title="Roadmap"></button>
+  <button class="dot-link" data-index="12" title="Why defensible"></button>
+  <button class="dot-link" data-index="13" title="Next steps"></button>
+  <button class="dot-link" data-index="14" title="The ask"></button>
 </div>
+
+<div class="key-hint">← → ↑ ↓ to navigate · click dots to jump</div>
+
+<div id="slide-viewport">
+<div id="slide-track">
 
 <!-- ── SLIDE 1 — COVER ─────────────────────────────────────────────────── -->
 <section class="slide slide--dark" id="s1">
@@ -563,50 +584,32 @@
   <span class="slide-number">05 / 15</span>
   <span class="slide-label">Market analysis · what these tools get right</span>
 
-  <h2>These are genuinely good tools — each solves a real problem well</h2>
+  <h2>Good tools — each solves one piece of the puzzle</h2>
 
-  <div class="cols-3" style="margin-top: 40px;">
+  <div class="cols-3" style="margin-top: 32px;">
     <div class="card card--accent">
       <h4>FigmaLint</h4>
-      <p style="margin-top: 8px; font-size: 14px; line-height: 1.65;">
-        <strong>What it does well:</strong> Scans every node in a Figma file for detached instances, hardcoded hex values, and raw px spacing — before handoff even starts. Gives designers instant, in-canvas feedback with no developer involvement.<br/><br/>
-        <strong>Why it's good:</strong> Catches the most common Figma sloppiness at source. Fast and zero-setup for designers already in Figma.
-      </p>
+      <p style="margin-top: 6px; font-size: 13px; color: var(--muted);">Good at <strong style="color:var(--text);">catching token &amp; component issues in Figma</strong> before handoff. Zero setup for designers.</p>
     </div>
     <div class="card card--accent">
       <h4>Chromatic</h4>
-      <p style="margin-top: 8px; font-size: 14px; line-height: 1.65;">
-        <strong>What it does well:</strong> Production-proven PR merge gate that blocks on any pixel-level visual regression across every Storybook story. Cross-browser, cross-viewport, automated on every commit.<br/><br/>
-        <strong>Why it's good:</strong> Prevents accidental UI regressions from shipping. Used at scale by some of the largest design systems in the industry.
-      </p>
+      <p style="margin-top: 6px; font-size: 13px; color: var(--muted);">Good at <strong style="color:var(--text);">visual regression CI gating</strong> — blocks pixel-level regressions on every PR.</p>
     </div>
     <div class="card card--accent">
       <h4>Supernova</h4>
-      <p style="margin-top: 8px; font-size: 14px; line-height: 1.65;">
-        <strong>What it does well:</strong> Tracks which design system components are actually used across a codebase — giving design system teams adoption metrics and code health dashboards at the enterprise level.<br/><br/>
-        <strong>Why it's good:</strong> Gives design system owners real data on where teams are and aren't adopting components.
-      </p>
+      <p style="margin-top: 6px; font-size: 13px; color: var(--muted);">Good at <strong style="color:var(--text);">component adoption metrics</strong> — tells design system teams what's being used.</p>
     </div>
     <div class="card card--accent">
       <h4>Tokens Studio</h4>
-      <p style="margin-top: 8px; font-size: 14px; line-height: 1.65;">
-        <strong>What it does well:</strong> Creates a bidirectional sync between Figma design tokens and the codebase — ensuring that when a token changes in Figma, it propagates to code automatically.<br/><br/>
-        <strong>Why it's good:</strong> Eliminates a major source of token drift between design and code for teams that set it up correctly.
-      </p>
+      <p style="margin-top: 6px; font-size: 13px; color: var(--muted);">Good at <strong style="color:var(--text);">Figma-to-code token sync</strong> — propagates token changes automatically.</p>
     </div>
     <div class="card card--accent">
       <h4>Zeroheight</h4>
-      <p style="margin-top: 8px; font-size: 14px; line-height: 1.65;">
-        <strong>What it does well:</strong> Turns design system documentation into a living, queryable knowledge base — and now exposes it via MCP so AI assistants can reference guidelines directly.<br/><br/>
-        <strong>Why it's good:</strong> Makes design system documentation accessible to AI tools. The MCP approach is genuinely forward-looking.
-      </p>
+      <p style="margin-top: 6px; font-size: 13px; color: var(--muted);">Good at <strong style="color:var(--text);">living design system docs</strong> — MCP-exposed so AI tools can query guidelines.</p>
     </div>
-    <div class="card" style="border: 1px dashed var(--border); background: transparent;">
-      <h4 style="color: var(--muted);">The shared limitation</h4>
-      <p style="margin-top: 8px; font-size: 14px; line-height: 1.65; color: var(--muted);">
-        Every one of these tools is designed to work for <em>any</em> design system. Their business model depends on it.<br/><br/>
-        That means none of them ships with Carbon rules, Carbon token names, Carbon component inventory, or Carbon-specific guidance pre-loaded. Teams must configure everything from scratch — or get nothing.
-      </p>
+    <div class="card" style="border: 2px solid var(--critical); background: var(--critical-bg);">
+      <h4>The shared gap</h4>
+      <p style="margin-top: 6px; font-size: 13px; line-height: 1.55;">None ships Carbon-aware. Every team must configure rules from scratch — or get nothing. <strong>That is the gap UX Reviewer fills.</strong></p>
     </div>
   </div>
 </section>
@@ -1119,6 +1122,87 @@ Dev:   Custom pill ← non-Carbon component
     </div>
   </div>
 </section>
+
+</div><!-- /slide-track -->
+</div><!-- /slide-viewport -->
+
+<script>
+(function () {
+  var slides  = document.querySelectorAll('.slide');
+  var dots    = document.querySelectorAll('.dot-link');
+  var total   = slides.length;
+  var current = 0;
+  var animating = false;
+
+  // Initialise — show first slide
+  slides[0].classList.add('is-active');
+
+  function goTo(n) {
+    if (animating) return;
+    if (n < 0 || n >= total) return;
+    if (n === current) return;
+    animating = true;
+
+    slides[current].classList.remove('is-active');
+    dots[current].classList.remove('active');
+
+    current = n;
+
+    slides[current].classList.add('is-active');
+    dots[current].classList.add('active');
+
+    setTimeout(function () { animating = false; }, 520);
+  }
+
+  // Dot clicks
+  dots.forEach(function (d) {
+    d.addEventListener('click', function () {
+      goTo(parseInt(d.getAttribute('data-index'), 10));
+    });
+  });
+
+  // Keyboard
+  document.addEventListener('keydown', function (e) {
+    switch (e.key) {
+      case 'ArrowDown':
+      case 'ArrowRight':
+        e.preventDefault();
+        goTo(current + 1);
+        break;
+      case 'ArrowUp':
+      case 'ArrowLeft':
+        e.preventDefault();
+        goTo(current - 1);
+        break;
+      case 'Home':
+        e.preventDefault();
+        goTo(0);
+        break;
+      case 'End':
+        e.preventDefault();
+        goTo(total - 1);
+        break;
+    }
+  });
+
+  // Touch / swipe
+  var touchStartY = 0;
+  var touchStartX = 0;
+  document.addEventListener('touchstart', function (e) {
+    touchStartY = e.changedTouches[0].clientY;
+    touchStartX = e.changedTouches[0].clientX;
+  }, { passive: true });
+  document.addEventListener('touchend', function (e) {
+    var dy = touchStartY - e.changedTouches[0].clientY;
+    var dx = touchStartX - e.changedTouches[0].clientX;
+    if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 40) {
+      goTo(current + (dy > 0 ? 1 : -1));
+    } else if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
+      goTo(current + (dx > 0 ? 1 : -1));
+    }
+  }, { passive: true });
+})();
+</script>
 
 </body>
 </html>
