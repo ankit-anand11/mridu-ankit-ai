@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="figma-node-id" content="" />
+<title>UX Review Report — [Screen name]</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'IBM Plex Sans', sans-serif; font-size: 14px; line-height: 1.6; background: #f4f4f4; color: #161616; }
+code { font-family: 'IBM Plex Mono', monospace; font-size: 12px; background: #e8e8e8; padding: 1px 5px; border-radius: 3px; color: #161616; }
+a { color: #0f62fe; text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.wrapper { max-width: 920px; margin: 0 auto; padding: 40px 28px 80px; }
+
+/* PAGE HEADER */
+.page-header { background: #ffffff; border-left: 4px solid #0f62fe; padding: 24px 28px; margin-bottom: 2px; }
+.page-header h1 { font-size: 22px; font-weight: 600; color: #161616; margin-bottom: 4px; }
+.page-header .sub { font-size: 12px; color: #6f6f6f; margin-bottom: 16px; }
+.pill-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.pill { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; padding: 3px 11px; border-radius: 20px; border: 1.5px solid; }
+.pill-c  { background:#fff1f1; border-color:#da1e28; color:#da1e28; }
+.pill-m  { background:#fff8e1; border-color:#f1620d; color:#f1620d; }
+.pill-n  { background:#f4f4f4; border-color:#8d8d8d; color:#6f6f6f; }
+.pill-i  { background:#edf5ff; border-color:#0f62fe; color:#0043ce; }
+.pill-w  { background:#f6f2ff; border-color:#8a3ffc; color:#6929c4; }
+
+/* CARBON TAG — used for finding ID badges */
+.ctag { display: inline-flex; align-items: center; font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; padding: 0 8px; height: 20px; border-radius: 24px; white-space: nowrap; flex-shrink: 0; }
+.ctag-c  { background: #fff1f1; color: #da1e28; outline: 1.5px solid #da1e28; }
+.ctag-m  { background: #fff8e1; color: #b5430a; outline: 1.5px solid #f1620d; }
+.ctag-n  { background: #f4f4f4; color: #525252; outline: 1.5px solid #8d8d8d; }
+.ctag-ok { background: #defbe6; color: #0e6027; outline: 1.5px solid #198038; }
+
+/* WHITE CARD / SECTION */
+.section { background: #ffffff; padding: 24px 28px; margin-bottom: 2px; }
+.section-heading { font-size: 14px; font-weight: 600; color: #161616; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #e0e0e0; }
+
+/* TABLE OF CONTENTS — deprecated in v1.5.0; superseded by .overview-table.
+   Retained for backward compatibility with pre-v1.5.0 reports. Do not use in new reports. */
+.toc-group { margin-bottom: 24px; }
+.toc-group:last-child { margin-bottom: 0; }
+.toc-group-label { font-size: 11px; font-weight: 600; color: #6f6f6f; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 8px; }
+.toc-tile { display: flex; align-items: center; gap: 14px; padding: 12px 16px; background: #f4f4f4; border: 1px solid #e0e0e0; border-bottom: none; text-decoration: none; color: #161616; cursor: pointer; }
+.toc-tile:first-of-type { border-radius: 4px 4px 0 0; }
+.toc-tile:last-of-type  { border-bottom: 1px solid #e0e0e0; border-radius: 0 0 4px 4px; }
+.toc-tile:only-of-type  { border-radius: 4px; border-bottom: 1px solid #e0e0e0; }
+.toc-tile:hover { background: #e8e8e8; border-color: #c6c6c6; }
+.toc-tile-text { flex: 1; font-size: 13px; font-weight: 400; line-height: 1.4; }
+.toc-tile-sub  { font-size: 11px; color: #6f6f6f; margin-top: 2px; }
+.toc-arrow { font-size: 14px; color: #8d8d8d; flex-shrink: 0; }
+
+/* ZONE MAP */
+.zone-caption { font-size: 11px; font-weight: 600; color: #6f6f6f; margin-bottom: 6px; }
+.zone-map { font-family: 'IBM Plex Mono', monospace; font-size: 11px; line-height: 1.6; background: #f4f4f4; border: 1px solid #e0e0e0; padding: 14px 16px; white-space: pre; overflow-x: auto; color: #393939; margin-bottom: 6px; }
+.zc  { color: #da1e28; font-weight: 600; }
+.zm  { color: #c45000; font-weight: 600; }
+.zn  { color: #6f6f6f; font-weight: 600; }
+.zok { color: #198038; font-weight: 600; }
+
+/* OVERVIEW TABLE — compact summary rows, no expanded cards */
+.overview-table th { background: #f4f4f4; padding: 9px 14px; text-align: left; font-weight: 600; font-size: 11px; color: #525252; text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 2px solid #e0e0e0; white-space: nowrap; }
+/* FINDING LINK — blue, visible upfront, clickable to open modal */
+.finding-title-link { font-size: 13px; color: #0f62fe; cursor: pointer; text-decoration: none; border-bottom: 1px solid transparent; font-weight: 500; }
+.finding-title-link:hover { color: #0043ce; border-bottom: 1px solid #0043ce; text-decoration: none; }
+.finding-title-link:focus { outline: 2px solid #0f62fe; outline-offset: 2px; border-radius: 1px; }
+.inferred-tag { font-size: 10px; color: #6929c4; background: #f6f2ff; padding: 2px 7px; border-radius: 10px; font-weight: 500; white-space: nowrap; margin-left: 6px; }
+
+/* COMPARISON TABLE (design-to-impl, if applicable) */
+.ctable { width: 100%; border-collapse: collapse; font-size: 13px; }
+.ctable th { background: #f4f4f4; padding: 8px 12px; text-align: left; font-weight: 600; font-size: 12px; color: #525252; border-bottom: 2px solid #e0e0e0; }
+.ctable td { padding: 10px 12px; border-bottom: 1px solid #f0f0f0; vertical-align: top; }
+.ctable tr:last-child td { border-bottom: none; }
+.diff { color: #da1e28; font-weight: 500; }
+.good { color: #198038; font-weight: 500; }
+
+/* ACCEPTED UI GAPS */
+.gaps-section { background: #fff8e1; border-left: 4px solid #f1620d; padding: 24px 28px; margin-bottom: 2px; }
+
+/* NOTES */
+.ceil { background: #fff8e1; border: 1px solid #f1620d; padding: 10px 14px; font-size: 12px; color: #3d3d3d; margin-top: 14px; line-height: 1.6; }
+
+/* ACTION LIST */
+.action-group-label { font-size: 13px; font-weight: 600; margin: 20px 0 10px; display: flex; align-items: center; gap: 8px; }
+.action-group-label:first-of-type { margin-top: 0; }
+.action-item { display: flex; gap: 12px; padding: 9px 0; border-bottom: 1px solid #f0f0f0; font-size: 13px; align-items: flex-start; }
+.action-item:last-child { border-bottom: none; }
+.anum { font-weight: 600; min-width: 22px; color: #8d8d8d; padding-top: 1px; }
+
+.section-group { margin-bottom: 2px; }
+
+.report-footer { text-align: center; font-size: 12px; color: #8d8d8d; padding-top: 24px; border-top: 1px solid #e0e0e0; margin-top: 56px; }
+
+/* ── PAGE HEADER TOP ROW ── */
+.page-header-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; }
+.page-header-top h1 { font-size: 22px; font-weight: 600; color: #161616; margin-bottom: 4px; }
+
+/* ── CONTENT SWITCHER (Carbon segmented control) ── */
+.content-switcher { display: inline-flex; border: 1px solid #0f62fe; border-radius: 2px; overflow: hidden; flex-shrink: 0; margin-top: 2px; }
+.cs-btn { padding: 8px 18px; font-size: 12px; font-weight: 500; color: #0f62fe; background: #ffffff; border: none; border-right: 1px solid #0f62fe; cursor: pointer; white-space: nowrap; line-height: 1; }
+.cs-btn:last-child { border-right: none; }
+.cs-btn:hover { background: #edf5ff; }
+.cs-btn.active { background: #0f62fe; color: #ffffff; font-weight: 600; }
+
+/* ── VIEW PANELS ── */
+.view-panel { display: none; }
+.view-panel.active { display: block; }
+
+/* ── SCREEN TABS — superseded by .cds-tabs in v1.7.0; retained for backward compatibility ── */
+.screen-tab-bar { background: #f4f4f4; border-bottom: 1px solid #e0e0e0; padding: 0 28px; display: flex; gap: 2px; overflow-x: auto; }
+.screen-tab { padding: 10px 18px; font-size: 13px; font-weight: 500; color: #525252; background: none; border: none; border-bottom: 3px solid transparent; cursor: pointer; white-space: nowrap; margin-bottom: -1px; }
+.screen-tab:hover { color: #161616; background: #e8e8e8; }
+.screen-tab.active { color: #161616; background: #ffffff; border-bottom-color: #161616; font-weight: 600; }
+.screen-tab-badge { display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; margin-left: 6px; }
+.badge-c { background: #da1e28; color: #fff; }
+.badge-m { background: #f1620d; color: #fff; }
+/* Use .cds-tabs / .cds-tab / .cds-tab-badge-c / .cds-tab-badge-m for new reports */
+.screen-panel { display: none; padding: 28px; }
+.screen-panel.active { display: block; }
+
+/* ── TRIAGE SECTION ── */
+.triage-section { background: #f0f4ff; border-left: 4px solid #0f62fe; padding: 24px 28px; margin-bottom: 2px; }
+.triage-note { font-size: 12px; color: #393939; margin-bottom: 16px; line-height: 1.6; }
+.triage-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.triage-table th { background: #e0eaff; padding: 8px 12px; text-align: left; font-weight: 600; font-size: 11px; color: #0043ce; border-bottom: 2px solid #c5d6ff; white-space: nowrap; }
+.triage-table td { padding: 9px 12px; border-bottom: 1px solid #dde7ff; vertical-align: middle; }
+.triage-table tr:last-child td { border-bottom: none; }
+.triage-table tr:hover td { background: #e8f0ff; }
+.status-unreviewed { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; color: #6f6f6f; background: #f4f4f4; border: 1px solid #c6c6c6; padding: 2px 9px; border-radius: 12px; white-space: nowrap; }
+.status-resolved   { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; color: #0e6027; background: #defbe6; border: 1px solid #198038; padding: 2px 9px; border-radius: 12px; white-space: nowrap; }
+.status-backlog    { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; color: #b5430a; background: #fff8e1; border: 1px solid #f1620d; padding: 2px 9px; border-radius: 12px; white-space: nowrap; }
+.status-rejected   { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; color: #4f2196; background: #f6f2ff; border: 1px solid #8a3ffc; padding: 2px 9px; border-radius: 12px; white-space: nowrap; }
+.triage-codes { margin-top: 14px; padding-top: 14px; border-top: 1px solid #c5d6ff; display: flex; flex-wrap: wrap; gap: 14px; font-size: 12px; color: #393939; }
+.triage-codes span { display: inline-flex; align-items: center; gap: 6px; }
+
+/* ── OVERVIEW TABLE (all findings summary) ── */
+.overview-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.overview-table th { background: #f4f4f4; padding: 9px 14px; text-align: left; font-weight: 600; font-size: 12px; color: #525252; border-bottom: 2px solid #e0e0e0; }
+.overview-table td { padding: 10px 14px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
+.overview-table tr:last-child td { border-bottom: none; }
+.overview-table tr:hover td { background: #fafafa; }
+.overview-cat { font-size: 11px; color: #525252; background: #f4f4f4; padding: 2px 8px; border-radius: 3px; white-space: nowrap; }
+
+/* ── ZONE SUMMARY ROW + MODAL TRIGGER ── */
+.zone-summary-row { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: #f4f4f4; border: 1px solid #e0e0e0; border-radius: 4px; margin-bottom: 12px; }
+.zone-summary-name { font-size: 13px; font-weight: 600; color: #161616; flex: 1; }
+.zone-summary-pills { display: flex; gap: 6px; }
+.zone-map-link { font-size: 12px; color: #0f62fe; border: 1px solid #0f62fe; padding: 4px 14px; border-radius: 3px; background: #edf5ff; cursor: pointer; white-space: nowrap; }
+.zone-map-link:hover { background: #d0e2ff; }
+
+/* ── PER-FINDING MODAL ── */
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 1000; align-items: flex-start; justify-content: center; padding: 40px 24px; overflow-y: auto; }
+.modal-overlay.open { display: flex; }
+.modal { background: #ffffff; border-radius: 2px; max-width: 760px; width: 100%; box-shadow: 0 16px 48px rgba(0,0,0,0.3); margin: auto; }
+.modal-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 16px 24px; border-bottom: 1px solid #e0e0e0; background: #fafafa; }
+.modal-header-left { display: flex; align-items: flex-start; gap: 10px; flex: 1; min-width: 0; }
+.modal-header h3 { font-size: 13px; font-weight: 600; color: #161616; line-height: 1.4; }
+.modal-close { background: none; border: none; font-size: 20px; color: #525252; cursor: pointer; padding: 2px 8px; border-radius: 2px; line-height: 1; flex-shrink: 0; }
+.modal-close:hover { background: #e8e8e8; }
+/* zone map inside modal */
+.modal-zone { padding: 20px 24px; border-bottom: 1px solid #e0e0e0; background: #f9f9f9; }
+/* finding detail rows inside modal */
+.modal-detail-row { display: grid; grid-template-columns: 120px 1fr; border-bottom: 1px solid #f0f0f0; }
+.modal-detail-row:last-child { border-bottom: none; }
+.modal-detail-label { padding: 14px 16px; font-size: 11px; font-weight: 600; color: #6f6f6f; text-transform: uppercase; letter-spacing: 0.05em; background: #fafafa; border-right: 1px solid #f0f0f0; }
+.modal-detail-value { padding: 14px 16px; font-size: 13px; color: #161616; line-height: 1.65; }
+.modal-detail-value a { color: #0f62fe; }
+.loc-chip { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 4px; border: 1px solid; }
+.loc-s1   { background: #edf5ff; color: #0043ce; border-color: #0f62fe; }
+.loc-s2   { background: #defbe6; color: #0e6027; border-color: #198038; }
+.loc-both { background: #f6f2ff; color: #4f2196; border-color: #8a3ffc; }
+.loc-pos  { font-size: 12px; color: #525252; margin-top: 6px; line-height: 1.5; }
+/* fix row — dark background */
+.modal-fix-row { display: grid; grid-template-columns: 120px 1fr; border-top: 1px solid #e0e0e0; }
+.modal-fix-label { padding: 14px 16px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; background: #001141; color: #8d8d8d; border-right: 1px solid #1a2a5c; }
+.modal-fix-cell { background: #001141; padding: 14px 16px; }
+.fix-instruction { font-size: 12px; color: #c6c6c6; margin-bottom: 10px; font-style: italic; line-height: 1.5; }
+.fix-code { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #f4f4f4; line-height: 1.75; white-space: pre-wrap; word-break: break-word; }
+.fc { color: #78a9ff; }
+.modal-inferred-note { font-size: 12px; color: #4f2196; background: #f6f2ff; border-top: 1px solid #d4bbff; padding: 10px 24px; line-height: 1.6; }
+
+/* ── TRIAGE INLINE EDIT CONTROLS ── */
+.triage-select { font-size: 12px; padding: 4px 8px; border: 1px solid #c5d6ff; border-radius: 3px; background: #ffffff; color: #161616; cursor: pointer; min-width: 130px; }
+.triage-select:focus { outline: 2px solid #0f62fe; outline-offset: 1px; }
+.triage-rationale { font-size: 12px; padding: 4px 8px; border: 1px solid #c5d6ff; border-radius: 3px; background: #ffffff; color: #161616; }
+.triage-rationale:focus { outline: 2px solid #0f62fe; outline-offset: 1px; }
+.triage-rationale::placeholder { color: #a8b8d8; }
+
+/* ── COPY TRIAGE JSON BUTTON (Carbon primary button pattern) ── */
+.copy-triage-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 400; padding: 0 16px; height: 40px; border: none; border-radius: 0; background: #0f62fe; color: #ffffff; cursor: pointer; white-space: nowrap; letter-spacing: 0.16px; transition: background 70ms ease; }
+.copy-triage-btn:hover { background: #0353e9; }
+.copy-triage-btn:active { background: #002d9c; }
+.copy-triage-btn:focus { outline: 2px solid #0f62fe; outline-offset: 2px; }
+.copy-triage-btn.copied { background: #198038; }
+
+/* ── UNSAVED CHANGES INLINE NOTIFICATION (Carbon inline notification — warning) ── */
+.triage-warning-notification { display: none; align-items: flex-start; gap: 0; background: #fcf4d6; border-left: 3px solid #f1c21b; padding: 0; margin-bottom: 16px; }
+.triage-warning-notification.visible { display: flex; }
+.triage-warning-icon { flex-shrink: 0; display: flex; align-items: flex-start; padding: 14px 12px; }
+.triage-warning-icon svg { width: 16px; height: 16px; fill: #f1c21b; }
+.triage-warning-content { flex: 1; padding: 14px 0 14px 0; }
+.triage-warning-title { font-size: 14px; font-weight: 600; color: #161616; margin-bottom: 2px; }
+.triage-warning-subtitle { font-size: 14px; color: #393939; }
+.triage-warning-close { flex-shrink: 0; display: flex; align-items: flex-start; padding: 14px 12px; }
+.triage-warning-close button { background: none; border: none; cursor: pointer; padding: 2px; color: #525252; font-size: 16px; line-height: 1; }
+.triage-warning-close button:hover { color: #161616; }
+
+/* ── PENDING ACTIONS NOTE ── */
+.pending-note { font-size: 12px; color: #393939; background: #f0f4ff; border: 1px solid #c5d6ff; padding: 10px 14px; margin-bottom: 16px; line-height: 1.6; }
+
+/* ── CARBON DATA TABLE (used for triage table, overview table) ── */
+.cds-table-container { background: #ffffff; }
+.cds-table-toolbar { display: flex; align-items: center; justify-content: space-between; padding: 0 16px; height: 48px; background: #f4f4f4; border-bottom: 1px solid #e0e0e0; }
+.cds-table-toolbar-content { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+.cds-table-search { display: inline-flex; align-items: center; background: #f4f4f4; border: none; border-bottom: 1px solid #8d8d8d; padding: 0 16px; height: 40px; font-size: 14px; color: #161616; outline: none; min-width: 200px; }
+.cds-table-search:focus { border-bottom: 2px solid #0f62fe; background: #ffffff; }
+.cds-table-search::placeholder { color: #a8a8a8; }
+
+/* ── CARBON TABS (used for per-screen section) ── */
+.cds-tabs { border-bottom: 1px solid #e0e0e0; display: flex; overflow-x: auto; background: #ffffff; }
+.cds-tab { padding: 0 16px; height: 40px; display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 400; color: #525252; background: none; border: none; border-bottom: 2px solid transparent; cursor: pointer; white-space: nowrap; margin-bottom: -1px; letter-spacing: 0.16px; }
+.cds-tab:hover { background: #e8e8e8; color: #161616; }
+.cds-tab.active { color: #161616; border-bottom: 2px solid #161616; font-weight: 600; background: #ffffff; }
+.cds-tab-badge { display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; }
+.cds-tab-badge-c { background: #da1e28; color: #fff; }
+.cds-tab-badge-m { background: #f1620d; color: #fff; }
+
+/* ── ACTION BAR (modal — recommended action strip) ── */
+.modal-action-bar { padding: 12px 24px; background: #edf5ff; border-bottom: 1px solid #c5d6ff; font-size: 13px; color: #0043ce; line-height: 1.5; }
+
+/* ── LEGEND ACCORDION ── */
+.accordion { border: 1px solid #e0e0e0; border-radius: 2px; margin: 0 28px 24px; background: #ffffff; }
+.accordion-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; cursor: pointer; font-size: 13px; font-weight: 600; color: #161616; border: none; background: none; width: 100%; text-align: left; }
+.accordion-header:hover { background: #f4f4f4; }
+.accordion-indicator { font-size: 12px; color: #525252; transition: transform 0.15s ease; }
+.accordion-body { display: none; padding: 16px 20px 20px; border-top: 1px solid #e0e0e0; }
+.accordion-body.open { display: block; }
+
+@media (max-width: 640px) {
+  .modal-detail-row, .modal-fix-row { grid-template-columns: 1fr; }
+  .modal-detail-label, .modal-fix-label { border-right: none; border-bottom: 1px solid #f0f0f0; }
+  .page-header-top { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <!-- 1. PAGE HEADER -->
+  <!-- 2. VIEW SWITCHER (inside .page-header-top) -->
+
+  <!-- PER-SCREEN VIEW -->
+  <div class="view-panel" id="view-perscreen">
+    <!-- Carbon Tabs tab bar -->
+    <!-- one .screen-panel per screen -->
+  </div>
+
+  <!-- OVERALL VIEW (default active) -->
+  <div class="view-panel active" id="view-overall">
+    <div style="padding: 28px 28px 0;">
+      <!-- A. SUMMARY -->
+      <!-- B. CARBON VIOLATIONS (always) -->
+      <!-- C. IMPLEMENTATION GAPS (only when 2 inputs provided) -->
+      <!-- D. BOTH (only when 2 inputs AND overlap exists) -->
+      <!-- E. ACCEPTED UI GAPS -->
+    </div>
+  </div>
+
+  <!-- LEGEND ACCORDION (outside view panels, always at bottom) -->
+  <div class="accordion" id="legend-accordion" style="margin-top:8px">
+    <button class="accordion-header" onclick="toggleAccordion('legend-body')" aria-expanded="false">
+      Legend
+      <span class="accordion-indicator" id="legend-indicator">▶</span>
+    </button>
+    <div class="accordion-body" id="legend-body">
+      <!-- Severity definitions table -->
+      <!-- Category definitions table -->
+    </div>
+  </div>
+
+  <div style="padding: 0 28px;">
+    <div class="report-footer">
+      Made with IBM Bob · UX Reviewer v1.8.0 · All findings are advisory
+    </div>
+  </div>
+
+</div>
+
+<!-- PER-FINDING MODALS (one per finding, placed after .wrapper) -->
+
+<script>
+/* ── VIEW + SCREEN SWITCHING ── */
+function switchView(v) {
+  document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.cs-btn[data-view]').forEach(b => b.classList.remove('active'));
+  document.getElementById('view-' + v).classList.add('active');
+  document.querySelector('.cs-btn[data-view="' + v + '"]').classList.add('active');
+}
+function switchScreen(s) {
+  document.querySelectorAll('.screen-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.cds-tab').forEach(function(t) {
+    t.classList.remove('active');
+    t.setAttribute('aria-selected', 'false');
+  });
+  document.getElementById('screen-' + s).classList.add('active');
+  var activeTab = document.getElementById('tab-' + s);
+  if (activeTab) {
+    activeTab.classList.add('active');
+    activeTab.setAttribute('aria-selected', 'true');
+  }
+}
+
+/* ── MODAL MANAGEMENT ── */
+var _activeModal = null;
+function openFinding(id) {
+  var overlay = document.getElementById(id);
+  if (!overlay) return;
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  _activeModal = id;
+}
+function closeFinding(id) {
+  var overlay = document.getElementById(id);
+  if (overlay) { overlay.classList.remove('open'); }
+  document.body.style.overflow = '';
+  _activeModal = null;
+}
+function closeOnBackdrop(e, id) {
+  if (e.target === document.getElementById(id)) closeFinding(id);
+}
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape' && _activeModal) closeFinding(_activeModal);
+});
+
+/* ── TRIAGE STATUS UPDATE ── */
+function updateTriageStatus(sel) {
+  var id = sel.getAttribute('data-id');
+  var row = document.querySelector('tr[data-id="' + id + '"]');
+  if (row) row.setAttribute('data-status', sel.value);
+  markTriageDirty();
+}
+
+/* ── DIRTY STATE — shows Carbon inline warning notification ── */
+function markTriageDirty() {
+  var warn = document.getElementById('triage-warning');
+  if (warn) warn.classList.add('visible');
+}
+
+/* ── FILTER SECTION TABLE (used by all three finding section tables) ── */
+function filterSectionTable(input, sectionId) {
+  var term = input.value.toLowerCase();
+  var section = document.getElementById(sectionId);
+  if (!section) return;
+  section.querySelectorAll('tbody tr[data-id]').forEach(function(row) {
+    var text = row.textContent.toLowerCase();
+    row.style.display = (!term || text.indexOf(term) !== -1) ? '' : 'none';
+  });
+}
+
+/* ── ACCORDION ── */
+function toggleAccordion(bodyId) {
+  var body = document.getElementById(bodyId);
+  if (!body) return;
+  var isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  var btn = body.previousElementSibling;
+  if (btn) btn.setAttribute('aria-expanded', String(!isOpen));
+  var indicator = btn ? btn.querySelector('.accordion-indicator') : null;
+  if (indicator) indicator.textContent = isOpen ? '▶' : '▼';
+}
+
+/* ── COPY TRIAGE JSON (reads from all three finding-table tables) ── */
+function copyTriageJSON() {
+  var rows = document.querySelectorAll('.finding-table tbody tr[data-id]');
+  var findings = [];
+  rows.forEach(function(row) {
+    var id      = row.getAttribute('data-id');
+    var sel     = row.querySelector('.triage-select[data-id="' + id + '"]');
+    var inp     = row.querySelector('.triage-rationale[data-id="' + id + '"]');
+    var titleEl = row.querySelector('.finding-title-link');
+    findings.push({
+      id:        id,
+      title:     titleEl ? titleEl.textContent.trim() : '',
+      severity:  row.getAttribute('data-severity') || '',
+      category:  row.getAttribute('data-category') || '',
+      screen:    row.getAttribute('data-screen')   || '',
+      status:    sel  ? sel.value  : 'unreviewed',
+      rationale: inp  ? inp.value.trim() : ''
+    });
+  });
+  var payload = {
+    schema_version: '1.0',
+    report_slug:    document.title.replace(/^UX Review Report — /, '').replace(/\s+/g, '-').toLowerCase(),
+    screen:         (findings[0] || {}).screen || '',
+    figma_node_id:  (document.querySelector('meta[name="figma-node-id"]') || {}).content || null,
+    exported_at:    new Date().toISOString(),
+    findings:       findings
+  };
+  var json = JSON.stringify(payload, null, 2);
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(json).then(function() {
+      _flashCopyBtn();
+    }).catch(function() {
+      _fallbackCopy(json);
+    });
+  } else {
+    _fallbackCopy(json);
+  }
+  var warn = document.getElementById('triage-warning');
+  if (warn) warn.classList.remove('visible');
+}
+
+function _flashCopyBtn() {
+  var btn = document.getElementById('copy-triage-btn');
+  if (!btn) return;
+  btn.textContent = '✓ Copied!';
+  btn.classList.add('copied');
+  setTimeout(function() {
+    btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M28,10H22V4a2,2,0,0,0-2-2H4A2,2,0,0,0,2,4V20a2,2,0,0,0,2,2h6v6a2,2,0,0,0,2,2H28a2,2,0,0,0,2-2V12A2,2,0,0,0,28,10ZM4,20V4H20v6H12a2,2,0,0,0-2,2V20Zm24,10H12V12H28Z"/></svg> Copy Triage JSON';
+    btn.classList.remove('copied');
+  }, 2000);
+}
+
+function _fallbackCopy(text) {
+  var ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  try { document.execCommand('copy'); _flashCopyBtn(); } catch (e) {}
+  document.body.removeChild(ta);
+}
+</script>
+</body>
+</html>
