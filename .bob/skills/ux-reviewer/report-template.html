@@ -25,6 +25,8 @@ a:hover { text-decoration: underline; }
 .pill-n  { background:#f4f4f4; border-color:#8d8d8d; color:#6f6f6f; }
 .pill-i  { background:#edf5ff; border-color:#0f62fe; color:#0043ce; }
 .pill-w  { background:#f6f2ff; border-color:#8a3ffc; color:#6929c4; }
+.pill-s  { background:#f4f4f4; border-color:#6f6f6f; color:#525252; }
+.pill-u  { background:#fff8e1; border-color:#f1620d; color:#b5430a; }
 
 /* CARBON TAG — used for finding ID badges */
 .ctag { display: inline-flex; align-items: center; font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; padding: 0 8px; height: 20px; border-radius: 24px; white-space: nowrap; flex-shrink: 0; }
@@ -77,6 +79,12 @@ a:hover { text-decoration: underline; }
 
 /* ACCEPTED UI GAPS */
 .gaps-section { background: #fff8e1; border-left: 4px solid #f1620d; padding: 24px 28px; margin-bottom: 2px; }
+
+/* SCOPE EXCLUSIONS */
+.scope-exclusions-section { background: #f4f4f4; border-left: 4px solid #8d8d8d; padding: 16px 28px; margin-bottom: 2px; }
+
+/* NOTED DRIFTS ACCORDION — same wrapper as .accordion */
+/* UNVERIFIED COMPONENTS ACCORDION — same wrapper as .accordion */
 
 /* NOTES */
 .ceil { background: #fff8e1; border: 1px solid #f1620d; padding: 10px 14px; font-size: 12px; color: #3d3d3d; margin-top: 14px; line-height: 1.6; }
@@ -259,13 +267,14 @@ a:hover { text-decoration: underline; }
   <!-- OVERALL VIEW (default active) -->
   <div class="view-panel active" id="view-overall">
     <div style="padding: 28px 28px 0;">
-      <!-- A. SUMMARY -->
-      <!-- B. CARBON VIOLATIONS (always) -->
-      <!-- C. IMPLEMENTATION GAPS (only when 2 inputs provided) -->
-      <!-- D. BOTH (only when 2 inputs AND overlap exists) -->
-      <!-- E. ACCEPTED UI GAPS -->
+      <!-- A. DESIGN GAPS (#section-design-gaps — always) -->
+      <!-- B. DEVELOPMENT GAPS (#section-development-gaps — only when 2 inputs provided) -->
+      <!-- C. ACCEPTED UI GAPS (.gaps-section — always) -->
     </div>
   </div>
+
+  <!-- NOTED DRIFTS ACCORDION (#noted-drifts-accordion — outside view panels) -->
+  <!-- UNVERIFIED COMPONENTS ACCORDION (#unverified-accordion — outside view panels; omit when 0 unverified) -->
 
   <!-- LEGEND ACCORDION (outside view panels, always at bottom) -->
   <div class="accordion" id="legend-accordion" style="margin-top:8px">
@@ -370,7 +379,7 @@ function toggleAccordion(bodyId) {
   if (indicator) indicator.textContent = isOpen ? '▶' : '▼';
 }
 
-/* ── COPY TRIAGE JSON (reads from all three finding-table tables) ── */
+/* ── COPY TRIAGE JSON (reads from both finding-table tables: #table-design-gaps and #table-development-gaps) ── */
 function copyTriageJSON() {
   var rows = document.querySelectorAll('.finding-table tbody tr[data-id]');
   var findings = [];

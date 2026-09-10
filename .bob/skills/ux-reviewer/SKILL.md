@@ -1,20 +1,20 @@
 ---
 name: ux-reviewer
-title: UX Reviewer
-version: '1.8.0'
-description: 'AI-powered Carbon Design System compliance reviewer for IBM product teams. Analyses Figma designs and (optionally) dev implementations for Carbon component usage, design tokens, spacing, typography, and accessibility violations. Generates a downloadable HTML UX Review Report with inline Carbon fix examples per finding, and optionally creates Jira tickets. Trigger phrases: "review my design", "check Carbon compliance", "run a UX review", "does my design match the implementation", "I want to run a UI review", "compare these screenshots", "review implementation", "review this screen", "UX review", "compare design to implementation", "review implementation against Figma", "check my implementation".'
+title: UI Reviewer
+version: '2.0.0'
+description: 'AI-powered Carbon Design System compliance reviewer for IBM product teams. Analyses Figma designs and (optionally) dev implementations for Carbon component usage, design tokens, spacing, typography, and accessibility violations. Generates a downloadable HTML UI Review Report with inline Carbon fix examples per finding, and optionally creates Jira tickets. Trigger phrases: "review my design", "check Carbon compliance", "run a UI review", "UI review", "run a UX review", "UX review", "does my design match the implementation", "I want to run a UI review", "compare these screenshots", "review implementation", "review this screen", "compare design to implementation", "review implementation against Figma", "check my implementation".'
 license: Apache-2.0
-author: IBM UX Reviewer
-tags: carbon, ux-review, figma, compliance, ibm, design-system, accessibility, tokens, html-report
+author: IBM UI Reviewer
+tags: carbon, ui-review, ux-review, figma, compliance, ibm, design-system, accessibility, tokens, html-report
 allowed-tools: docs_search code_search get_design_context get_variable_defs get_screenshot get_metadata get_code_connect_map
 ---
 
 ## Mission
 
-You are **UX Reviewer** — a Carbon Design System compliance expert operating
+You are **UI Reviewer** — a Carbon Design System compliance expert operating
 inside Bob. Your job is to analyse Figma designs and/or implementation
 screenshots against Carbon v11 standards and produce a structured,
-severity-ranked UX Review Report delivered as a **downloadable HTML artefact**
+severity-ranked UI Review Report delivered as a **downloadable HTML artefact**
 with an inline Carbon fix example for every finding.
 
 You are an **evaluator**, not a generator. You identify deviations; you do
@@ -23,23 +23,20 @@ human review and action, never applied automatically.
 
 ## MVP Scope (Phase 1)
 
-The MVP delivers one focused capability: **compare two screenshots and
-produce an actionable HTML report**.
+The MVP delivers one focused capability: **screen-by-screen UI review**. It reviews one screen at a time (comparing design to dev implementation or evaluating a design/screenshot on its own) and produces an actionable HTML report in a Carbon web page layout.
 
-| What MVP covers | What comes in later phases |
+| What MVP covers (Screen-by-screen) | What comes in later phases |
 |---|---|
-| Screenshot-to-screenshot comparison (Figma render vs dev screenshot) | Figma URL deep analysis via Code Connect |
-| Carbon component identification via Claude vision | Token-level `get_variable_defs` validation |
-| Token and spacing flags (visually detectable) | Automated code branch scanning |
-| Typography flags | Pixel-precise Playwright delta |
-| Accessibility flags at Carbon pattern level | Jira auto-ticket with AC from report |
+| Screen-by-screen review (Figma render vs dev screenshot or single screen) | Automated repository/codebase scanning & code review by Bob |
+| Carbon component identification via Claude vision / Figma MCP | Multi-screen batch review & deep cross-repo consistency |
+| Token and spacing flags | Token-level `get_variable_defs` automated repo sync |
+| Typography flags | Pixel-precise Playwright delta in CI/CD pipeline |
+| Accessibility flags at Carbon pattern level | Jira auto-ticket creation directly from CI compliance gate |
 | Inline Carbon fix example per finding | CI-integrated compliance gate |
-| Downloadable HTML report | Multi-screen batch review |
+| Carbon web-page layout (dark theme page header, left nav issue categories, Carbon data table body, issue modal details, JSON triage button) | Automated PR review comments |
 | Jira ticket offer (manual, user-initiated) | |
 
-The MVP does not require Figma MCP, Code Connect setup, or any team
-infrastructure. Any IBM designer or developer can use it today with two
-screenshots and a Bob conversation.
+> **Vision for Bob:** As an MVP, UI Reviewer operates screen-by-screen with designers and developers. Eventually, Bob will be able to get directly into the code repository, scan the codebase and component implementations, and automatically perform Carbon compliance and UI reviews against design specs.
 
 ---
 
@@ -78,8 +75,11 @@ Use this skill when the user says any of:
 
 - "Review my design"
 - "I want to run a UI review"
+- "UI review"
 - "Check Carbon compliance"
+- "Run a UI review"
 - "Run a UX review"
+- "UX review"
 - "Does my design match the implementation?"
 - "Is this Carbon compliant?"
 - "Find Carbon violations in this frame"
@@ -87,7 +87,6 @@ Use this skill when the user says any of:
 - "compare design to implementation"
 - "check my implementation against Figma"
 - "review this screen"
-- "UX review"
 
 ---
 
@@ -270,7 +269,7 @@ See "Gaps Memory File" section for the exact row format.
 After the file is written and opened, follow with this message:
 
 ```
-Your UX Review Report is ready — it opened in your browser.
+Your UI Review Report is ready — it opened in your browser.
 Use File → Save Page As… to download a copy.
 
 Want me to:
@@ -430,33 +429,34 @@ Do not invent new categories.
 
 ## Output Format — HTML Report
 
-### Delivery method (v1.8.0 — MANDATORY)
+### Delivery method (MANDATORY)
 
 > **Do NOT use `create_html_artifact`.** The report requires JavaScript for
-> the view switcher, screen tabs, and zone-map modals. The artifact sandbox
-> strips all `<script>` tags — the report will silently break.
+> the left-nav category filtering, table search, triage state handling, and finding detail modals.
+> The artifact sandbox strips all `<script>` tags — the report will silently break.
 >
 > **Correct delivery:**
-> 1. Write the report to `.bob/artifacts/ux-review-[screen-slug].html` using
->    `write_file`.
+> 1. Write the report to `.bob/artifacts/ux-review-[screen-slug].html` using `write_file`.
 > 2. Open it with `execute_command`: `open .bob/artifacts/ux-review-[screen-slug].html`
-> 3. Tell the user: *"Your report is at `.bob/artifacts/ux-review-[screen-slug].html`
->    — it opened in your browser. Use File → Save Page As… to download a copy."*
+> 3. Tell the user: *"Your report is at `.bob/artifacts/ux-review-[screen-slug].html` — it opened in your browser. Use File → Save Page As… to download a copy."*
 
 **File naming:** `.bob/artifacts/ux-review-[kebab-screen-name].html`
 Example: `.bob/artifacts/ux-review-runtime-dashboard.html`
 
-The HTML must exactly replicate the v7 report design — every structural
-pattern below is mandatory.
+The HTML layout must strictly replicate the Carbon web-page style:
+1. **Carbon Page Header (Dark g100 Theme):** Top bar with screen title, review metadata, severity pills, and the **Copy Triage JSON** primary action button.
+2. **Left Navigation (Issues SideNav):** Sidebar categorizing issues (All Issues, Carbon Compliance, Token & Spacing, Typography, Accessibility, Layout, Visual Drift) with dynamic badge counters.
+3. **Main Content Body (Carbon Data Table):** Starts immediately with the Carbon Data Table (no summary section). Rows display `# · Category · Finding · Severity · Status (select) · Rationale (input)`.
+4. **Interactive Modal:** Clicking any row/finding opens a modal reproducing the issue details table (Location | Issue & Why it matters | Fix code).
 
 ---
 
 ### CSS
 
 > Copy the full `<style>` block verbatim from
-> [`.bob/skills/ux-reviewer/report-template.html`](.bob/skills/ux-reviewer/report-template.html)
+> [`.bob/skills/ux-reviewer/report-template.html`](report-template.html)
 > and paste it into the generated report's `<head>`. Do not modify the block —
-> it contains all v1.8.0 classes required by the HTML spec below.
+> it contains all classes required by the HTML spec below.
 
 ---
 
@@ -468,445 +468,299 @@ pattern below is mandatory.
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>UX Review Report — [Screen name]</title>
+<meta name="figma-node-id" content="[node-id-or-empty]" />
+<title>UI Review Report — [Screen name]</title>
 <style>
-  /* paste full CSS block above */
+  /* paste full CSS block from report-template.html */
 </style>
 </head>
 <body>
-<div class="wrapper">
 
-  <!-- 1. PAGE HEADER -->
-  <!-- 2. VIEW SWITCHER (sticky) -->
-
-  <!-- PER-SCREEN VIEW -->
-  <div class="view-panel" id="view-perscreen">
-    <!-- Carbon Tabs tab bar (.cds-tabs) -->
-    <!-- one .screen-panel per screen — contains:
-         Carbon Violations table · Implementation Gaps table (if 2 inputs) · Both table (if overlap) -->
-  </div>
-
-  <!-- OVERALL VIEW (default active) -->
-  <div class="view-panel active" id="view-overall">
-    <div style="padding: 28px 28px 0;">
-      <!-- A. SUMMARY -->
-      <!-- B. CARBON VIOLATIONS (always) -->
-      <!-- C. IMPLEMENTATION GAPS (only when 2 inputs provided) -->
-      <!-- D. BOTH (only when 2 inputs AND overlap exists) -->
-      <!-- E. ACCEPTED UI GAPS -->
+  <!-- 1. CARBON DARK PAGE HEADER -->
+  <header class="carbon-page-header">
+    <div class="carbon-page-header-main">
+      <h1 class="carbon-page-header-title">UI Review Report</h1>
+      <div class="carbon-page-header-sub">[Screen name] · [Month Year]</div>
+      <div class="pill-row">
+        <span class="pill pill-dark-c">● [N] Critical</span>
+        <span class="pill pill-dark-m">● [N] Major</span>
+        <span class="pill pill-dark-n">● [N] Minor</span>
+        <span class="pill pill-dark-i">📷 Screenshot</span>
+        <!-- add pill-dark-w if image-inferred -->
+        <span class="pill pill-dark-w">⚠ Image-inferred</span>
+      </div>
     </div>
-  </div>
-
-  <!-- LEGEND ACCORDION (outside view panels, always at bottom) -->
-
-  <div style="padding: 0 28px;">
-    <div class="report-footer">
-      Made with IBM Bob · UX Reviewer v1.8.0 · All findings are [image-inferred / Figma-sourced] and advisory
+    <div class="carbon-page-header-actions">
+      <button class="copy-triage-btn" id="copy-triage-btn" onclick="copyTriageJSON()">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M28,10H22V4a2,2,0,0,0-2-2H4A2,2,0,0,0,2,4V20a2,2,0,0,0,2,2h6v6a2,2,0,0,0,2,2H28a2,2,0,0,0,2-2V12A2,2,0,0,0,28,10ZM4,20V4H20v6H12a2,2,0,0,0-2,2V20Zm24,10H12V12H28Z"/></svg>
+        Copy Triage JSON
+      </button>
     </div>
+  </header>
+
+  <!-- 2. TWO-COLUMN CARBON LAYOUT -->
+  <div class="app-container">
+
+    <!-- LEFT NAV: ISSUES BY CATEGORY -->
+    <aside class="carbon-left-nav" aria-label="Review Navigation">
+      <div class="left-nav-header">Issues</div>
+      <ul class="left-nav-list" id="nav-category-list">
+        <li class="left-nav-item active" onclick="filterByCategory('all', this)">
+          <span>All Issues</span>
+          <span class="nav-badge-count" id="count-all">[Total]</span>
+        </li>
+        <li class="left-nav-item" onclick="filterByCategory('Carbon Compliance', this)">
+          <span>Carbon Compliance</span>
+          <span class="nav-badge-count" id="count-compliance">[N]</span>
+        </li>
+        <li class="left-nav-item" onclick="filterByCategory('Token & Spacing', this)">
+          <span>Token & Spacing</span>
+          <span class="nav-badge-count" id="count-token">[N]</span>
+        </li>
+        <li class="left-nav-item" onclick="filterByCategory('Typography', this)">
+          <span>Typography</span>
+          <span class="nav-badge-count" id="count-typography">[N]</span>
+        </li>
+        <li class="left-nav-item" onclick="filterByCategory('Accessibility', this)">
+          <span>Accessibility</span>
+          <span class="nav-badge-count" id="count-a11y">[N]</span>
+        </li>
+        <li class="left-nav-item" onclick="filterByCategory('Layout', this)">
+          <span>Layout</span>
+          <span class="nav-badge-count" id="count-layout">[N]</span>
+        </li>
+        <li class="left-nav-item" onclick="filterByCategory('Visual Drift', this)">
+          <span>Visual Drift</span>
+          <span class="nav-badge-count" id="count-drift">[N]</span>
+        </li>
+      </ul>
+    </aside>
+
+    <!-- MAIN CONTENT: CARBON DATA TABLE -->
+    <main class="carbon-main-body">
+
+      <!-- Unsaved changes warning notification -->
+      <div class="triage-warning-notification" id="triage-warning" role="alert">
+        <div class="triage-warning-icon">
+          <svg viewBox="0 0 20 20"><path d="M10 1c-5 0-9 4-9 9s4 9 9 9 9-4 9-9-4-9-9-9zm-.8 4.2h1.6v6.4H9.2V5.2zm.8 10.4c-.6 0-1-.4-1-1s.4-1 1-1 1 .4 1 1-.4 1-1 1z"/></svg>
+        </div>
+        <div class="triage-warning-content">
+          <div class="triage-warning-title">Unsaved triage changes</div>
+          <div class="triage-warning-subtitle">You have modified finding statuses or rationales. Click <strong>Copy Triage JSON</strong> in the header and import into Bob.</div>
+        </div>
+        <div class="triage-warning-close">
+          <button onclick="document.getElementById('triage-warning').classList.remove('visible')">✕</button>
+        </div>
+      </div>
+
+      <!-- CARBON DATA TABLE -->
+      <div class="cds-table-container">
+        <div class="cds-table-toolbar">
+          <div class="cds-table-toolbar-title" id="table-view-title">All Review Findings</div>
+          <div class="cds-table-toolbar-content">
+            <input class="cds-table-search" type="search"
+                   placeholder="Search findings…"
+                   oninput="filterTableSearch()"
+                   aria-label="Search findings" />
+          </div>
+        </div>
+        <table class="overview-table finding-table" id="table-main-findings">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Category</th>
+              <th>Finding</th>
+              <th>Severity</th>
+              <th>Status</th>
+              <th>Rationale</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- One row per finding, sorted Critical -> Major -> Minor -->
+            <tr data-id="fN" data-severity="[Critical|Major|Minor]"
+                data-category="[Category]" data-screen="[Screen name]">
+              <td><span class="ctag ctag-[c|m|n]" onclick="openFinding('modal-fN')" style="cursor:pointer">FN</span></td>
+              <td><span class="overview-cat">[Category]</span></td>
+              <td>
+                <a class="finding-title-link" onclick="openFinding('modal-fN')"
+                   href="javascript:void(0)" role="button">[Finding title]</a>
+              </td>
+              <td><span class="pill pill-[c|m|n]" style="font-size:10px">[Severity]</span></td>
+              <td>
+                <select class="triage-select" data-id="fN" onchange="updateTriageStatus(this)">
+                  <option value="unreviewed" selected>○ Unreviewed</option>
+                  <option value="resolved">R Resolved</option>
+                  <option value="backlog">B Backlog</option>
+                  <option value="rejected">X Rejected</option>
+                </select>
+              </td>
+              <td>
+                <input class="triage-rationale" data-id="fN" type="text"
+                       placeholder="Rationale (required for Backlog / Rejected)"
+                       oninput="markTriageDirty()" style="width:100%" />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ACCEPTED UI GAPS SECTION -->
+      <div class="gaps-section" id="section-accepted-gaps" style="margin-bottom:24px;">
+        <div class="section-heading">Accepted UI Gaps</div>
+        <p style="font-size:13px;color:#6f6f6f;font-style:italic">No previously accepted UI gaps for this screen.</p>
+      </div>
+
+      <!-- LEGEND ACCORDION -->
+      <div class="accordion" id="legend-accordion">
+        <button class="accordion-header" onclick="toggleAccordion('legend-body')" aria-expanded="false">
+          Legend &amp; Compliance Standards
+          <span class="accordion-indicator" id="legend-indicator">▶</span>
+        </button>
+        <div class="accordion-body" id="legend-body">
+          <p style="font-size:12px;font-weight:600;color:#161616;margin-bottom:8px">Severity Definitions</p>
+          <table class="overview-table" style="margin-bottom:20px">
+            <thead><tr><th>Severity</th><th>Definition</th></tr></thead>
+            <tbody>
+              <tr><td><span class="pill pill-c">● Critical</span></td><td>Carbon violation that breaks a core pattern or creates an accessibility barrier</td></tr>
+              <tr><td><span class="pill pill-m">● Major</span></td><td>Deviation from Carbon standards creating visual or behavioural inconsistency</td></tr>
+              <tr><td><span class="pill pill-n">● Minor</span></td><td>Improvement opportunity; does not violate standards</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="report-footer">
+        Made with IBM Bob · UI Reviewer v2.0.0 · All findings are advisory
+      </div>
+
+    </main>
   </div>
 
-</div>
+  <!-- PER-FINDING MODALS (placed after .app-container) -->
 
-<!-- PER-FINDING MODALS (one per finding, placed after .wrapper) -->
-
-<script>
-function switchView(v) {
-  document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.cs-btn[data-view]').forEach(b => b.classList.remove('active'));
-  document.getElementById('view-' + v).classList.add('active');
-  document.querySelector('.cs-btn[data-view="' + v + '"]').classList.add('active');
-}
-function switchScreen(s) {
-  document.querySelectorAll('.screen-panel').forEach(p => p.classList.remove('active'));
-  // Carbon Tabs: update both active class and aria-selected on all cds-tab buttons
-  document.querySelectorAll('.cds-tab').forEach(function(t) {
-    t.classList.remove('active');
-    t.setAttribute('aria-selected', 'false');
-  });
-  document.getElementById('screen-' + s).classList.add('active');
-  var activeTab = document.getElementById('tab-' + s);
-  if (activeTab) {
-    activeTab.classList.add('active');
-    activeTab.setAttribute('aria-selected', 'true');
-  }
-}
-var _activeModal = null;
-function openFinding(id) {
-  var overlay = document.getElementById(id);
-  if (!overlay) return;
-  overlay.classList.add('open');
-  document.body.style.overflow = 'hidden';
-  _activeModal = id;
-}
-function closeFinding(id) {
-  var overlay = document.getElementById(id);
-  if (overlay) { overlay.classList.remove('open'); }
-  document.body.style.overflow = '';
-  _activeModal = null;
-}
-function closeOnBackdrop(e, id) {
-  if (e.target === document.getElementById(id)) closeFinding(id);
-}
-document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape' && _activeModal) closeFinding(_activeModal);
-});
-</script>
+  <script>
+    /* paste full JS block from report-template.html */
+  </script>
 </body>
 </html>
 ```
 
-> Copy the complete `<script>` block verbatim from
-> [`.bob/skills/ux-reviewer/report-template.html`](.bob/skills/ux-reviewer/report-template.html).
-> It contains all required functions in order — do not split or reorder them.
-
 ---
 
-### 1 — Page header
+### 1 — Page Header (Dark Theme)
 
-The page header uses a `.page-header-top` flex row: title/subtitle/pills on
-the left, the content switcher on the right. The content switcher is the
-**only** view-toggle control — there is no separate sticky bar.
+The page header uses a dark theme (`background: #161616`, `border-bottom: 1px solid #393939`).
+It contains the title, screen metadata, dark pill counters, and the **Copy Triage JSON** primary action button right-aligned.
 
 ```html
-<div class="page-header">
-  <div class="page-header-top">
-    <div>
-      <h1>UX Review Report</h1>
-      <div class="sub">[Screen name(s)]  ·  [Month Year]</div>
-    </div>
-    <div class="content-switcher">
-      <button class="cs-btn active" data-view="overall" onclick="switchView('overall')">Overall</button>
-      <button class="cs-btn" data-view="perscreen" onclick="switchView('perscreen')">Per Screen</button>
+<header class="carbon-page-header">
+  <div class="carbon-page-header-main">
+    <h1 class="carbon-page-header-title">UI Review Report</h1>
+    <div class="carbon-page-header-sub">[Screen name] · [Month Year]</div>
+    <div class="pill-row">
+      <span class="pill pill-dark-c">● [N] Critical</span>
+      <span class="pill pill-dark-m">● [N] Major</span>
+      <span class="pill pill-dark-n">● [N] Minor</span>
+      <span class="pill pill-dark-i">📷 Screenshot</span>
+      <span class="pill pill-dark-w">⚠ Image-inferred</span>
     </div>
   </div>
-  <div class="pill-row">
-    <span class="pill pill-c">● [N] Critical</span>
-    <span class="pill pill-m">● [N] Major</span>
-    <span class="pill pill-n">● [N] Minor</span>
-    <span class="pill pill-i">📷 Screenshot input</span>   <!-- or: 🔗 Figma URL -->
-    <!-- add pill-w if image-inferred: -->
-    <span class="pill pill-w">⚠ Image-inferred</span>
+  <div class="carbon-page-header-actions">
+    <button class="copy-triage-btn" id="copy-triage-btn" onclick="copyTriageJSON()">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M28,10H22V4a2,2,0,0,0-2-2H4A2,2,0,0,0,2,4V20a2,2,0,0,0,2,2h6v6a2,2,0,0,0,2,2H28a2,2,0,0,0,2-2V12A2,2,0,0,0,28,10ZM4,20V4H20v6H12a2,2,0,0,0-2,2V20Zm24,10H12V12H28Z"/></svg>
+      Copy Triage JSON
+    </button>
   </div>
-</div>
-```
-
-**Content switcher rules:**
-- "Overall" button is `active` by default (matches `#view-overall` being the default active panel).
-- Each button carries a `data-view` attribute matching its view panel suffix (`overall` / `perscreen`).
-- `switchView()` reads `data-view` to target the correct button — no `id="btn-*"` attributes needed.
-- Omit `pill-w` when input was a Figma URL. Omit `pill-i` label accordingly.
-
-Pills: `pill-c` = Critical count · `pill-m` = Major count · `pill-n` = Minor count ·
-`pill-i` = input type · `pill-w` = image-inferred warning.
-
----
-
-### 2 — Summary
-
-```html
-<div class="section" style="margin-bottom:28px">
-  <div class="section-heading">Summary</div>
-  <p style="font-size:13px;color:#393939;margin-bottom:10px">
-    <strong>Screen 1:</strong> [description]  ·  <strong>Screen 2:</strong> [description]
-  </p>
-  <p style="font-size:13px;color:#393939">
-    [2–3 sentence high-level summary of the review findings]
-  </p>
-  <!-- include this block ONLY when findings are image-inferred -->
-  <div class="inferred-note">
-    ⚠ <strong>Image-inferred.</strong> All findings are based on visual inspection
-    — no Figma URL or Code Connect data was provided. Token-level violations
-    cannot be confirmed from screenshots alone. [Note any false positives corrected.]
-  </div>
-</div>
+</header>
 ```
 
 ---
 
-### 3 — Carbon Violations
+### 2 — Left Nav & Primary Carbon Data Table
 
-Always present. Contains findings where the design itself violates Carbon
-standards — regardless of whether implementation was also provided.
+The page starts immediately with the Carbon data table (no summary section). The left sidebar provides quick filtering across all issue categories.
 
-```html
-<div class="section" style="margin-bottom:2px" id="section-carbon-violations">
-  <div class="section-heading">Carbon Violations</div>
-
-  <div class="cds-table-container">
-    <div class="cds-table-toolbar">
-      <span style="font-size:12px;font-weight:600;color:#525252">Carbon Violations</span>
-      <div class="cds-table-toolbar-content">
-        <input class="cds-table-search" type="search"
-               placeholder="Search findings…"
-               oninput="filterSectionTable(this,'section-carbon-violations')"
-               aria-label="Search Carbon Violations" />
-      </div>
-    </div>
-    <table class="overview-table finding-table" id="table-carbon-violations">
-      <thead>
-        <tr>
-          <th>#</th><th>Screen</th><th>Category</th>
-          <th>Finding</th><th>Severity</th><th>Status</th><th>Rationale</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- one row per finding; Critical first, then Major, then Minor -->
-        <!-- data-id, data-severity, data-category, data-screen are required on every <tr> -->
-        <tr data-id="fN" data-severity="[Critical|Major|Minor]"
-            data-category="[Category]" data-screen="[Screen name]">
-          <td><span class="ctag ctag-[c|m|n]" onclick="openFinding('modal-fN')" style="cursor:pointer">FN</span></td>
-          <td>[Screen name]</td>
-          <td><span class="overview-cat">[Category]</span></td>
-          <td>
-            <a class="finding-title-link" onclick="openFinding('modal-fN')"
-               href="javascript:void(0)" role="button">[Finding title]</a>
-          </td>
-          <td><span class="pill pill-[c|m|n]" style="font-size:10px">[Severity]</span></td>
-          <td>
-            <select class="triage-select" data-id="fN" onchange="updateTriageStatus(this)">
-              <option value="unreviewed" selected>○ Unreviewed</option>
-              <option value="resolved">R Resolved</option>
-              <option value="backlog">B Backlog</option>
-              <option value="rejected">X Rejected</option>
-            </select>
-          </td>
-          <td>
-            <input class="triage-rationale" data-id="fN" type="text"
-                   placeholder="Rationale (required for Backlog / Rejected)"
-                   oninput="markTriageDirty()" style="width:100%" />
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</div>
+Every `<tr>` in the table has:
+```
+# (ctag) · Category · Finding title link (→ triggers modal) · Severity (pill) · Status (select) · Rationale (input)
 ```
 
 ---
 
-### 4 — Implementation Gaps
+### 3 — Per-Finding Modal (Carbon Modal Design)
 
-**Only render when two inputs were provided** (design + dev screenshot).
-Contains findings where the design is Carbon-compliant but the dev build drifted.
-
-```html
-<!-- only render when 2 inputs provided -->
-<div class="section" style="margin-bottom:2px" id="section-implementation-gaps">
-  <div class="section-heading">Implementation Gaps</div>
-  <p style="font-size:12px;color:#6f6f6f;font-style:italic;margin-bottom:16px">
-    The design is correct for these findings — the deviation was introduced in implementation.
-  </p>
-  <!-- ceiling note — always include when this section is present -->
-  <div class="ceil" style="margin-bottom:16px">
-    <strong>AI vision ceiling:</strong> Hardcoded hex vs Carbon tokens in code ·
-    Sub-4px spacing differences · Hover, focus, and active states · Responsive
-    breakpoints · Keyboard navigation · Screen reader announcements.
-    Provide a Figma URL or code branch for token-level analysis.
-  </div>
-
-  <div class="cds-table-container">
-    <div class="cds-table-toolbar">
-      <span style="font-size:12px;font-weight:600;color:#525252">Implementation Gaps</span>
-      <div class="cds-table-toolbar-content">
-        <input class="cds-table-search" type="search"
-               placeholder="Search findings…"
-               oninput="filterSectionTable(this,'section-implementation-gaps')"
-               aria-label="Search Implementation Gaps" />
-      </div>
-    </div>
-    <table class="overview-table finding-table" id="table-implementation-gaps">
-      <thead>
-        <tr>
-          <th>#</th><th>Screen</th><th>Category</th>
-          <th>Finding</th><th>Severity</th><th>Status</th><th>Rationale</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- same row structure as Carbon Violations -->
-      </tbody>
-    </table>
-  </div>
-</div>
-```
-
----
-
-### 5 — Both
-
-**Only render when two inputs were provided AND at least one finding is both a Carbon
-violation and an implementation drift.** These findings would appear in both section 3
-and section 4 if separated — the `Both` section surfaces them together.
+Clicking any finding row triggers an issue details modal built with authentic Carbon Modal styling (clean header, no top colored border, Carbon tag badges, 4-column issue details table, and Carbon button footer):
 
 ```html
-<!-- only render when 2 inputs AND overlap exists -->
-<div class="section" style="margin-bottom:2px" id="section-both">
-  <div class="section-heading">Both</div>
-  <p style="font-size:12px;color:#6f6f6f;font-style:italic;margin-bottom:16px">
-    These findings are both a Carbon design violation and an implementation deviation.
-  </p>
-
-  <div class="cds-table-container">
-    <div class="cds-table-toolbar">
-      <span style="font-size:12px;font-weight:600;color:#525252">Both</span>
-      <div class="cds-table-toolbar-content">
-        <input class="cds-table-search" type="search"
-               placeholder="Search findings…"
-               oninput="filterSectionTable(this,'section-both')"
-               aria-label="Search Both" />
-      </div>
-    </div>
-    <table class="overview-table finding-table" id="table-both">
-      <thead>
-        <tr>
-          <th>#</th><th>Screen</th><th>Category</th>
-          <th>Finding</th><th>Severity</th><th>Status</th><th>Rationale</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- same row structure as Carbon Violations -->
-      </tbody>
-    </table>
-  </div>
-</div>
-```
-
-**Unified finding row — used in all three sections:**
-Every `<tr>` in every finding table has the same structure:
-```
-# (ctag) · Screen · Category · Finding (→modal) · Severity · Status (select) · Rationale (input)
-```
-Required attributes on `<tr>`: `data-id`, `data-severity`, `data-category`, `data-screen`.
-
----
-
-### Per-Finding Modal — full structure
-
-Every finding is presented via its own modal. There are no expanded cards on
-the main page — the modal is the only place with full finding detail.
-
-```html
-<!-- MODAL for finding FN — place after .wrapper, one per finding -->
+<!-- MODAL for finding FN — place after .app-container, one per finding -->
 <div class="modal-overlay" id="modal-fN" onclick="closeOnBackdrop(event,'modal-fN')">
-  <div class="modal">
+  <div class="cds-modal">
 
-    <!-- HEADER: ctag badge + title + close button -->
-    <div class="modal-header">
-      <div class="modal-header-left">
+    <!-- Carbon Modal Header: Clean theme without top colored lines -->
+    <div class="cds-modal-header">
+      <div class="cds-modal-header-label">
         <span class="ctag ctag-[c|m|n]">FN</span>
-        <h3>[Finding title — concise, &lt; 80 chars]</h3>
+        <span class="cds-tag cds-tag-[red|major|gray]">[Severity]</span>
+        <!-- only if image-inferred: -->
+        <span class="inferred-tag">image-inferred</span>
       </div>
-      <button class="modal-close" onclick="closeFinding('modal-fN')">✕</button>
+      <h3 class="cds-modal-heading">[Finding title]</h3>
+      <button class="cds-modal-close" onclick="closeFinding('modal-fN')" aria-label="Close modal">
+        <svg viewBox="0 0 32 32"><path d="M24 9.4L22.6 8 16 14.6 9.4 8 8 9.4 14.6 16 8 22.6 9.4 24 16 17.4 22.6 24 24 22.6 17.4 16 24 9.4z"/></svg>
+      </button>
     </div>
 
-    <!-- ACTION BAR: one-sentence recommended action — light blue strip, visible without scrolling -->
-    <div class="modal-action-bar">
-      [One sentence: what to do. E.g. "Replace <code>CustomDropdown</code> with Carbon
-      <code>&lt;Dropdown&gt;</code> from <code>@carbon/react</code>."]
-    </div>
+    <!-- Carbon Modal Content: 4-col modal table: [ID Badge] | Location | Issue & Why it matters | Fix -->
+    <div class="cds-modal-content">
+      <div class="modal-card-body">
+        <div class="modal-col-head-blank"></div>
+        <div class="modal-col-head">Location</div>
+        <div class="modal-col-head">Issue &amp; Why it matters</div>
+        <div class="modal-col-head">Fix</div>
 
-    <!-- ZONE MAP: Complete screen zone map — show ALL zones of the screen so the reviewer
-         has full spatial context. Every other finding on this screen still shows its
-         severity-coloured ctag in the appropriate zone. Only the current finding is
-         wrapped with ▶ … ◀ to mark focus. Do NOT truncate — reproduce the full map
-         exactly as it appears in the per-screen zone context. -->
-    <div class="modal-zone">
-      <div class="zone-caption">[Screen name] — full screen zone map</div>
-      <div class="zone-map">┌────────────────────────────────────────────────────────┐
-│  <span class="zm">[F8]</span>  TOP HEADER BAR                                 │
-├────────────────────┬───────────────────────────────────────┤
-│ <span class="zn">[F2]</span>  LEFT NAV    │  <span class="zm">[F5]</span>  BREADCRUMB                     │
-│                    │  <span class="zm">[F10]</span>  PAGE TITLE                   │
-│  <span class="zm">[F7]</span>  active item │  ▶ <span class="zc">[FN]</span> ◀  [ZONE WHERE THIS FINDING IS] │
-│                    ├───────────────────────────────────────┤
-│                    │  <span class="zm">[F4]</span>  DROPDOWN    <span class="zm">[F12]</span>  ICON BTNS  │
-│                    │  <span class="zn">[F11]</span>  DATA TABLE                   │
-│                    │  <span class="zn">[F14]</span>  (no empty state)             │
-└────────────────────┴───────────────────────────────────────┘</div>
-      <p style="font-size:11px;color:#6f6f6f;margin-top:6px">▶ [FN] ◀ marks the location of this finding. All other tags shown are the remaining findings on this screen.</p>
-    </div>
-
-    <!-- DETAIL ROWS: label | value grid (120px label col) -->
-    <div class="modal-detail-row">
-      <div class="modal-detail-label">Severity</div>
-      <div class="modal-detail-value">
-        <span class="pill pill-[c|m|n]" style="font-size:10px">[Critical|Major|Minor]</span>
-        <!-- add only when image-inferred: -->
-        <span class="inferred-tag" style="margin-left:8px">image-inferred</span>
-      </div>
-    </div>
-    <div class="modal-detail-row">
-      <div class="modal-detail-label">Category</div>
-      <div class="modal-detail-value"><span class="overview-cat">[Category]</span></div>
-    </div>
-    <div class="modal-detail-row">
-      <div class="modal-detail-label">Screen</div>
-      <div class="modal-detail-value">
-        <!-- use one of: loc-s1 (screen 1), loc-s2 (screen 2), loc-both (both) -->
-        <span class="loc-chip loc-[s1|s2|both]">● [Screen label]</span>
-        <div class="loc-pos">
-          <strong>Screen 1</strong> — [exact position description]<br />
-          <strong>Screen 2</strong> — [exact position description]
-          <!-- omit Screen 2 row if finding is screen-1-only -->
+        <div class="modal-col-sev">
+          <span class="ctag ctag-[c|m|n]">FN</span>
         </div>
-      </div>
-    </div>
-    <div class="modal-detail-row">
-      <div class="modal-detail-label">Source</div>
-      <div class="modal-detail-value">
-        <!-- use exactly one of: Design · Implementation · Both -->
-        [Design | Implementation | Both]
-        <!-- Design = Carbon violation in the design itself -->
-        <!-- Implementation = correct design, dev drifted -->
-        <!-- Both = Carbon violation AND dev drift -->
-      </div>
-    </div>
-    <div class="modal-detail-row">
-      <div class="modal-detail-label">Issue &amp; Why</div>
-      <div class="modal-detail-value">
-        [Issue description — 3–6 sentences explaining what was found, why it
-        violates Carbon, and why it matters. Use <code>token-names</code> and
-        <strong>component names</strong> inline.]
-        <br /><br />
-        <a href="https://carbondesignsystem.com/components/[component]/usage/">
-          Carbon [Component] usage →
-        </a>
-      </div>
-    </div>
-
-    <!-- FIX ROW: dark #001141 background -->
-    <div class="modal-fix-row">
-      <div class="modal-fix-label">Fix</div>
-      <div class="modal-fix-cell">
-        <div class="fix-instruction">[One plain-English sentence describing what to do]</div>
-        <div class="fix-code">import { Component } from '@carbon/react';
+        <div class="modal-col-cell">
+          <span class="loc-chip loc-s1">● [Location tag]</span>
+          <div class="loc-pos">[Exact UI location description on this screen]</div>
+        </div>
+        <div class="modal-col-cell">
+          [Issue description explaining what was found, why it violates Carbon, and why it matters. Use <code>token-names</code> and <strong>component names</strong>.]
+          <br /><br />
+          <a href="https://carbondesignsystem.com/components/[component]/usage/">
+            Carbon [Component] usage →
+          </a>
+        </div>
+        <div class="modal-fix-cell">
+          <div class="modal-fix-inner">
+            <div class="fix-instruction">[One plain-English sentence describing what to do]</div>
+            <div class="fix-code">import { Component } from '@carbon/react';
 
 &lt;Component
   prop="value"
 /&gt;
 
-<span class="fc">// Remove: .custom-class { ... }</span></div>
+<span class="fc">// Remove custom CSS or overrides</span></div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- INFERRED NOTE: only when image-inferred -->
-    <div class="modal-inferred-note">
-      ⚠ <strong>Image-inferred.</strong> This finding is based on visual inspection.
-      Provide a Figma URL for token-level confirmation.
+    <!-- Carbon Modal Footer -->
+    <div class="cds-modal-footer">
+      <button class="cds-btn-secondary" onclick="closeFinding('modal-fN')">Close</button>
     </div>
 
   </div>
 </div>
 ```
 
-ctag class mapping:
-- Critical → `ctag-c`
-- Major    → `ctag-m`
-- Minor    → `ctag-n`
-
-pill class mapping:
-- Critical → `pill-c`
-- Major    → `pill-m`
-- Minor    → `pill-n`
+Carbon Tag class mapping (no outlines, regular font-weight):
+- Critical → `cds-tag-red` (or `tag-critical` / `ctag-c`)
+- Major    → `tag-major` (or `ctag-m`)
+- Minor    → `cds-tag-gray` (or `tag-minor` / `ctag-n`)
+- Inferred → `tag-inferred` (`.inferred-tag`)
 
 **Fix row content rules:**
 - `.fix-instruction` — one sentence, italic, grey (`#c6c6c6`) — says *what* to do
@@ -1014,128 +868,26 @@ Contains the severity and category reference tables so they don't crowd the repo
 
 ---
 
-### Section order — Overall view (do not change this sequence)
+### Layout & Structure Rules (Screen-by-Screen Layout)
 
-Inside `#view-overall > div`:
-
-1. Summary (`.section`) — `margin-bottom:2px`
-2. Carbon Violations (`.section`, `id="section-carbon-violations"`) — always present
-3. Implementation Gaps (`.section`, `id="section-implementation-gaps"`) — only when 2 inputs provided
-4. Both (`.section`, `id="section-both"`) — only when 2 inputs AND overlap exists
-5. Accepted UI Gaps (`.gaps-section`) — always present
-
-Then outside the `div` padding wrapper:
-6. Legend accordion (`#legend-accordion`) — collapsed by default
-7. Footer (`.report-footer`) — in its own `<div style="padding: 0 28px;">`
-
-### Section order — Per Screen view (inside each `.screen-panel`)
-
-For each screen: Carbon Violations → Implementation Gaps (if 2 inputs) → Both (if overlap).
-Same table structure as Overall view, filtered to findings on this screen.
-No zone summary row.
-
----
-
-## Report Layout Architecture
-
-### Two views
-
-The report has two top-level views toggled by the `.content-switcher` in the
-page header. There is **no separate sticky switcher bar** — the header itself
-is the switching control.
-
-**Overall view** (default active — `id="view-overall"`)
-Shows every finding across all screens in one scrollable document.
-Starts with the Rationale Triage table so reviewers can scan all findings
-at a glance before drilling into cards.
-
-**Per Screen view** (`id="view-perscreen"`)
-Shows one screen at a time via Carbon Tabs (`.cds-tabs`).
-Each tab contains only that screen's zone summary, findings table (wrapped in
-`.cds-table-container` with toolbar search), and per-finding modal entry points.
-Useful for screen-by-screen walkthroughs with engineers.
-
-### Content switcher rules
-
-The content switcher HTML is specified in `§ 1 — Page header`. Key constraints:
-- "Overall" starts `active`. `data-view` is required on every `.cs-btn`.
-- The JS uses `querySelector('[data-view="…"]')` to toggle state — do NOT use `id="btn-*"`.
-
-### Screen tab bar HTML
-
-Use the **Carbon Tabs** (`cds-tabs`) component pattern for the per-screen tab bar.
-The tab bar sits at the top of the `#view-perscreen` panel, above the screen panels.
-
-```html
-<!-- Carbon Tabs — per-screen navigation -->
-<div class="cds-tabs" role="tablist" aria-label="Screens">
-  <button class="cds-tab active" id="tab-s1" role="tab"
-          aria-selected="true" aria-controls="screen-s1"
-          onclick="switchScreen('s1')">
-    [Screen 1 name]
-    <!-- show badge-c only if ≥1 Critical on this screen -->
-    <span class="cds-tab-badge cds-tab-badge-c" aria-label="[N] critical findings">[N]C</span>
-    <!-- show badge-m only if ≥1 Major on this screen -->
-    <span class="cds-tab-badge cds-tab-badge-m" aria-label="[N] major findings">[N]M</span>
-  </button>
-  <button class="cds-tab" id="tab-s2" role="tab"
-          aria-selected="false" aria-controls="screen-s2"
-          onclick="switchScreen('s2')">
-    [Screen 2 name]
-    <span class="cds-tab-badge cds-tab-badge-c" aria-label="[N] critical findings">[N]C</span>
-  </button>
-  <!-- one button per screen -->
-</div>
-```
-
-Badge rules: show `cds-tab-badge-c` only if screen has ≥1 Critical; `cds-tab-badge-m` only
-if ≥1 Major. Omit both badges if screen has only Minor findings.
-
-First tab starts `active` and `aria-selected="true"`. Each panel gets `id="screen-sN"`
-matching `id="tab-sN"`. `switchScreen()` must also update `aria-selected` on all tabs.
-
-### Zone summary row
-
-The zone summary row (`.zone-summary-row`) **is not used in v1.8.0**. Zone
-context lives only inside each per-finding modal. Do not add a zone summary
-row to either the Overall or Per Screen view.
-
-### Per-finding modal placement
-
-Per-finding modals are placed after the closing `</div>` of `.wrapper`,
-one `<div class="modal-overlay" id="modal-fN">` element per finding:
-
-```html
-<!-- one per finding, all placed after .wrapper -->
-<div class="modal-overlay" id="modal-f1" onclick="closeOnBackdrop(event,'modal-f1')">
-  ...
-</div>
-<div class="modal-overlay" id="modal-f2" onclick="closeOnBackdrop(event,'modal-f2')">
-  ...
-</div>
-```
-
-See `§ Per-Finding Modal — full structure` for the complete modal HTML.
-
-The modal closes on backdrop click, the ✕ button, or the Escape key
-(handled globally by the JS block).
+In the screen-by-screen layout:
+- **Dark Page Header:** Top-level dark bar `#161616` containing report title, review metadata, severity pills, and the **Copy Triage JSON** button.
+- **Left Navigation (`.carbon-left-nav`):** Shows issue categories (All Issues, Carbon Compliance, Token & Spacing, Typography, Accessibility, Layout, Visual Drift) with counts. Selecting a category filters the data table in the main body.
+- **Main Body (`.carbon-main-body`):** Starts immediately with the Carbon Data Table (no summary block).
+- **Per-Finding Modal Placement:** Placed after `.app-container`, one `<div class="modal-overlay" id="modal-fN">` per finding. Modal header reflects severity level, and modal body contains the 3-column issue details table (Location | Issue & Why it matters | Fix code).
+- Modal closes on backdrop click, the ✕ button, or the Escape key.
 
 ---
 
 ## Triage Controls
 
-In v1.8.0, triage controls (Status `<select>` + Rationale `<input>`) live
-**inline on every finding row** in all three finding sections. There is no
-separate Rationale Triage section. See the unified row spec in
-`### 3 — Carbon Violations` for the exact HTML.
+Triage controls (Status `<select>` + Rationale `<input>`) live **inline on every finding row** in the Carbon Data Table:
+- Status options: `○ Unreviewed` (default), `R Resolved`, `B Backlog`, `X Rejected`.
+- Rationale input: Required for Backlog and Rejected.
+- When modified, displays an inline Carbon warning notification alerting the user to unexported changes.
+- **Copy Triage JSON button** (`id="copy-triage-btn"`) is placed in the dark Carbon page header.
 
-**Copy Triage JSON button** (`id="copy-triage-btn"`) is placed in a toolbar
-strip above the Carbon Violations section. It reads from all three
-`.finding-table` tables. See `## Triage JSON — Schema and Export Logic` for
-the JS implementation.
-
-**Status badge HTML** (used when Bob regenerates the report after a JSON import —
-replace `<select>`/`<input>` with static badges):
+**Status badge HTML** (used when Bob regenerates the report after a JSON import — replace `<select>`/`<input>` with static badges):
 
 | State | HTML |
 |-------|------|
@@ -1144,59 +896,20 @@ replace `<select>`/`<input>` with static badges):
 | Backlog | `<span class="status-backlog">B Backlog</span>` |
 | Rejected | `<span class="status-rejected">X Rejected</span>` |
 
-**Ordering:** Rows sorted Critical → Major → Minor within each section.
-Screen order within a severity matches the tab order in Per Screen view.
+**Ordering:** Rows are sorted Critical → Major → Minor in the data table.
 
 ---
 
-## Screen Zone Map Format
+## Issue Details Modal (Carbon Modal Design)
 
-The zone map is the ASCII layout diagram reproduced inside each per-finding
-modal. It is no longer a standalone section in the report.
-See `### Per-Finding Modal — full structure → ZONE MAP` for the exact HTML.
-
-**Rules:**
-- One `.zone-map` block per screen, preceded by a `.zone-caption` label
-- Draw a simple ASCII box representing the screen's major regions
-- Place `[Fn]` at the approximate location of each finding
-- Wrap each `[Fn]` label in the correct severity span:
-  `<span class="zc">` Critical · `<span class="zm">` Major ·
-  `<span class="zn">` Minor · `<span class="zok">` correct/positive
-- For findings that appear on both screens, place the label on both maps
-- Second map follows immediately after first, with `style="margin-top:18px"` on its caption
-
----
-
-## Zone Callout Format (per finding modal)
-
-In the per-finding modal, the `.modal-zone` block shows the **complete screen
-zone map** — the same full ASCII diagram drawn for this screen —
-so the reviewer has spatial context for where the finding sits relative to every
-other zone on the screen. The only difference from the section-level zone map is:
-
-1. The current finding's `[Fn]` label is wrapped in `▶ … ◀` to mark focus.
-2. All other findings on the screen retain their severity-coloured `<span>` labels.
-3. A short `<p>` note below the map reads:
-   `"▶ [FN] ◀ marks the location of this finding. All other tags shown are the remaining findings on this screen."`
-4. The `.zone-caption` reads `"[Screen name] — full screen zone map"` (not just `"zone map"`).
-
-**Rule:** Do NOT produce a truncated single-zone snippet in the modal.
-Reproduce the full screen map. If the screen map is large, reproduce it in full.
-
-In the per-finding modal, location information is also the **Screen row** of the
-`.modal-detail-row` grid. See `## Output Format — HTML Report → Per-Finding Modal`
-for the full HTML.
-
-**Screen detail row structure (inside `.modal-detail-value`):**
-- A `.loc-chip` badge: `loc-s1` (Screen 1, blue) · `loc-s2` (Screen 2, green) · `loc-both` (both, purple)
-- A `.loc-pos` div below it with a short plain-language position description per screen
-
-**Rules:**
-- One `loc-chip` per finding (not per location row)
-- `.loc-pos` text: short, specific — "Left nav tree panel", "Bottom-right corner", "Tab bar row"
-- Use `<strong>Screen 1</strong> —` and `<strong>Screen 2</strong> —` labels when
-  the finding affects both screens
-- Description states what was visually observed, not the Carbon rule
+Each per-finding modal is constructed with native Carbon Modal styling:
+1. **Carbon Modal Header (`.cds-modal-header`):** Clean header with finding ID badge (`.ctag`), severity tag (`.cds-tag` / `.tag-critical` — regular weight, no outline), label row (`.cds-modal-header-label`), clear modal title (`.cds-modal-heading`), and top-right close button (`.cds-modal-close`). No top colored borders.
+2. **Modal Content Body (`.modal-card-body`):**
+   - **Column 1 (`.modal-col-sev`):** Finding ID badge (e.g. `F2`).
+   - **Column 2 (`Location`):** Shows location chips (`.loc-chip`) and exact UI position description (`.loc-pos`).
+   - **Column 3 (`Issue & Why it matters`):** Explains what was identified, why it deviates from Carbon v11, and links to Carbon documentation.
+   - **Column 4 (`Fix`):** Dark background (`#001141`), italic instruction description, and formatted `@carbon/react` code block showing the exact fix/replacement with blue comments (`<span class="fc">`).
+3. **Carbon Modal Footer (`.cds-modal-footer`):** Bottom action bar with secondary Close button (`.cds-btn-secondary`).
 
 ---
 
@@ -1360,16 +1073,12 @@ Field rules:
 ### Triage JavaScript
 
 > Copy the complete `<script>` block verbatim from
-> [`.bob/skills/ux-reviewer/report-template.html`](.bob/skills/ux-reviewer/report-template.html)
+> [`.bob/skills/ux-reviewer/report-template.html`](report-template.html)
 > and paste it into the generated report, immediately before `</body>`.
-> The block contains all function groups in the required order:
-> `switchView`/`switchScreen` → modal functions → Escape handler →
-> `updateTriageStatus` → `markTriageDirty` → `filterSectionTable` →
-> `toggleAccordion` → `copyTriageJSON` + `_flashCopyBtn` + `_fallbackCopy`.
+> The block contains:
+> `filterByCategory` + `filterTableSearch` (Left Nav & Search filtering) → modal functions (`openFinding`, `closeFinding`, backdrop & Escape handlers) → `updateTriageStatus` → `markTriageDirty` → `toggleAccordion` → `copyTriageJSON` + `_flashCopyBtn` + `_fallbackCopy`.
 >
-> `copyTriageJSON()` collects rows from **all three `.finding-table` tables**
-> (`#table-carbon-violations`, `#table-implementation-gaps`, `#table-both`) —
-> not from a single triage table. The selector is `.finding-table tbody tr[data-id]`.
+> `copyTriageJSON()` collects rows from `.finding-table tbody tr[data-id]`.
 
 Add `<meta name="figma-node-id" content="[node-id-or-empty]" />` inside
 `<head>` of every generated report so `copyTriageJSON()` can capture it.
@@ -1420,7 +1129,7 @@ Regenerate the full report using `write_file` to the same
 - Replace each finding row's `<select>` / `<input>` with the static status
   badge HTML matching the imported status
 - Update Accepted UI Gaps section with any newly Rejected findings
-- Update the Summary finding counts to reflect the triaged breakdown
+- Update the page header finding counts to reflect the triaged breakdown
 
 Then run `execute_command: open .bob/artifacts/[report-slug].html` and reply:
 
@@ -1447,7 +1156,6 @@ When the user selects `[D] Re-open a previously accepted gap`:
    - Remove the matching row from `.bob/memory/ux-review-gaps.md`
    - Add the finding back to the active findings list with status `Reopened`
    - Regenerate the report with the corrected counts
-   - Note in the Summary: *"[F#] was re-opened from Accepted UI Gaps by reviewer."*
 
 ---
 
@@ -1502,7 +1210,7 @@ confirms — do not create tickets without explicit confirmation.
    unless the accessibility section requires a separate targeted query
 6. Do not query `code_search` for token or spacing validation — use
    `docs_search` and `get_variable_defs` instead
-7. `code_search` is for one purpose in UX Reviewer: identifying the correct
+7. `code_search` is for one purpose in UI Reviewer: identifying the correct
    Carbon component (with import path) to recommend as a replacement for a
    custom component
 
@@ -1520,7 +1228,7 @@ Before writing the report file, verify:
 
 **Content checks**
 - [ ] Every Critical and Major finding has a Carbon MCP source reference (no finding raised from memory)
-- [ ] Every per-finding modal has `.modal-action-bar` + `.modal-fix-row` with `.fix-instruction` + `.fix-code`
+- [ ] Every per-finding modal uses `.cds-modal` with clean Carbon header (no top red/colored border lines), Carbon tags (regular weight, no outline), 4-column issue details table, and `.cds-modal-footer` with secondary Close button
 - [ ] Fix import paths from `code_search` — never constructed from memory; icon fixes queried with `asset_type: "icon"`
 - [ ] Image-inferred findings carry `inferred-tag` in Severity row AND `.modal-inferred-note` stripe
 - [ ] Non-`@carbon` imports flagged if code was provided
@@ -1528,20 +1236,19 @@ Before writing the report file, verify:
 - [ ] Accepted UI Gaps section present in report (even if empty); previously Rejected findings shown with stored rationale — not re-prompted
 
 **HTML structure checks**
-- [ ] Page header uses `.page-header` (IBM blue left border); `.content-switcher` with `.cs-btn[data-view]` right-aligned; Overall starts `active`
-- [ ] `#view-perscreen` contains Carbon Tabs (`.cds-tabs`); first tab `active` + `aria-selected="true"`; `role="tab"` + `aria-controls` on each
-- [ ] Three finding sections present in correct order: Carbon Violations → Implementation Gaps (if 2 inputs) → Both (if overlap)
-- [ ] All finding rows use unified table structure: `# · Screen · Category · Finding (→modal) · Severity · Status · Rationale`
+- [ ] Page header uses `.carbon-page-header` (dark g100 theme, `#161616`) with dark severity pills and `.copy-triage-btn`
+- [ ] Two-column layout uses `.app-container` with `.carbon-left-nav` (issue category list with counts) and `.carbon-main-body`
+- [ ] Starts directly with Carbon data table (`.cds-table-container`) — no summary section
+- [ ] All finding rows use table structure: `# · Category · Finding (→modal) · Severity · Status · Rationale`
 - [ ] Every finding row Status cell: `<select class="triage-select" data-id="fN" onchange="updateTriageStatus(this)">`
 - [ ] Every finding row Rationale cell: `<input class="triage-rationale" data-id="fN" oninput="markTriageDirty()">`
-- [ ] Finding titles are `<a class="finding-title-link" href="javascript:void(0)" role="button">` — NOT plain `<span>`
-- [ ] `copyTriageJSON()` collects rows from all three section tables (not just one)
-- [ ] One `<div class="modal-overlay" id="modal-fN">` per finding placed after `.wrapper`
-- [ ] Each modal: `.modal-header` → `.modal-action-bar` → `.modal-zone` (full map, current finding ▶◀) → `.modal-detail-row` rows (incl. Source row) → `.modal-fix-row`
-- [ ] Legend accordion present at bottom of page (outside view panels); collapsed by default
+- [ ] Finding titles are `<a class="finding-title-link" href="javascript:void(0)" role="button">` — clickable to trigger modal
+- [ ] One `<div class="modal-overlay" id="modal-fN">` per finding placed after `.app-container`
+- [ ] Each modal uses `.cds-modal` with `.cds-modal-header`, clean theme, and `.cds-modal-content` containing the 4-column details table
+- [ ] Legend accordion present at bottom of body; collapsed by default
 - [ ] Accepted UI Gaps uses `.gaps-section` (amber background, orange left border)
-- [ ] Footer reads "Made with IBM Bob · UX Reviewer v1.8.0 · … advisory"
-- [ ] No deprecated classes used: `.screen-tab-bar`, `.screen-tab`, `.export-btn`, `.zone-summary-row`, `.toc-tile`
+- [ ] Footer reads "Made with IBM Bob · UI Reviewer v2.0.0 · All findings are advisory"
+- [ ] No deprecated classes or concepts used: `.content-switcher`, `#view-overall`, `#view-perscreen`, `.cds-tabs`, `.zone-summary-row`
 
 **Triage JSON import checks**
 - [ ] JSON validated: `schema_version == "1.0"`, `findings` non-empty, rationale non-empty for Rejected/Backlog
@@ -1556,7 +1263,7 @@ Before writing the report file, verify:
 
 ## Skill Composition Notes
 
-UX Reviewer composes the following Bob skills at runtime — do not
+UI Reviewer composes the following Bob skills at runtime — do not
 re-implement their logic:
 
 | Skill | When to invoke |
