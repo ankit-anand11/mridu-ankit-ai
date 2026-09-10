@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<meta name="figma-node-id" content="" />
-<title>UI Review Report — [Screen name]</title>
+<meta name="figma-node-id" content="1542:44424" />
+<title>UI Review Report — API Studio · Paths &amp; Operations</title>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'IBM Plex Sans', sans-serif; font-size: 14px; line-height: 1.6; background: #f4f4f4; color: #161616; display: flex; flex-direction: column; min-height: 100vh; }
+body { font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; line-height: 1.6; background: #f4f4f4; color: #161616; display: flex; flex-direction: column; min-height: 100vh; }
 code { font-family: 'IBM Plex Mono', monospace; font-size: 12px; background: #e8e8e8; padding: 1px 5px; border-radius: 3px; color: #161616; }
 a { color: #0f62fe; text-decoration: none; }
 a:hover { text-decoration: underline; }
@@ -161,71 +161,17 @@ a:hover { text-decoration: underline; }
 .ctag-n  { background: #e0e0e0; color: #393939; border: none; outline: none; }
 .ctag-ok { background: #a7f0ba; color: #0e6027; border: none; outline: none; }
 
-/* WHITE CARD / SECTION */
-.section { background: #ffffff; padding: 24px 28px; margin-bottom: 2px; }
-.section-heading { font-size: 14px; font-weight: 600; color: #161616; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #e0e0e0; }
-
-/* TABLE OF CONTENTS — deprecated in v1.5.0; superseded by .overview-table.
-   Retained for backward compatibility with pre-v1.5.0 reports. Do not use in new reports. */
-.toc-group { margin-bottom: 24px; }
-.toc-group:last-child { margin-bottom: 0; }
-.toc-group-label { font-size: 11px; font-weight: 600; color: #6f6f6f; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 8px; }
-.toc-tile { display: flex; align-items: center; gap: 14px; padding: 12px 16px; background: #f4f4f4; border: 1px solid #e0e0e0; border-bottom: none; text-decoration: none; color: #161616; cursor: pointer; }
-.toc-tile:first-of-type { border-radius: 4px 4px 0 0; }
-.toc-tile:last-of-type  { border-bottom: 1px solid #e0e0e0; border-radius: 0 0 4px 4px; }
-.toc-tile:only-of-type  { border-radius: 4px; border-bottom: 1px solid #e0e0e0; }
-.toc-tile:hover { background: #e8e8e8; border-color: #c6c6c6; }
-.toc-tile-text { flex: 1; font-size: 13px; font-weight: 400; line-height: 1.4; }
-.toc-tile-sub  { font-size: 11px; color: #6f6f6f; margin-top: 2px; }
-.toc-arrow { font-size: 14px; color: #8d8d8d; flex-shrink: 0; }
-
-/* ZONE MAP */
-.zone-caption { font-size: 11px; font-weight: 600; color: #6f6f6f; margin-bottom: 6px; }
-.zone-map { font-family: 'IBM Plex Mono', monospace; font-size: 11px; line-height: 1.6; background: #f4f4f4; border: 1px solid #e0e0e0; padding: 14px 16px; white-space: pre; overflow-x: auto; color: #393939; margin-bottom: 6px; }
-.zc  { color: #da1e28; font-weight: 600; }
-.zm  { color: #c45000; font-weight: 600; }
-.zn  { color: #6f6f6f; font-weight: 600; }
-.zok { color: #198038; font-weight: 600; }
-
-/* OVERVIEW TABLE — compact summary rows, no expanded cards */
-.overview-table th { background: #f4f4f4; padding: 9px 14px; text-align: left; font-weight: 600; font-size: 11px; color: #525252; text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 2px solid #e0e0e0; white-space: nowrap; }
-/* FINDING LINK — blue, visible upfront, clickable to open modal */
-.finding-title-link { font-size: 13px; color: #0f62fe; cursor: pointer; text-decoration: none; border-bottom: 1px solid transparent; font-weight: 500; }
-.finding-title-link:hover { color: #0043ce; border-bottom: 1px solid #0043ce; text-decoration: none; }
-.finding-title-link:focus { outline: 2px solid #0f62fe; outline-offset: 2px; border-radius: 1px; }
-.inferred-tag { font-size: 11px; color: #6929c4; background: #e8daff; padding: 0 8px; height: 20px; border-radius: 10px; font-weight: 400; display: inline-flex; align-items: center; white-space: nowrap; margin-left: 6px; border: none; }
-
-/* COMPARISON TABLE (design-to-impl, if applicable) */
-.ctable { width: 100%; border-collapse: collapse; font-size: 13px; }
-.ctable th { background: #f4f4f4; padding: 8px 12px; text-align: left; font-weight: 600; font-size: 12px; color: #525252; border-bottom: 2px solid #e0e0e0; }
-.ctable td { padding: 10px 12px; border-bottom: 1px solid #f0f0f0; vertical-align: top; }
-.ctable tr:last-child td { border-bottom: none; }
-.diff { color: #da1e28; font-weight: 500; }
-.good { color: #198038; font-weight: 500; }
-
-/* ACCEPTED UI GAPS */
-.gaps-section { background: #fff8e1; border-left: 4px solid #f1620d; padding: 24px 28px; margin-bottom: 2px; }
-
-/* NOTES */
-.ceil { background: #fff8e1; border: 1px solid #f1620d; padding: 10px 14px; font-size: 12px; color: #3d3d3d; margin-top: 14px; line-height: 1.6; }
-
-/* ACTION LIST */
-.action-group-label { font-size: 13px; font-weight: 600; margin: 20px 0 10px; display: flex; align-items: center; gap: 8px; }
-.action-group-label:first-of-type { margin-top: 0; }
-.action-item { display: flex; gap: 12px; padding: 9px 0; border-bottom: 1px solid #f0f0f0; font-size: 13px; align-items: flex-start; }
-.action-item:last-child { border-bottom: none; }
-.anum { font-weight: 600; min-width: 22px; color: #8d8d8d; padding-top: 1px; }
-
-.section-group { margin-bottom: 2px; }
-
-.report-footer { text-align: center; font-size: 12px; color: #8d8d8d; padding-top: 24px; border-top: 1px solid #e0e0e0; margin-top: 40px; }
-
 /* ── OVERVIEW / DATA TABLE STYLES ── */
 .overview-table { width: 100%; border-collapse: collapse; font-size: 13px; }
 .overview-table th { background: #f4f4f4; padding: 10px 14px; text-align: left; font-weight: 600; font-size: 12px; color: #525252; border-bottom: 2px solid #e0e0e0; letter-spacing: 0.02em; }
 .overview-table td { padding: 12px 14px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
 .overview-table tr:hover td { background: #fafafa; }
 .overview-cat { font-size: 11px; color: #525252; background: #f4f4f4; padding: 2px 8px; border-radius: 3px; white-space: nowrap; }
+
+.finding-title-link { font-size: 13px; color: #0f62fe; cursor: pointer; text-decoration: none; border-bottom: 1px solid transparent; font-weight: 500; }
+.finding-title-link:hover { color: #0043ce; border-bottom: 1px solid #0043ce; text-decoration: none; }
+.finding-title-link:focus { outline: 2px solid #0f62fe; outline-offset: 2px; border-radius: 1px; }
+.inferred-tag { font-size: 11px; color: #6929c4; background: #e8daff; padding: 0 8px; height: 20px; border-radius: 10px; font-weight: 400; display: inline-flex; align-items: center; white-space: nowrap; margin-left: 6px; border: none; }
 
 /* ── CARBON DATA TABLE (Container, Toolbar, Search) ── */
 .cds-table-container { background: #ffffff; border: 1px solid #e0e0e0; margin-bottom: 24px; }
@@ -377,6 +323,12 @@ a:hover { text-decoration: underline; }
 }
 .cds-btn-primary:hover { background: #0353e9; }
 
+.loc-chip { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 400; padding: 0 8px; height: 20px; border-radius: 10px; border: none; }
+.loc-s1   { background: #d0e2ff; color: #0043ce; }
+.loc-s2   { background: #a7f0ba; color: #0e6027; }
+.loc-both { background: #e8daff; color: #6929c4; }
+.loc-pos  { font-size: 12px; color: #525252; margin-top: 6px; line-height: 1.5; }
+
 /* fix cell in modal — dark #001141 */
 .modal-fix-cell { padding: 0; background: #001141; border-right: none; }
 .modal-fix-inner { padding: 16px 18px; }
@@ -410,13 +362,18 @@ a:hover { text-decoration: underline; }
 .triage-warning-close button { background: none; border: none; cursor: pointer; padding: 2px; color: #525252; font-size: 16px; line-height: 1; }
 .triage-warning-close button:hover { color: #161616; }
 
-/* ── LEGEND ACCORDION ── */
+/* ── ACCEPTED UI GAPS & LEGEND ── */
+.gaps-section { background: #fff8e1; border-left: 4px solid #f1620d; padding: 24px 28px; margin-bottom: 24px; }
+.section-heading { font-size: 14px; font-weight: 600; color: #161616; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1px solid #e0e0e0; }
+
 .accordion { border: 1px solid #e0e0e0; border-radius: 0; margin-bottom: 24px; background: #ffffff; }
 .accordion-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; cursor: pointer; font-size: 13px; font-weight: 600; color: #161616; border: none; background: none; width: 100%; text-align: left; }
 .accordion-header:hover { background: #f4f4f4; }
 .accordion-indicator { font-size: 12px; color: #525252; transition: transform 0.15s ease; }
 .accordion-body { display: none; padding: 16px 20px 20px; border-top: 1px solid #e0e0e0; }
 .accordion-body.open { display: block; }
+
+.report-footer { text-align: center; font-size: 12px; color: #8d8d8d; padding-top: 24px; border-top: 1px solid #e0e0e0; margin-top: 40px; }
 
 @media (max-width: 800px) {
   .app-container { flex-direction: column; }
@@ -434,13 +391,12 @@ a:hover { text-decoration: underline; }
 <header class="carbon-page-header">
   <div class="carbon-page-header-main">
     <h1 class="carbon-page-header-title">UI Review Report</h1>
-    <div class="carbon-page-header-sub">[Screen name] · [Month Year]</div>
+    <div class="carbon-page-header-sub">API Studio · Paths &amp; Operations vs API Connect · August 2026</div>
     <div class="pill-row">
-      <span class="pill pill-dark-c">● [N] Critical</span>
-      <span class="pill pill-dark-m">● [N] Major</span>
-      <span class="pill pill-dark-n">● [N] Minor</span>
-      <span class="pill pill-dark-i">📷 Screenshot</span>
-      <span class="pill pill-dark-w">⚠ Image-inferred</span>
+      <span class="pill pill-dark-c">● 2 Critical</span>
+      <span class="pill pill-dark-m">● 4 Major</span>
+      <span class="pill pill-dark-n">● 1 Minor</span>
+      <span class="pill pill-dark-i">🔗 Figma URL + 📷 Screenshot</span>
     </div>
   </div>
   <div class="carbon-page-header-actions">
@@ -460,31 +416,27 @@ a:hover { text-decoration: underline; }
     <ul class="left-nav-list" id="nav-category-list">
       <li class="left-nav-item active" onclick="filterByCategory('all', this)">
         <span>All Issues</span>
-        <span class="nav-badge-count" id="count-all">[Total]</span>
+        <span class="nav-badge-count" id="count-all">7</span>
       </li>
       <li class="left-nav-item" onclick="filterByCategory('Carbon Compliance', this)">
         <span>Carbon Compliance</span>
-        <span class="nav-badge-count" id="count-compliance">[N]</span>
+        <span class="nav-badge-count" id="count-compliance">3</span>
       </li>
       <li class="left-nav-item" onclick="filterByCategory('Token & Spacing', this)">
         <span>Token & Spacing</span>
-        <span class="nav-badge-count" id="count-token">[N]</span>
+        <span class="nav-badge-count" id="count-token">1</span>
       </li>
       <li class="left-nav-item" onclick="filterByCategory('Typography', this)">
         <span>Typography</span>
-        <span class="nav-badge-count" id="count-typography">[N]</span>
+        <span class="nav-badge-count" id="count-typography">1</span>
       </li>
       <li class="left-nav-item" onclick="filterByCategory('Accessibility', this)">
         <span>Accessibility</span>
-        <span class="nav-badge-count" id="count-a11y">[N]</span>
-      </li>
-      <li class="left-nav-item" onclick="filterByCategory('Layout', this)">
-        <span>Layout</span>
-        <span class="nav-badge-count" id="count-layout">[N]</span>
+        <span class="nav-badge-count" id="count-a11y">1</span>
       </li>
       <li class="left-nav-item" onclick="filterByCategory('Visual Drift', this)">
         <span>Visual Drift</span>
-        <span class="nav-badge-count" id="count-drift">[N]</span>
+        <span class="nav-badge-count" id="count-drift">1</span>
       </li>
     </ul>
   </aside>
@@ -526,12 +478,33 @@ a:hover { text-decoration: underline; }
           </tr>
         </thead>
         <tbody>
-          <!-- One row per finding, sorted Critical -> Major -> Minor -->
-          <tr data-id="f2" data-severity="Critical" data-category="Carbon Compliance" data-screen="[Screen name]">
+          <!-- F1 -->
+          <tr data-id="f1" data-severity="Critical" data-category="Carbon Compliance" data-screen="API Authoring">
+            <td><span class="ctag ctag-c" onclick="openFinding('modal-f1')" style="cursor:pointer">F1</span></td>
+            <td><span class="overview-cat">Carbon Compliance</span></td>
+            <td>
+              <a class="finding-title-link" onclick="openFinding('modal-f1')" href="javascript:void(0)" role="button">Custom left navigation tree instead of Carbon TreeView</a>
+            </td>
+            <td><span class="pill pill-c" style="font-size:10px">Critical</span></td>
+            <td>
+              <select class="triage-select" data-id="f1" onchange="updateTriageStatus(this)">
+                <option value="unreviewed" selected>○ Unreviewed</option>
+                <option value="resolved">R Resolved</option>
+                <option value="backlog">B Backlog</option>
+                <option value="rejected">X Rejected</option>
+              </select>
+            </td>
+            <td>
+              <input class="triage-rationale" data-id="f1" type="text" placeholder="Rationale (required for Backlog / Rejected)" oninput="markTriageDirty()" style="width:100%" />
+            </td>
+          </tr>
+
+          <!-- F2 -->
+          <tr data-id="f2" data-severity="Critical" data-category="Carbon Compliance" data-screen="API Authoring">
             <td><span class="ctag ctag-c" onclick="openFinding('modal-f2')" style="cursor:pointer">F2</span></td>
             <td><span class="overview-cat">Carbon Compliance</span></td>
             <td>
-              <a class="finding-title-link" onclick="openFinding('modal-f2')" href="javascript:void(0)" role="button">Left navigation tree — custom implementation in both products</a>
+              <a class="finding-title-link" onclick="openFinding('modal-f2')" href="javascript:void(0)" role="button">Nested &amp; mixed Tab variants across navigation levels</a>
             </td>
             <td><span class="pill pill-c" style="font-size:10px">Critical</span></td>
             <td>
@@ -546,12 +519,117 @@ a:hover { text-decoration: underline; }
               <input class="triage-rationale" data-id="f2" type="text" placeholder="Rationale (required for Backlog / Rejected)" oninput="markTriageDirty()" style="width:100%" />
             </td>
           </tr>
+
+          <!-- F3 -->
+          <tr data-id="f3" data-severity="Major" data-category="Carbon Compliance" data-screen="API Authoring">
+            <td><span class="ctag ctag-m" onclick="openFinding('modal-f3')" style="cursor:pointer">F3</span></td>
+            <td><span class="overview-cat">Carbon Compliance</span></td>
+            <td>
+              <a class="finding-title-link" onclick="openFinding('modal-f3')" href="javascript:void(0)" role="button">Breadcrumb active/current page item rendered as link</a>
+            </td>
+            <td><span class="pill pill-m" style="font-size:10px">Major</span></td>
+            <td>
+              <select class="triage-select" data-id="f3" onchange="updateTriageStatus(this)">
+                <option value="unreviewed" selected>○ Unreviewed</option>
+                <option value="resolved">R Resolved</option>
+                <option value="backlog">B Backlog</option>
+                <option value="rejected">X Rejected</option>
+              </select>
+            </td>
+            <td>
+              <input class="triage-rationale" data-id="f3" type="text" placeholder="Rationale (required for Backlog / Rejected)" oninput="markTriageDirty()" style="width:100%" />
+            </td>
+          </tr>
+
+          <!-- F4 -->
+          <tr data-id="f4" data-severity="Major" data-category="Accessibility" data-screen="API Authoring">
+            <td><span class="ctag ctag-m" onclick="openFinding('modal-f4')" style="cursor:pointer">F4</span></td>
+            <td><span class="overview-cat">Accessibility</span></td>
+            <td>
+              <a class="finding-title-link" onclick="openFinding('modal-f4')" href="javascript:void(0)" role="button">Icon-only action buttons missing accessible labels</a>
+            </td>
+            <td><span class="pill pill-m" style="font-size:10px">Major</span></td>
+            <td>
+              <select class="triage-select" data-id="f4" onchange="updateTriageStatus(this)">
+                <option value="unreviewed" selected>○ Unreviewed</option>
+                <option value="resolved">R Resolved</option>
+                <option value="backlog">B Backlog</option>
+                <option value="rejected">X Rejected</option>
+              </select>
+            </td>
+            <td>
+              <input class="triage-rationale" data-id="f4" type="text" placeholder="Rationale (required for Backlog / Rejected)" oninput="markTriageDirty()" style="width:100%" />
+            </td>
+          </tr>
+
+          <!-- F5 -->
+          <tr data-id="f5" data-severity="Major" data-category="Visual Drift" data-screen="API Authoring">
+            <td><span class="ctag ctag-m" onclick="openFinding('modal-f5')" style="cursor:pointer">F5</span></td>
+            <td><span class="overview-cat">Visual Drift</span></td>
+            <td>
+              <a class="finding-title-link" onclick="openFinding('modal-f5')" href="javascript:void(0)" role="button">Non-Carbon floating "Get Started" card in implementation</a>
+            </td>
+            <td><span class="pill pill-m" style="font-size:10px">Major</span></td>
+            <td>
+              <select class="triage-select" data-id="f5" onchange="updateTriageStatus(this)">
+                <option value="unreviewed" selected>○ Unreviewed</option>
+                <option value="resolved">R Resolved</option>
+                <option value="backlog">B Backlog</option>
+                <option value="rejected">X Rejected</option>
+              </select>
+            </td>
+            <td>
+              <input class="triage-rationale" data-id="f5" type="text" placeholder="Rationale (required for Backlog / Rejected)" oninput="markTriageDirty()" style="width:100%" />
+            </td>
+          </tr>
+
+          <!-- F6 -->
+          <tr data-id="f6" data-severity="Major" data-category="Token & Spacing" data-screen="API Authoring">
+            <td><span class="ctag ctag-m" onclick="openFinding('modal-f6')" style="cursor:pointer">F6</span></td>
+            <td><span class="overview-cat">Token &amp; Spacing</span></td>
+            <td>
+              <a class="finding-title-link" onclick="openFinding('modal-f6')" href="javascript:void(0)" role="button">Hardcoded border &amp; active background tokens in sidebar</a>
+            </td>
+            <td><span class="pill pill-m" style="font-size:10px">Major</span></td>
+            <td>
+              <select class="triage-select" data-id="f6" onchange="updateTriageStatus(this)">
+                <option value="unreviewed" selected>○ Unreviewed</option>
+                <option value="resolved">R Resolved</option>
+                <option value="backlog">B Backlog</option>
+                <option value="rejected">X Rejected</option>
+              </select>
+            </td>
+            <td>
+              <input class="triage-rationale" data-id="f6" type="text" placeholder="Rationale (required for Backlog / Rejected)" oninput="markTriageDirty()" style="width:100%" />
+            </td>
+          </tr>
+
+          <!-- F7 -->
+          <tr data-id="f7" data-severity="Minor" data-category="Typography" data-screen="API Authoring">
+            <td><span class="ctag ctag-n" onclick="openFinding('modal-f7')" style="cursor:pointer">F7</span></td>
+            <td><span class="overview-cat">Typography</span></td>
+            <td>
+              <a class="finding-title-link" onclick="openFinding('modal-f7')" href="javascript:void(0)" role="button">DataTable column header font weight lighter than 600</a>
+            </td>
+            <td><span class="pill pill-n" style="font-size:10px">Minor</span></td>
+            <td>
+              <select class="triage-select" data-id="f7" onchange="updateTriageStatus(this)">
+                <option value="unreviewed" selected>○ Unreviewed</option>
+                <option value="resolved">R Resolved</option>
+                <option value="backlog">B Backlog</option>
+                <option value="rejected">X Rejected</option>
+              </select>
+            </td>
+            <td>
+              <input class="triage-rationale" data-id="f7" type="text" placeholder="Rationale (required for Backlog / Rejected)" oninput="markTriageDirty()" style="width:100%" />
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>
 
-    <!-- ACCEPTED UI GAPS SECTION (if any) -->
-    <div class="gaps-section" id="section-accepted-gaps" style="margin-bottom:24px;">
+    <!-- ACCEPTED UI GAPS SECTION -->
+    <div class="gaps-section" id="section-accepted-gaps">
       <div class="section-heading">Accepted UI Gaps</div>
       <p style="font-size:13px;color:#6f6f6f;font-style:italic">No previously accepted UI gaps for this screen.</p>
     </div>
@@ -582,23 +660,72 @@ a:hover { text-decoration: underline; }
   </main>
 </div>
 
-<!-- PER-FINDING MODALS (one per finding, placed before script) -->
+<!-- ── PER-FINDING MODALS ── -->
+
+<!-- Modal F1 -->
+<div class="modal-overlay" id="modal-f1" onclick="closeOnBackdrop(event,'modal-f1')">
+  <div class="cds-modal">
+    <div class="cds-modal-header">
+      <div class="cds-modal-header-label">
+        <span class="ctag ctag-c">F1</span>
+        <span class="cds-tag cds-tag-red">Critical</span>
+      </div>
+      <h3 class="cds-modal-heading">Custom left navigation tree instead of Carbon TreeView</h3>
+      <button class="cds-modal-close" onclick="closeFinding('modal-f1')" aria-label="Close modal">
+        <svg viewBox="0 0 32 32"><path d="M24 9.4L22.6 8 16 14.6 9.4 8 8 9.4 14.6 16 8 22.6 9.4 24 16 17.4 22.6 24 24 22.6 17.4 16 24 9.4z"/></svg>
+      </button>
+    </div>
+    <div class="cds-modal-content">
+      <div class="modal-card-body">
+        <div class="modal-col-head-blank"></div>
+        <div class="modal-col-head">Location</div>
+        <div class="modal-col-head">Issue &amp; Why it matters</div>
+        <div class="modal-col-head">Fix</div>
+
+        <div class="modal-col-sev"><span class="ctag ctag-c">F1</span></div>
+        <div class="modal-col-cell">
+          <span class="loc-chip loc-s1">● Left Nav</span>
+          <div class="loc-pos">Left Explorer navigation panel (APIs, Policy sequences, Tests, Environment hierarchy)</div>
+        </div>
+        <div class="modal-col-cell">
+          The left navigation panel uses custom tree items with hardcoded borders and non-standard caret expand icons. Carbon provides the native <strong>TreeView</strong> component which supports full keyboard accessibility (arrow keys navigation), aria-expanded attributes, and automated <code>$layer-selected-01</code> background states.<br /><br />
+          <a href="https://carbondesignsystem.com/components/tree-view/usage/">Carbon TreeView usage →</a>
+        </div>
+        <div class="modal-fix-cell">
+          <div class="modal-fix-inner">
+            <div class="fix-instruction">Replace custom tree DOM with Carbon TreeView and TreeNode.</div>
+            <div class="fix-code">import { TreeView, TreeNode } from '@carbon/react';
+
+&lt;TreeView label="Explorer"&gt;
+  &lt;TreeNode id="apis" label="APIs" isExpanded&gt;
+    &lt;TreeNode id="api1" label="jacobson_goldner_soap_api" /&gt;
+  &lt;/TreeNode&gt;
+&lt;/TreeView&gt;
+
+<span class="fc">// Remove custom border/active CSS</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cds-modal-footer">
+      <button class="cds-btn-secondary" onclick="closeFinding('modal-f1')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal F2 -->
 <div class="modal-overlay" id="modal-f2" onclick="closeOnBackdrop(event,'modal-f2')">
   <div class="cds-modal">
-    <!-- Carbon Modal Header: Clean theme without top colored lines -->
     <div class="cds-modal-header">
       <div class="cds-modal-header-label">
         <span class="ctag ctag-c">F2</span>
         <span class="cds-tag cds-tag-red">Critical</span>
-        <span class="inferred-tag">image-inferred</span>
       </div>
-      <h3 class="cds-modal-heading">Left navigation tree — custom implementation in both products</h3>
+      <h3 class="cds-modal-heading">Nested &amp; mixed Tab variants across navigation levels</h3>
       <button class="cds-modal-close" onclick="closeFinding('modal-f2')" aria-label="Close modal">
         <svg viewBox="0 0 32 32"><path d="M24 9.4L22.6 8 16 14.6 9.4 8 8 9.4 14.6 16 8 22.6 9.4 24 16 17.4 22.6 24 24 22.6 17.4 16 24 9.4z"/></svg>
       </button>
     </div>
-
-    <!-- Carbon Modal Content: 4-col table layout: Location | Issue & Why it matters | Fix -->
     <div class="cds-modal-content">
       <div class="modal-card-body">
         <div class="modal-col-head-blank"></div>
@@ -608,37 +735,276 @@ a:hover { text-decoration: underline; }
 
         <div class="modal-col-sev"><span class="ctag ctag-c">F2</span></div>
         <div class="modal-col-cell">
-          <span class="loc-chip loc-both">● Both screens</span>
-          <div class="loc-pos"><strong>Screen 1</strong> — entire left tree panel (APIs, Policy sequences, Tests, Environment)<br /><br /><strong>Screen 2</strong> — same structure, different custom implementation with ⊕ add icons</div>
+          <span class="loc-chip loc-s1">● Main Header Tabs</span>
+          <div class="loc-pos">Top navigation tabs: API Specification / Policy / API Set + Nested tabs below (Paths &amp; Operations)</div>
         </div>
         <div class="modal-col-cell">
-          Two different custom tree navigation implementations across two related products. Neither uses Carbon's <strong>TreeView</strong> component.<br /><br />
-          Carbon's TreeView handles keyboard navigation, expand/collapse, and selected state automatically via <code>$layer-selected-01</code>.<br /><br />
-          <a href="https://carbondesignsystem.com/components/tree-view/usage/">Carbon TreeView usage →</a>
+          The implementation mixes contained top tabs and nested line tabs on a single screen. Carbon Design System v11 guidance mandates a unified tab variant (standard line tabs) within a product context and discourages nested tab bars.<br /><br />
+          <a href="https://carbondesignsystem.com/components/tabs/usage/">Carbon Tabs usage →</a>
         </div>
         <div class="modal-fix-cell">
           <div class="modal-fix-inner">
-            <div class="fix-instruction">Replace both custom trees with Carbon TreeView. Remove all custom border/background CSS.</div>
-            <div class="fix-code">import { TreeView, TreeNode }
-  from '@carbon/react';
+            <div class="fix-instruction">Consolidate to a single standard Carbon line Tabs component.</div>
+            <div class="fix-code">import { Tabs, TabList, Tab, TabPanels, TabPanel } from '@carbon/react';
 
-&lt;TreeView label="Explorer"&gt;
-  &lt;TreeNode id="apis"
-    label="APIs" isExpanded&gt;
-    &lt;TreeNode id="api1"
-      label="API 1" /&gt;
-  &lt;/TreeNode&gt;
-&lt;/TreeView&gt;
-
-<span class="fc">// Remove custom active state</span></div>
+&lt;Tabs&gt;
+  &lt;TabList aria-label="API Sections"&gt;
+    &lt;Tab&gt;API Specification&lt;/Tab&gt;
+    &lt;Tab&gt;Policy&lt;/Tab&gt;
+    &lt;Tab&gt;API Set&lt;/Tab&gt;
+  &lt;/TabList&gt;
+&lt;/Tabs&gt;</div>
           </div>
         </div>
       </div>
     </div>
-
-    <!-- Carbon Modal Footer -->
     <div class="cds-modal-footer">
       <button class="cds-btn-secondary" onclick="closeFinding('modal-f2')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal F3 -->
+<div class="modal-overlay" id="modal-f3" onclick="closeOnBackdrop(event,'modal-f3')">
+  <div class="cds-modal">
+    <div class="cds-modal-header">
+      <div class="cds-modal-header-label">
+        <span class="ctag ctag-m">F3</span>
+        <span class="cds-tag tag-major">Major</span>
+      </div>
+      <h3 class="cds-modal-heading">Breadcrumb active/current page item rendered as link</h3>
+      <button class="cds-modal-close" onclick="closeFinding('modal-f3')" aria-label="Close modal">
+        <svg viewBox="0 0 32 32"><path d="M24 9.4L22.6 8 16 14.6 9.4 8 8 9.4 14.6 16 8 22.6 9.4 24 16 17.4 22.6 24 24 22.6 17.4 16 24 9.4z"/></svg>
+      </button>
+    </div>
+    <div class="cds-modal-content">
+      <div class="modal-card-body">
+        <div class="modal-col-head-blank"></div>
+        <div class="modal-col-head">Location</div>
+        <div class="modal-col-head">Issue &amp; Why it matters</div>
+        <div class="modal-col-head">Fix</div>
+
+        <div class="modal-col-sev"><span class="ctag ctag-m">F3</span></div>
+        <div class="modal-col-cell">
+          <span class="loc-chip loc-s1">● Top Toolbar</span>
+          <div class="loc-pos">Top breadcrumb bar (Projects / jacobson_goldner...)</div>
+        </div>
+        <div class="modal-col-cell">
+          The current page item in the breadcrumb is rendered as an active interactive link with <code>color: #0f62fe</code>. In Carbon, the current page breadcrumb item must be plain text with <code>isCurrentPage={true}</code> to prevent confusing circular navigation and meet accessibility standards.<br /><br />
+          <a href="https://carbondesignsystem.com/components/breadcrumb/usage/">Carbon Breadcrumb usage →</a>
+        </div>
+        <div class="modal-fix-cell">
+          <div class="modal-fix-inner">
+            <div class="fix-instruction">Set isCurrentPage on the terminal BreadcrumbItem.</div>
+            <div class="fix-code">import { Breadcrumb, BreadcrumbItem } from '@carbon/react';
+
+&lt;Breadcrumb&gt;
+  &lt;BreadcrumbItem href="/projects"&gt;Projects&lt;/BreadcrumbItem&gt;
+  &lt;BreadcrumbItem isCurrentPage&gt;jacobson_goldner&lt;/BreadcrumbItem&gt;
+&lt;/Breadcrumb&gt;</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cds-modal-footer">
+      <button class="cds-btn-secondary" onclick="closeFinding('modal-f3')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal F4 -->
+<div class="modal-overlay" id="modal-f4" onclick="closeOnBackdrop(event,'modal-f4')">
+  <div class="cds-modal">
+    <div class="cds-modal-header">
+      <div class="cds-modal-header-label">
+        <span class="ctag ctag-m">F4</span>
+        <span class="cds-tag tag-major">Major</span>
+      </div>
+      <h3 class="cds-modal-heading">Icon-only action buttons missing accessible labels</h3>
+      <button class="cds-modal-close" onclick="closeFinding('modal-f4')" aria-label="Close modal">
+        <svg viewBox="0 0 32 32"><path d="M24 9.4L22.6 8 16 14.6 9.4 8 8 9.4 14.6 16 8 22.6 9.4 24 16 17.4 22.6 24 24 22.6 17.4 16 24 9.4z"/></svg>
+      </button>
+    </div>
+    <div class="cds-modal-content">
+      <div class="modal-card-body">
+        <div class="modal-col-head-blank"></div>
+        <div class="modal-col-head">Location</div>
+        <div class="modal-col-head">Issue &amp; Why it matters</div>
+        <div class="modal-col-head">Fix</div>
+
+        <div class="modal-col-sev"><span class="ctag ctag-m">F4</span></div>
+        <div class="modal-col-cell">
+          <span class="loc-chip loc-s1">● Page Header Actions</span>
+          <div class="loc-pos">Edit (pencil), Delete (trash), and info buttons next to title and table rows</div>
+        </div>
+        <div class="modal-col-cell">
+          Icon-only buttons lack visible text labels and missing <code>iconDescription</code> / <code>hasIconOnly</code> properties. Screen readers cannot announce the action purpose to assistive tech users.<br /><br />
+          <a href="https://carbondesignsystem.com/components/button/usage/#icon-only-buttons">Carbon Icon-Only Button usage →</a>
+        </div>
+        <div class="modal-fix-cell">
+          <div class="modal-fix-inner">
+            <div class="fix-instruction">Add hasIconOnly and descriptive iconDescription to all icon buttons.</div>
+            <div class="fix-code">import { Button } from '@carbon/react';
+import { Edit, TrashCan } from '@carbon/icons-react';
+
+&lt;Button
+  hasIconOnly
+  renderIcon={Edit}
+  iconDescription="Edit API name"
+  kind="ghost"
+  size="sm"
+/&gt;</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cds-modal-footer">
+      <button class="cds-btn-secondary" onclick="closeFinding('modal-f4')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal F5 -->
+<div class="modal-overlay" id="modal-f5" onclick="closeOnBackdrop(event,'modal-f5')">
+  <div class="cds-modal">
+    <div class="cds-modal-header">
+      <div class="cds-modal-header-label">
+        <span class="ctag ctag-m">F5</span>
+        <span class="cds-tag tag-major">Major</span>
+      </div>
+      <h3 class="cds-modal-heading">Non-Carbon floating "Get Started" card in implementation</h3>
+      <button class="cds-modal-close" onclick="closeFinding('modal-f5')" aria-label="Close modal">
+        <svg viewBox="0 0 32 32"><path d="M24 9.4L22.6 8 16 14.6 9.4 8 8 9.4 14.6 16 8 22.6 9.4 24 16 17.4 22.6 24 24 22.6 17.4 16 24 9.4z"/></svg>
+      </button>
+    </div>
+    <div class="cds-modal-content">
+      <div class="modal-card-body">
+        <div class="modal-col-head-blank"></div>
+        <div class="modal-col-head">Location</div>
+        <div class="modal-col-head">Issue &amp; Why it matters</div>
+        <div class="modal-col-head">Fix</div>
+
+        <div class="modal-col-sev"><span class="ctag ctag-m">F5</span></div>
+        <div class="modal-col-cell">
+          <span class="loc-chip loc-s1">● Bottom Right</span>
+          <div class="loc-pos">Floating "Get Started" black popover widget in the bottom-right corner</div>
+        </div>
+        <div class="modal-col-cell">
+          A custom dark floating card appears in the bottom-right viewport corner. Carbon does not include un-anchored floating cards outside standard Toast notifications, Tearsheets, or SidePanels. It causes content occlusion on smaller resolutions.<br /><br />
+          <a href="https://carbondesignsystem.com/patterns/overview/">Carbon Patterns Overview →</a>
+        </div>
+        <div class="modal-fix-cell">
+          <div class="modal-fix-inner">
+            <div class="fix-instruction">Replace floating card with standard Carbon SidePanel or Toast Notification.</div>
+            <div class="fix-code">import { ToastNotification } from '@carbon/react';
+
+&lt;ToastNotification
+  title="Get Started"
+  subtitle="Follow the onboarding guide"
+  caption="00:00"
+  timeout={5000}
+/&gt;</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cds-modal-footer">
+      <button class="cds-btn-secondary" onclick="closeFinding('modal-f5')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal F6 -->
+<div class="modal-overlay" id="modal-f6" onclick="closeOnBackdrop(event,'modal-f6')">
+  <div class="cds-modal">
+    <div class="cds-modal-header">
+      <div class="cds-modal-header-label">
+        <span class="ctag ctag-m">F6</span>
+        <span class="cds-tag tag-major">Major</span>
+      </div>
+      <h3 class="cds-modal-heading">Hardcoded border &amp; active background tokens in sidebar</h3>
+      <button class="cds-modal-close" onclick="closeFinding('modal-f6')" aria-label="Close modal">
+        <svg viewBox="0 0 32 32"><path d="M24 9.4L22.6 8 16 14.6 9.4 8 8 9.4 14.6 16 8 22.6 9.4 24 16 17.4 22.6 24 24 22.6 17.4 16 24 9.4z"/></svg>
+      </button>
+    </div>
+    <div class="cds-modal-content">
+      <div class="modal-card-body">
+        <div class="modal-col-head-blank"></div>
+        <div class="modal-col-head">Location</div>
+        <div class="modal-col-head">Issue &amp; Why it matters</div>
+        <div class="modal-col-head">Fix</div>
+
+        <div class="modal-col-sev"><span class="ctag ctag-m">F6</span></div>
+        <div class="modal-col-cell">
+          <span class="loc-chip loc-s1">● Sidebar</span>
+          <div class="loc-pos">Selected item active state in Explorer navigation tree</div>
+        </div>
+        <div class="modal-col-cell">
+          Active item uses a hardcoded <code>border-left: 3px solid #0f62fe</code> rather than relying on standard Carbon semantic tokens (<code>$layer-selected-01</code> background + <code>$border-interactive</code>).<br /><br />
+          <a href="https://carbondesignsystem.com/elements/color/usage/">Carbon Color Tokens →</a>
+        </div>
+        <div class="modal-fix-cell">
+          <div class="modal-fix-inner">
+            <div class="fix-instruction">Use semantic Carbon color tokens.</div>
+            <div class="fix-code"><span class="fc">// Remove:</span>
+<span class="fc">// .active-tree-item { border-left: 3px solid #0f62fe; }</span>
+
+<span class="fc">// Use Carbon theme tokens:</span>
+background-color: var(--cds-layer-selected-01);
+color: var(--cds-text-primary);</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cds-modal-footer">
+      <button class="cds-btn-secondary" onclick="closeFinding('modal-f6')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal F7 -->
+<div class="modal-overlay" id="modal-f7" onclick="closeOnBackdrop(event,'modal-f7')">
+  <div class="cds-modal">
+    <div class="cds-modal-header">
+      <div class="cds-modal-header-label">
+        <span class="ctag ctag-n">F7</span>
+        <span class="cds-tag tag-minor">Minor</span>
+      </div>
+      <h3 class="cds-modal-heading">DataTable column header font weight lighter than 600</h3>
+      <button class="cds-modal-close" onclick="closeFinding('modal-f7')" aria-label="Close modal">
+        <svg viewBox="0 0 32 32"><path d="M24 9.4L22.6 8 16 14.6 9.4 8 8 9.4 14.6 16 8 22.6 9.4 24 16 17.4 22.6 24 24 22.6 17.4 16 24 9.4z"/></svg>
+      </button>
+    </div>
+    <div class="cds-modal-content">
+      <div class="modal-card-body">
+        <div class="modal-col-head-blank"></div>
+        <div class="modal-col-head">Location</div>
+        <div class="modal-col-head">Issue &amp; Why it matters</div>
+        <div class="modal-col-head">Fix</div>
+
+        <div class="modal-col-sev"><span class="ctag ctag-n">F7</span></div>
+        <div class="modal-col-cell">
+          <span class="loc-chip loc-s1">● Parameters Table</span>
+          <div class="loc-pos">Column headers: Name, Located in, Ref name</div>
+        </div>
+        <div class="modal-col-cell">
+          Table headers in implementation use regular 400 font weight instead of Carbon's <code>$heading-compact-01</code> / <code>font-weight: 600</code> specification.<br /><br />
+          <a href="https://carbondesignsystem.com/components/data-table/usage/">Carbon DataTable usage →</a>
+        </div>
+        <div class="modal-fix-cell">
+          <div class="modal-fix-inner">
+            <div class="fix-instruction">Ensure TableHeader uses standard Carbon styling.</div>
+            <div class="fix-code">import { TableHeader } from '@carbon/react';
+
+&lt;TableHeader&gt;Name&lt;/TableHeader&gt;
+&lt;TableHeader&gt;Located in&lt;/TableHeader&gt;
+&lt;TableHeader&gt;Ref name&lt;/TableHeader&gt;</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cds-modal-footer">
+      <button class="cds-btn-secondary" onclick="closeFinding('modal-f7')">Close</button>
     </div>
   </div>
 </div>
@@ -703,21 +1069,10 @@ function updateTriageStatus(sel) {
   markTriageDirty();
 }
 
-/* ── DIRTY STATE — shows Carbon inline warning notification ── */
+/* ── DIRTY STATE ── */
 function markTriageDirty() {
   var warn = document.getElementById('triage-warning');
   if (warn) warn.classList.add('visible');
-}
-
-/* ── FILTER SECTION TABLE (used by all three finding section tables) ── */
-function filterSectionTable(input, sectionId) {
-  var term = input.value.toLowerCase();
-  var section = document.getElementById(sectionId);
-  if (!section) return;
-  section.querySelectorAll('tbody tr[data-id]').forEach(function(row) {
-    var text = row.textContent.toLowerCase();
-    row.style.display = (!term || text.indexOf(term) !== -1) ? '' : 'none';
-  });
 }
 
 /* ── ACCORDION ── */
@@ -732,7 +1087,7 @@ function toggleAccordion(bodyId) {
   if (indicator) indicator.textContent = isOpen ? '▶' : '▼';
 }
 
-/* ── COPY TRIAGE JSON (reads from all three finding-table tables) ── */
+/* ── COPY TRIAGE JSON ── */
 function copyTriageJSON() {
   var rows = document.querySelectorAll('.finding-table tbody tr[data-id]');
   var findings = [];
@@ -753,8 +1108,8 @@ function copyTriageJSON() {
   });
   var payload = {
     schema_version: '1.0',
-    report_slug:    document.title.replace(/^UX Review Report — /, '').replace(/\s+/g, '-').toLowerCase(),
-    screen:         (findings[0] || {}).screen || '',
+    report_slug:    'ux-review-api-studio-api-connect',
+    screen:         (findings[0] || {}).screen || 'API Authoring',
     figma_node_id:  (document.querySelector('meta[name="figma-node-id"]') || {}).content || null,
     exported_at:    new Date().toISOString(),
     findings:       findings
@@ -781,7 +1136,7 @@ function _flashCopyBtn() {
   setTimeout(function() {
     btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M28,10H22V4a2,2,0,0,0-2-2H4A2,2,0,0,0,2,4V20a2,2,0,0,0,2,2h6v6a2,2,0,0,0,2,2H28a2,2,0,0,0,2-2V12A2,2,0,0,0,28,10ZM4,20V4H20v6H12a2,2,0,0,0-2,2V20Zm24,10H12V12H28Z"/></svg> Copy Triage JSON';
     btn.classList.remove('copied');
-  }, 2000);
+  }, 2200);
 }
 
 function _fallbackCopy(text) {
@@ -790,9 +1145,13 @@ function _fallbackCopy(text) {
   ta.style.position = 'fixed';
   ta.style.opacity = '0';
   document.body.appendChild(ta);
-  ta.focus();
   ta.select();
-  try { document.execCommand('copy'); _flashCopyBtn(); } catch (e) {}
+  try {
+    document.execCommand('copy');
+    _flashCopyBtn();
+  } catch (err) {
+    alert('Copy failed. Please manually copy triage JSON.');
+  }
   document.body.removeChild(ta);
 }
 </script>

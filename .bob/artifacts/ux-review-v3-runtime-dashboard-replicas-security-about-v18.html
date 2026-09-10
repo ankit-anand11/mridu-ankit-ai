@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="figma-node-id" content="4533:42224" />
+<title>UX Review Report — Runtime Dashboard · Replicas &amp; Security</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'IBM Plex Sans', sans-serif; font-size: 14px; line-height: 1.6; background: #f4f4f4; color: #161616; }
+code { font-family: 'IBM Plex Mono', monospace; font-size: 12px; background: #e8e8e8; padding: 1px 5px; border-radius: 3px; color: #161616; }
+a { color: #0f62fe; text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.wrapper { max-width: 920px; margin: 0 auto; padding: 40px 28px 80px; }
+
+/* ── PAGE HEADER — Carbon for IBM Products PageHeader pattern ── */
+.page-header { background: #ffffff; margin-bottom: 2px; border-bottom: 1px solid #e0e0e0; }
+
+/* Zone 1: breadcrumb bar — $layer-01, 40px */
+.page-header-breadcrumb {
+  background: #f4f4f4;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 0 32px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  color: #525252;
+  gap: 6px;
+}
+.page-header-breadcrumb a { color: #0f62fe; font-size: 12px; text-decoration: none; }
+.page-header-breadcrumb a:hover { text-decoration: underline; }
+.page-header-breadcrumb .bc-sep { color: #8d8d8d; font-size: 12px; }
+.page-header-breadcrumb .bc-current { color: #161616; font-weight: 600; }
+
+/* Zone 2: title body — white, min 64px, $productive-heading-04 */
+.page-header-body {
+  padding: 16px 32px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  min-height: 64px;
+}
+.page-header-body h1 {
+  font-size: 28px;
+  font-weight: 600;
+  color: #161616;
+  line-height: 1.2;
+  letter-spacing: 0;
+  margin: 0;
+}
+.page-header-subtitle { font-size: 12px; color: #525252; margin-top: 4px; font-weight: 400; }
+
+/* Zone 3: tag/pill row */
+.page-header-tags { padding: 0 32px 16px; display: flex; flex-wrap: wrap; gap: 8px; }
+
+.pill { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; padding: 3px 11px; border-radius: 20px; border: 1.5px solid; }
+.pill-c  { background:#fff1f1; border-color:#da1e28; color:#da1e28; }
+.pill-m  { background:#fff8e1; border-color:#f1620d; color:#f1620d; }
+.pill-n  { background:#f4f4f4; border-color:#8d8d8d; color:#6f6f6f; }
+.pill-i  { background:#edf5ff; border-color:#0f62fe; color:#0043ce; }
+.pill-w  { background:#f6f2ff; border-color:#8a3ffc; color:#6929c4; }
+
+/* CARBON TAG — used for finding ID badges */
+.ctag { display: inline-flex; align-items: center; font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; padding: 0 8px; height: 20px; border-radius: 24px; white-space: nowrap; flex-shrink: 0; }
+.ctag-c  { background: #fff1f1; color: #da1e28; outline: 1.5px solid #da1e28; }
+.ctag-m  { background: #fff8e1; color: #b5430a; outline: 1.5px solid #f1620d; }
+.ctag-n  { background: #f4f4f4; color: #525252; outline: 1.5px solid #8d8d8d; }
+.ctag-ok { background: #defbe6; color: #0e6027; outline: 1.5px solid #198038; }
+
+/* WHITE CARD / SECTION */
+.section { background: #ffffff; padding: 24px 28px; margin-bottom: 2px; }
+.section-heading { font-size: 14px; font-weight: 600; color: #161616; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #e0e0e0; }
+
+.toc-group { margin-bottom: 24px; }
+.toc-group:last-child { margin-bottom: 0; }
+.toc-group-label { font-size: 11px; font-weight: 600; color: #6f6f6f; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 8px; }
+.toc-tile { display: flex; align-items: center; gap: 14px; padding: 12px 16px; background: #f4f4f4; border: 1px solid #e0e0e0; border-bottom: none; text-decoration: none; color: #161616; cursor: pointer; }
+.toc-tile:first-of-type { border-radius: 4px 4px 0 0; }
+.toc-tile:last-of-type  { border-bottom: 1px solid #e0e0e0; border-radius: 0 0 4px 4px; }
+.toc-tile:only-of-type  { border-radius: 4px; border-bottom: 1px solid #e0e0e0; }
+.toc-tile:hover { background: #e8e8e8; border-color: #c6c6c6; }
+.toc-tile-text { flex: 1; font-size: 13px; font-weight: 400; line-height: 1.4; }
+.toc-tile-sub  { font-size: 11px; color: #6f6f6f; margin-top: 2px; }
+.toc-arrow { font-size: 14px; color: #8d8d8d; flex-shrink: 0; }
+
+/* ZONE MAP */
+.zone-caption { font-size: 11px; font-weight: 600; color: #6f6f6f; margin-bottom: 6px; }
+.zone-map { font-family: 'IBM Plex Mono', monospace; font-size: 11px; line-height: 1.6; background: #f4f4f4; border: 1px solid #e0e0e0; padding: 14px 16px; white-space: pre; overflow-x: auto; color: #393939; margin-bottom: 6px; }
+.zc  { color: #da1e28; font-weight: 600; }
+.zm  { color: #c45000; font-weight: 600; }
+.zn  { color: #6f6f6f; font-weight: 600; }
+.zok { color: #198038; font-weight: 600; }
+
+/* OVERVIEW TABLE — compact summary rows, no expanded cards */
+.overview-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.overview-table th { background: #f4f4f4; padding: 9px 14px; text-align: left; font-weight: 600; font-size: 11px; color: #525252; text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 2px solid #e0e0e0; white-space: nowrap; }
+.overview-table td { padding: 10px 14px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
+.overview-table tr:last-child td { border-bottom: none; }
+.overview-table tr:hover td { background: #fafafa; }
+.overview-cat { font-size: 11px; color: #525252; background: #f4f4f4; padding: 2px 8px; border-radius: 3px; white-space: nowrap; }
+/* FINDING LINK — blue, visible upfront, clickable to open modal */
+.finding-title-link { font-size: 13px; color: #0f62fe; cursor: pointer; text-decoration: none; border-bottom: 1px solid transparent; font-weight: 500; }
+.finding-title-link:hover { color: #0043ce; border-bottom: 1px solid #0043ce; text-decoration: none; }
+.finding-title-link:focus { outline: 2px solid #0f62fe; outline-offset: 2px; border-radius: 1px; }
+.inferred-tag { font-size: 10px; color: #6929c4; background: #f6f2ff; padding: 2px 7px; border-radius: 10px; font-weight: 500; white-space: nowrap; margin-left: 6px; }
+
+/* COMPARISON TABLE */
+.ctable { width: 100%; border-collapse: collapse; font-size: 13px; }
+.ctable th { background: #f4f4f4; padding: 8px 12px; text-align: left; font-weight: 600; font-size: 12px; color: #525252; border-bottom: 2px solid #e0e0e0; }
+.ctable td { padding: 10px 12px; border-bottom: 1px solid #f0f0f0; vertical-align: top; }
+.ctable tr:last-child td { border-bottom: none; }
+.diff { color: #da1e28; font-weight: 500; }
+.good { color: #198038; font-weight: 500; }
+
+/* ACCEPTED UI GAPS */
+.gaps-section { background: #fff8e1; border-left: 4px solid #f1620d; padding: 24px 28px; margin-bottom: 2px; }
+
+/* NOTES */
+.ceil { background: #fff8e1; border: 1px solid #f1620d; padding: 10px 14px; font-size: 12px; color: #3d3d3d; margin-top: 14px; line-height: 1.6; }
+
+/* ACTION LIST */
+.action-group-label { font-size: 13px; font-weight: 600; margin: 20px 0 10px; display: flex; align-items: center; gap: 8px; }
+.action-group-label:first-of-type { margin-top: 0; }
+.action-item { display: flex; gap: 12px; padding: 9px 0; border-bottom: 1px solid #f0f0f0; font-size: 13px; align-items: flex-start; }
+.action-item:last-child { border-bottom: none; }
+.anum { font-weight: 600; min-width: 22px; color: #8d8d8d; padding-top: 1px; }
+
+.section-group { margin-bottom: 2px; }
+
+.report-footer { text-align: center; font-size: 12px; color: #8d8d8d; padding-top: 24px; border-top: 1px solid #e0e0e0; margin-top: 56px; }
+
+/* ── PAGE HEADER TOP ROW (lives inside .page-header-body) ── */
+.page-header-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; flex: 1; }
+.page-header-top h1 { font-size: 28px; font-weight: 600; color: #161616; margin-bottom: 4px; }
+
+/* ── CONTENT SWITCHER (Carbon segmented control) ── */
+.content-switcher { display: inline-flex; border: 1px solid #0f62fe; border-radius: 2px; overflow: hidden; flex-shrink: 0; margin-top: 2px; }
+.cs-btn { padding: 8px 18px; font-size: 12px; font-weight: 500; color: #0f62fe; background: #ffffff; border: none; border-right: 1px solid #0f62fe; cursor: pointer; white-space: nowrap; line-height: 1; }
+.cs-btn:last-child { border-right: none; }
+.cs-btn:hover { background: #edf5ff; }
+.cs-btn.active { background: #0f62fe; color: #ffffff; font-weight: 600; }
+
+/* ── VIEW PANELS ── */
+.view-panel { display: none; }
+.view-panel.active { display: block; }
+
+/* ── SCREEN TABS ── */
+.screen-tab-bar { background: #f4f4f4; border-bottom: 1px solid #e0e0e0; padding: 0 28px; display: flex; gap: 2px; overflow-x: auto; }
+.screen-tab { padding: 10px 18px; font-size: 13px; font-weight: 500; color: #525252; background: none; border: none; border-bottom: 3px solid transparent; cursor: pointer; white-space: nowrap; margin-bottom: -1px; }
+.screen-tab:hover { color: #161616; background: #e8e8e8; }
+.screen-tab.active { color: #161616; background: #ffffff; border-bottom-color: #161616; font-weight: 600; }
+.screen-tab-badge { display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; margin-left: 6px; }
+.badge-c { background: #da1e28; color: #fff; }
+.badge-m { background: #f1620d; color: #fff; }
+.screen-panel { display: none; padding: 28px; }
+.screen-panel.active { display: block; }
+
+/* ── TRIAGE SECTION ── */
+.triage-section { background: #f0f4ff; border-left: 4px solid #0f62fe; padding: 24px 28px; margin-bottom: 2px; }
+.triage-note { font-size: 12px; color: #393939; margin-bottom: 16px; line-height: 1.6; }
+.triage-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.triage-table th { background: #e0eaff; padding: 8px 12px; text-align: left; font-weight: 600; font-size: 11px; color: #0043ce; border-bottom: 2px solid #c5d6ff; white-space: nowrap; }
+.triage-table td { padding: 9px 12px; border-bottom: 1px solid #dde7ff; vertical-align: middle; }
+.triage-table tr:last-child td { border-bottom: none; }
+.triage-table tr:hover td { background: #e8f0ff; }
+.status-unreviewed { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; color: #6f6f6f; background: #f4f4f4; border: 1px solid #c6c6c6; padding: 2px 9px; border-radius: 12px; white-space: nowrap; }
+.status-resolved   { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; color: #0e6027; background: #defbe6; border: 1px solid #198038; padding: 2px 9px; border-radius: 12px; white-space: nowrap; }
+.status-backlog    { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; color: #b5430a; background: #fff8e1; border: 1px solid #f1620d; padding: 2px 9px; border-radius: 12px; white-space: nowrap; }
+.status-rejected   { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; color: #4f2196; background: #f6f2ff; border: 1px solid #8a3ffc; padding: 2px 9px; border-radius: 12px; white-space: nowrap; }
+.triage-codes { margin-top: 14px; padding-top: 14px; border-top: 1px solid #c5d6ff; display: flex; flex-wrap: wrap; gap: 14px; font-size: 12px; color: #393939; }
+.triage-codes span { display: inline-flex; align-items: center; gap: 6px; }
+
+/* ── OVERVIEW TABLE (all findings summary) ── */
+.overview-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.overview-table th { background: #f4f4f4; padding: 9px 14px; text-align: left; font-weight: 600; font-size: 12px; color: #525252; border-bottom: 2px solid #e0e0e0; }
+.overview-table td { padding: 10px 14px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
+.overview-table tr:last-child td { border-bottom: none; }
+.overview-table tr:hover td { background: #fafafa; }
+.overview-cat { font-size: 11px; color: #525252; background: #f4f4f4; padding: 2px 8px; border-radius: 3px; white-space: nowrap; }
+
+/* ── ZONE SUMMARY ROW + MODAL TRIGGER ── */
+.zone-summary-row { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: #f4f4f4; border: 1px solid #e0e0e0; border-radius: 4px; margin-bottom: 12px; }
+.zone-summary-name { font-size: 13px; font-weight: 600; color: #161616; flex: 1; }
+.zone-summary-pills { display: flex; gap: 6px; }
+.zone-map-link { font-size: 12px; color: #0f62fe; border: 1px solid #0f62fe; padding: 4px 14px; border-radius: 3px; background: #edf5ff; cursor: pointer; white-space: nowrap; }
+.zone-map-link:hover { background: #d0e2ff; }
+
+/* ── PER-FINDING MODAL ── */
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 1000; align-items: flex-start; justify-content: center; padding: 40px 24px; overflow-y: auto; }
+.modal-overlay.open { display: flex; }
+.modal { background: #ffffff; border-radius: 2px; max-width: 760px; width: 100%; box-shadow: 0 16px 48px rgba(0,0,0,0.3); margin: auto; }
+.modal-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 16px 24px; border-bottom: 1px solid #e0e0e0; background: #fafafa; }
+.modal-header-left { display: flex; align-items: flex-start; gap: 10px; flex: 1; min-width: 0; }
+.modal-header h3 { font-size: 13px; font-weight: 600; color: #161616; line-height: 1.4; }
+.modal-close { background: none; border: none; font-size: 20px; color: #525252; cursor: pointer; padding: 2px 8px; border-radius: 2px; line-height: 1; flex-shrink: 0; }
+.modal-close:hover { background: #e8e8e8; }
+.modal-zone { padding: 20px 24px; border-bottom: 1px solid #e0e0e0; background: #f9f9f9; }
+.modal-detail-row { display: grid; grid-template-columns: 120px 1fr; border-bottom: 1px solid #f0f0f0; }
+.modal-detail-row:last-child { border-bottom: none; }
+.modal-detail-label { padding: 14px 16px; font-size: 11px; font-weight: 600; color: #6f6f6f; text-transform: uppercase; letter-spacing: 0.05em; background: #fafafa; border-right: 1px solid #f0f0f0; }
+.modal-detail-value { padding: 14px 16px; font-size: 13px; color: #161616; line-height: 1.65; }
+.modal-detail-value a { color: #0f62fe; }
+.loc-chip { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 4px; border: 1px solid; }
+.loc-s1   { background: #edf5ff; color: #0043ce; border-color: #0f62fe; }
+.loc-s2   { background: #defbe6; color: #0e6027; border-color: #198038; }
+.loc-both { background: #f6f2ff; color: #4f2196; border-color: #8a3ffc; }
+.loc-pos  { font-size: 12px; color: #525252; margin-top: 6px; line-height: 1.5; }
+.modal-fix-row { display: grid; grid-template-columns: 120px 1fr; border-top: 1px solid #e0e0e0; }
+.modal-fix-label { padding: 14px 16px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; background: #001141; color: #8d8d8d; border-right: 1px solid #1a2a5c; }
+.modal-fix-cell { background: #001141; padding: 14px 16px; }
+.fix-instruction { font-size: 12px; color: #c6c6c6; margin-bottom: 10px; font-style: italic; line-height: 1.5; }
+.fix-code { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #f4f4f4; line-height: 1.75; white-space: pre-wrap; word-break: break-word; }
+.fc { color: #78a9ff; }
+.modal-inferred-note { font-size: 12px; color: #4f2196; background: #f6f2ff; border-top: 1px solid #d4bbff; padding: 10px 24px; line-height: 1.6; }
+
+/* ── TRIAGE INLINE EDIT CONTROLS ── */
+.triage-select { font-size: 12px; padding: 4px 8px; border: 1px solid #c5d6ff; border-radius: 3px; background: #ffffff; color: #161616; cursor: pointer; min-width: 130px; }
+.triage-select:focus { outline: 2px solid #0f62fe; outline-offset: 1px; }
+.triage-rationale { font-size: 12px; padding: 4px 8px; border: 1px solid #c5d6ff; border-radius: 3px; background: #ffffff; color: #161616; }
+.triage-rationale:focus { outline: 2px solid #0f62fe; outline-offset: 1px; }
+.triage-rationale::placeholder { color: #a8b8d8; }
+
+/* ── COPY TRIAGE JSON BUTTON (Carbon primary button pattern) ── */
+.copy-triage-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 400; padding: 0 16px; height: 40px; border: none; border-radius: 0; background: #0f62fe; color: #ffffff; cursor: pointer; white-space: nowrap; letter-spacing: 0.16px; transition: background 70ms ease; }
+.copy-triage-btn:hover { background: #0353e9; }
+.copy-triage-btn:active { background: #002d9c; }
+.copy-triage-btn:focus { outline: 2px solid #0f62fe; outline-offset: 2px; }
+.copy-triage-btn.copied { background: #198038; }
+
+/* ── UNSAVED CHANGES INLINE NOTIFICATION (Carbon inline notification — warning) ── */
+.triage-warning-notification { display: none; align-items: flex-start; gap: 0; background: #fcf4d6; border-left: 3px solid #f1c21b; padding: 0; margin-bottom: 16px; }
+.triage-warning-notification.visible { display: flex; }
+.triage-warning-icon { flex-shrink: 0; display: flex; align-items: flex-start; padding: 14px 12px; }
+.triage-warning-icon svg { width: 16px; height: 16px; fill: #f1c21b; }
+.triage-warning-content { flex: 1; padding: 14px 0 14px 0; }
+.triage-warning-title { font-size: 14px; font-weight: 600; color: #161616; margin-bottom: 2px; }
+.triage-warning-subtitle { font-size: 14px; color: #393939; }
+.triage-warning-close { flex-shrink: 0; display: flex; align-items: flex-start; padding: 14px 12px; }
+.triage-warning-close button { background: none; border: none; cursor: pointer; padding: 2px; color: #525252; font-size: 16px; line-height: 1; }
+.triage-warning-close button:hover { color: #161616; }
+
+/* ── CARBON DATA TABLE ── */
+.cds-table-container { background: #ffffff; }
+.cds-table-toolbar { display: flex; align-items: center; justify-content: space-between; padding: 0 16px; height: 48px; background: #f4f4f4; border-bottom: 1px solid #e0e0e0; }
+.cds-table-toolbar-content { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+.cds-table-search { display: inline-flex; align-items: center; background: #f4f4f4; border: none; border-bottom: 1px solid #8d8d8d; padding: 0 16px; height: 40px; font-size: 14px; color: #161616; outline: none; min-width: 200px; }
+.cds-table-search:focus { border-bottom: 2px solid #0f62fe; background: #ffffff; }
+.cds-table-search::placeholder { color: #a8a8a8; }
+
+/* ── CARBON TABS ── */
+.cds-tabs { border-bottom: 1px solid #e0e0e0; display: flex; overflow-x: auto; background: #ffffff; }
+.cds-tab { padding: 0 16px; height: 40px; display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 400; color: #525252; background: none; border: none; border-bottom: 2px solid transparent; cursor: pointer; white-space: nowrap; margin-bottom: -1px; letter-spacing: 0.16px; }
+.cds-tab:hover { background: #e8e8e8; color: #161616; }
+.cds-tab.active { color: #161616; border-bottom: 2px solid #161616; font-weight: 600; background: #ffffff; }
+.cds-tab-badge { display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; }
+.cds-tab-badge-c { background: #da1e28; color: #fff; }
+.cds-tab-badge-m { background: #f1620d; color: #fff; }
+
+/* ── ACTION BAR (modal) ── */
+.modal-action-bar { padding: 12px 24px; background: #edf5ff; border-bottom: 1px solid #c5d6ff; font-size: 13px; color: #0043ce; line-height: 1.5; }
+
+/* ── LEGEND ACCORDION ── */
+.accordion { border: 1px solid #e0e0e0; border-radius: 2px; margin: 0 28px 24px; background: #ffffff; }
+.accordion-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; cursor: pointer; font-size: 13px; font-weight: 600; color: #161616; border: none; background: none; width: 100%; text-align: left; }
+.accordion-header:hover { background: #f4f4f4; }
+.accordion-indicator { font-size: 12px; color: #525252; transition: transform 0.15s ease; }
+.accordion-body { display: none; padding: 16px 20px 20px; border-top: 1px solid #e0e0e0; }
+.accordion-body.open { display: block; }
+
+/* ── COPY TRIAGE TOOLBAR STRIP ── */
+.triage-toolbar-strip { display: flex; align-items: center; justify-content: space-between; padding: 0 0 16px 0; }
+
+@media (max-width: 640px) {
+  .modal-detail-row, .modal-fix-row { grid-template-columns: 1fr; }
+  .modal-detail-label, .modal-fix-label { border-right: none; border-bottom: 1px solid #f0f0f0; }
+  .page-header-body { flex-direction: column; gap: 12px; }
+  .page-header-top { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+
+  <!-- Zone 1: breadcrumb bar -->
+  <div class="page-header-breadcrumb">
+    <a href="javascript:void(0)">UX Review</a>
+    <span class="bc-sep">/</span>
+    <span class="bc-current">Runtime Dashboard — Replicas &amp; Security</span>
+  </div>
+
+  <!-- Zone 2: title + content switcher -->
+  <div class="page-header-body">
+    <div class="page-header-top">
+      <div>
+        <h1>UX Review Report</h1>
+        <div class="page-header-subtitle">Runtime Dashboard — Replicas &amp; Security tabs &nbsp;·&nbsp; Figma node 4533:42224 &nbsp;·&nbsp; July 2025</div>
+      </div>
+    </div>
+    <div class="content-switcher">
+      <button class="cs-btn active" data-view="overall" onclick="switchView('overall')">Overall</button>
+      <button class="cs-btn" data-view="perscreen" onclick="switchView('perscreen')">Per Screen</button>
+    </div>
+  </div>
+
+  <!-- Zone 3: severity + input pills -->
+  <div class="page-header-tags">
+    <span class="pill pill-c">● 2 Critical</span>
+    <span class="pill pill-m">● 7 Major</span>
+    <span class="pill pill-i">🔗 Figma URL + Dev Screenshots</span>
+  </div>
+
+</div>
+
+<!-- ═══════════════════ PER-SCREEN VIEW ═══════════════════ -->
+<div class="view-panel" id="view-perscreen">
+
+  <!-- Carbon Tabs tab bar -->
+  <div class="cds-tabs" role="tablist" aria-label="Screens">
+    <button class="cds-tab active" id="tab-replicas" role="tab"
+            aria-selected="true" aria-controls="screen-replicas"
+            onclick="switchScreen('replicas')">
+      Replicas
+      <span class="cds-tab-badge cds-tab-badge-c" aria-label="1 critical finding">1C</span>
+      <span class="cds-tab-badge cds-tab-badge-m" aria-label="1 major finding">1M</span>
+    </button>
+    <button class="cds-tab" id="tab-security" role="tab"
+            aria-selected="false" aria-controls="screen-security"
+            onclick="switchScreen('security')">
+      Security
+      <span class="cds-tab-badge cds-tab-badge-c" aria-label="1 critical finding">1C</span>
+      <span class="cds-tab-badge cds-tab-badge-m" aria-label="4 major findings">4M</span>
+    </button>
+  </div>
+
+  <!-- REPLICAS SCREEN PANEL -->
+  <div class="screen-panel active" id="screen-replicas">
+
+    <!-- Copy Triage JSON toolbar strip -->
+    <div class="triage-toolbar-strip">
+      <div>
+        <div class="triage-warning-notification" id="triage-warning-ps-r">
+          <div class="triage-warning-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2a14 14 0 1 0 14 14A14 14 0 0 0 16 2zm-1 6h2v10h-2zm1 14a1.5 1.5 0 1 1 1.5-1.5A1.5 1.5 0 0 1 16 22z"/></svg></div>
+          <div class="triage-warning-content">
+            <div class="triage-warning-title">Unsaved changes</div>
+            <div class="triage-warning-subtitle">Click "Copy Triage JSON" and paste back to save decisions.</div>
+          </div>
+        </div>
+      </div>
+      <button class="copy-triage-btn" id="copy-triage-btn" onclick="copyTriageJSON()">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M28,10H22V4a2,2,0,0,0-2-2H4A2,2,0,0,0,2,4V20a2,2,0,0,0,2,2h6v6a2,2,0,0,0,2,2H28a2,2,0,0,0,2-2V12A2,2,0,0,0,28,10ZM4,20V4H20v6H12a2,2,0,0,0-2,2V20Zm24,10H12V12H28Z"/></svg>
+        Copy Triage JSON
+      </button>
+    </div>
+
+    <!-- Replicas: Carbon Violations -->
+    <div class="section" style="margin-bottom:2px" id="section-cv-replicas">
+      <div class="section-heading">Carbon Violations</div>
+      <div class="cds-table-container">
+        <div class="cds-table-toolbar">
+          <span style="font-size:12px;font-weight:600;color:#525252">Carbon Violations</span>
+          <div class="cds-table-toolbar-content">
+            <input class="cds-table-search" type="search" placeholder="Search findings…"
+                   oninput="filterSectionTable(this,'section-cv-replicas')" aria-label="Search Carbon Violations" />
+          </div>
+        </div>
+        <table class="overview-table finding-table" id="table-cv-replicas">
+          <thead>
+            <tr><th>#</th><th>Screen</th><th>Category</th><th>Finding</th><th>Severity</th><th>Status</th><th>Rationale</th></tr>
+          </thead>
+          <tbody>
+            <tr data-id="f1" data-severity="Critical" data-category="Accessibility" data-screen="Replicas">
+              <td><span class="ctag ctag-c" onclick="openFinding('modal-f1')" style="cursor:pointer">F1</span></td>
+              <td>Replicas</td>
+              <td><span class="overview-cat">Accessibility</span></td>
+              <td><a class="finding-title-link" onclick="openFinding('modal-f1')" href="javascript:void(0)" role="button">Icon-only action buttons in Replicas table lack accessible name (iconDescription)</a></td>
+              <td><span class="pill pill-c" style="font-size:10px">Critical</span></td>
+              <td><select class="triage-select" data-id="f1" onchange="updateTriageStatus(this)"><option value="unreviewed">○ Unreviewed</option><option value="resolved" selected>R Resolved</option><option value="backlog">B Backlog</option><option value="rejected">X Rejected</option></select></td>
+              <td><input class="triage-rationale" data-id="f1" type="text" placeholder="Rationale (required for Backlog / Rejected)" oninput="markTriageDirty()" style="width:100%" /></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Replicas: Implementation Gaps -->
+    <div class="section" style="margin-bottom:2px" id="section-ig-replicas">
+      <div class="section-heading">Implementation Gaps</div>
+      <p style="font-size:12px;color:#6f6f6f;font-style:italic;margin-bottom:16px">The design is correct for these findings — the deviation was introduced in implementation.</p>
+      <div class="ceil" style="margin-bottom:16px">
+        <strong>AI vision ceiling:</strong> Hardcoded hex vs Carbon tokens in code · Sub-4px spacing differences · Hover, focus, and active states · Responsive breakpoints · Keyboard navigation · Screen reader announcements. Provide a Figma URL or code branch for token-level analysis.
+      </div>
+      <div class="cds-table-container">
+        <div class="cds-table-toolbar">
+          <span style="font-size:12px;font-weight:600;color:#525252">Implementation Gaps</span>
+          <div class="cds-table-toolbar-content">
+            <input class="cds-table-search" type="search" placeholder="Search findings…"
+                   oninput="filterSectionTable(this,'section-ig-replicas')" aria-label="Search Implementation Gaps" />
+          </div>
+        </div>
+        <table class="overview-table finding-table" id="table-ig-replicas">
+          <thead>
+            <tr><th>#</th><th>Screen</th><th>Category</th><th>Finding</th><th>Severity</th><th>Status</th><th>Rationale</th></tr>
+          </thead>
+          <tbody>
+            <tr data-id="f4" data-severity="Major" data-category="Visual Drift" data-screen="Replicas">
+              <td><span class="ctag ctag-m" onclick="openFinding('modal-f4')" style="cursor:pointer">F4</span></td>
+              <td>Replicas</td>
+              <td><span class="overview-cat">Visual Drift</span></td>
+              <td><a class="finding-title-link" onclick="openFinding('modal-f4')" href="javascript:void(0)" role="button">Replicas table row height: 48px design spec vs visually taller dev render</a></td>
+              <td><span class="pill pill-m" style="font-size:10px">Major</span></td>
+              <td><select class="triage-select" data-id="f4" onchange="updateTriageStatus(this)"><option value="unreviewed" selected>○ Unreviewed</option><option value="resolved">R Resolved</option><option value="backlog">B Backlog</option><option value="rejected">X Rejected</option></select></td>
+              <td><input class="triage-rationale" data-id="f4" type="text" placeholder="Rationale (required for Backlog / Rejected)" oninput="markTriageDirty()" style="width:100%" /></td>
+            </tr>
+            <tr data-id="f8" data-severity="Major" data-category="Icons" data-screen="Both">
+              <td><span class="ctag ctag-m" onclick="openFinding('modal-f8')" style="cursor:pointer">F8</span></td>
+              <td>Both</td>
+              <td><span class="overview-cat">Icons</span></td>
+              <td><a class="finding-title-link" onclick="openFinding('modal-f8')" href="javascript:void(0)" role="button">Sync button: dev uses a different icon than the Figma design — implementation gap</a></td>
+              <td><span class="pill pill-m" style="font-size:10px">Major</span></td>
+              <td><select class="triage-select" data-id="f8" onchange="updateTriageStatus(this)"><option value="unreviewed" selected>○ Unreviewed</option><option value="resolved">R Resolved</option><option value="backlog">B Backlog</option><option value="rejected">X Rejected</option></select></td>
+              <td><input class="triage-rationale" data-id="f8" type="text" placeholder="Rationale (required for Backlog / Rejected)" oninput="markTriageDirty()" style="width:100%" /></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- /screen-replicas -->
+
+  <!-- SECURITY SCREEN PANEL -->
+  <div class="screen-panel" id="screen-security">
+
+    <!-- Copy Triage JSON toolbar strip (reads document-wide finding-tables) -->
+    <div class="triage-toolbar-strip">
+      <div>
+        <div class="triage-warning-notification" id="triage-warning-ps-s">
+          <div class="triage-warning-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2a14 14 0 1 0 14 14A14 14 0 0 0 16 2zm-1 6h2v10h-2zm1 14a1.5 1.5 0 1 1 1.5-1.5A1.5 1.5 0 0 1 16 22z"/></svg></div>
+          <div class="triage-warning-content">
+            <div class="triage-warning-title">Unsaved changes</div>
+            <div class="triage-warning-subtitle">Click "Copy Triage JSON" and paste back to save decisions.</div>
+          </div>
+        </div>
+      </div>
+      <button class="copy-triage-btn" onclick="copyTriageJSON()">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M28,10H22V4a2,2,0,0,0-2-2H4A2,2,0,0,0,2,4V20a2,2,0,0,0,2,2h6v6a2,2,0,0,0,2,2H28a2,2,0,0,0,2-2V12A2,2,0,0,0,28,10ZM4,20V4H20v6H12a2,2,0,0,0-2,2V20Zm24,10H12V12H28Z"/></svg>
+        Copy Triage JSON
+      </button>
+    </div>
+
+    <!-- Security: Carbon Violations -->
+    <div class="section" style="margin-bottom:2px" id="section-cv-security">
+      <div class="section-heading">Carbon Violations</div>
+      <div class="cds-table-container">
+        <div class="cds-table-toolbar">
+          <span style="font-size:12px;font-weight:600;color:#525252">Carbon Violations</span>
+          <div class="cds-table-toolbar-content">
+            <input class="cds-table-search" type="search" placeholder="Search findings…"
+                   oninput="filterSectionTable(this,'section-cv-security')" aria-label="Search Carbon Violations" />
+          </div>
+        </div>
+        <table class="overview-table finding-table" id="table-cv-security">
+          <thead>
+            <tr><th>#</th><th>Screen</th><th>Category</th><th>Finding</th><th>Severity</th><th>Status</th><th>Rationale</th></tr>
+          </thead>
+          <tbody>
+            <tr data-id="f2" data-severity="Critical" data-category="Accessibility" data-screen="Security">
+              <td><span class="ctag ctag-c" onclick="openFinding('modal-f2')" style="cursor:pointer">F2</span></td>
+              <td>Security</td>
+              <td><span class="overview-cat">Accessibility</span></td>
+              <td><a class="finding-title-link" onclick="openFinding('modal-f2')" href="javascript:void(0)" role="button">Delete icon-only button in Pairing tokens table lacks iconDescription</a></td>
+              <td><span class="pill pill-c" style="font-size:10px">Critical</span></td>
+              <td><select class="triage-select" data-id="f2" onchange="updateTriageStatus(this)"><option value="unreviewed" selected>○ Unreviewed</option><option value="resolved">R Resolved</option><option value="backlog">B Backlog</option><option value="rejected">X Rejected</option></select></td>
+              <td><input class="triage-rationale" data-id="f2" type="text" placeholder="Rationale (required for Backlog / Rejected)" oninput="markTriageDirty()" style="width:100%" /></td>
+            </tr>
+            <tr data-id="f3" data-severity="Major" data-category="Carbon Compliance" data-screen="Security">
+              <td><span class="ctag ctag-m" onclick="openFinding('modal-f3')" style="cursor:pointer">F3</span></td>
+              <td>Security</td>
+              <td><span class="overview-cat">Carbon Compliance</span></td>
+              <td><a class="finding-title-link" onclick="openFinding('modal-f3')" href="javascript:void(0)" role="button">Generate button uses non-standard key icon — not from @carbon/icons-react</a></td>
+              <td><span class="pill pill-m" style="font-size:10px">Major</span></td>
+              <td><select class="triage-select" data-id="f3" onchange="updateTriageStatus(this)"><option value="unreviewed" selected>○ Unreviewed</option><option value="resolved">R Resolved</option><option value="backlog">B Backlog</option><option value="rejected">X Rejected</option></select></td>
+              <td><input class="triage-rationale" data-id="f3" type="text" placeholder="Rationale (required for Backlog / Rejected)" oninput="markTriageDirty()" style="width:100%" /></td>
+            </tr>
+            <tr data-id="f6" data-severity="Major" data-category="Carbon Compliance" data-screen="Security">
+              <td><span class="ctag ctag-m" onclick="openFinding('modal-f6')" style="cursor:pointer">F6</span></td>
+              <td>Security</td>
+              <td><span class="overview-cat">Carbon Compliance</span></td>
+              <td><a class="finding-title-link" onclick="openFinding('modal-f6')" href="javascript:void(0)" role="button">Tooltip body statically placed (x:319, y:3) over password input — pattern misuse</a></td>
+              <td><span class="pill pill-m" style="font-size:10px">Major</span></td>
+              <td><select class="triage-select" data-id="f6" onchange="updateTriageStatus(this)"><option value="unreviewed" selected>○ Unreviewed</option><option value="resolved">R Resolved</option><option value="backlog">B Backlog</option><option value="rejected">X Rejected</option></select></td>
+              <td><input class="triage-rationale" data-id="f6" type="text" placeholder="Rationale (required for Backlog / Rejected)" oninput="markTriageDirty()" style="width:100%" /></td>
+            </tr>
+            <tr data-id="f7" data-severity="Major" data-category="Token &amp; Spacing" data-screen="Security">
+              <td><span class="ctag ctag-m" onclick="openFinding('modal-f7')" style="cursor:pointer">F7</span></td>
+              <td>Security</td>
+              <td><span class="overview-cat">Token &amp; Spacing</span></td>
+              <td><a class="finding-title-link" onclick="openFinding('modal-f7')" href="javascript:void(0)" role="button">Tooltip uses background-inverse (#393939) — correct token, but tooltip is persistently rendered</a></td>
+              <td><span class="pill pill-m" style="font-size:10px">Major</span></td>
+              <td><select class="triage-select" data-id="f7" onchange="updateTriageStatus(this)"><option value="unreviewed" selected>○ Unreviewed</option><option value="resolved">R Resolved</option><option value="backlog">B Backlog</option><option value="rejected">X Rejected</option></select></td>
+              <td><input class="triage-rationale" data-id="f7" type="text" placeholder="Rationale (required for Backlog / Rejected)" oninput="markTriageDirty()" style="width:100%" /></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Security: Implementation Gaps -->
+    <div class="section" style="margin-bottom:2px" id="section-ig-security">
+      <div class="section-heading">Implementation Gaps</div>
+      <p style="font-size:12px;color:#6f6f6f;font-style:italic;margin-bottom:16px">The design is correct for these findings — the deviation was introduced in implementation.</p>
+      <div class="ceil" style="margin-bottom:16px">
+        <strong>AI vision ceiling:</strong> Hardcoded hex vs Carbon tokens in code · Sub-4px spacing differences · Hover, focus, and active states · Responsive breakpoints · Keyboard navigation · Screen reader announcements. Provide a Figma URL or code branch for token-level analysis.
+      </div>
+      <div class="cds-table-container">
+        <div class="cds-table-toolbar">
+          <span style="font-size:12px;font-weight:600;color:#525252">Implementation Gaps</span>
+          <div class="cds-table-toolbar-content">
+            <input class="cds-table-search" type="search" placeholder="Search findings…"
+                   oninput="filterSectionTable(this,'section-ig-security')" aria-label="Search Implementation Gaps" />
+          </div>
+        </div>
+        <table class="overview-table finding-table" id="table-ig-security">
+          <thead>
+            <tr><th>#</th><th>Screen</th><th>Category</th><th>Finding</th><th>Severity</th><th>Status</th><th>Rationale</th></tr>
+          </thead>
+          <tbody>
+            <tr data-id="f5" data-severity="Major" data-category="Visual Drift" data-screen="Security">
+              <td><span class="ctag ctag-m" onclick="openFinding('modal-f5')" style="cursor:pointer">F5</span></td>
+              <td>Security</td>
+              <td><span class="overview-cat">Visual Drift</span></td>
+              <td><a class="finding-title-link" onclick="openFinding('modal-f5')" href="javascript:void(0)" role="button">Pairing tokens table: 64px rows in Figma vs ~48px in dev</a></td>
+              <td><span class="pill pill-m" style="font-size:10px">Major</span></td>
+              <td><select class="triage-select" data-id="f5" onchange="updateTriageStatus(this)"><option value="unreviewed" selected>○ Unreviewed</option><option value="resolved">R Resolved</option><option value="backlog">B Backlog</option><option value="rejected">X Rejected</option></select></td>
+              <td><input class="triage-rationale" data-id="f5" type="text" placeholder="Rationale (required for Backlog / Rejected)" oninput="markTriageDirty()" style="width:100%" /></td>
+            </tr>
+            <tr data-id="f8b" data-severity="Major" data-category="Icons" data-screen="Both">
+              <td><span class="ctag ctag-m" onclick="openFinding('modal-f8')" style="cursor:pointer">F8</span></td>
+              <td>Both</td>
+              <td><span class="overview-cat">Icons</span></td>
+              <td><a class="finding-title-link" onclick="openFinding('modal-f8')" href="javascript:void(0)" role="button">Sync button: dev uses a different icon than the Figma design — implementation gap</a></td>
+              <td><span class="pill pill-m" style="font-size:10px">Major</span></td>
+              <td><select class="triage-select" data-id="f8b" onchange="updateTriageStatus(this)"><option value="unreviewed" selected>○ Unreviewed</option><option value="resolved">R Resolved</option><option value="backlog">B Backlog</option><option value="rejected">X Rejected</option></select></td>
+              <td><input class="triage-rationale" data-id="f8b" type="text" placeholder="Rationale (required for Backlog / Rejected)" oninput="markTriageDirty()" style="width:100%" /></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- /screen-security -->
+</div><!-- /view-perscreen -->
+
+<!-- ═══════════════════ OVERALL VIEW ═══════════════════ -->
+<div class="view-panel active" id="view-overall">
+<div style="padding: 28px 28px 0;">
+
+<!-- COPY TRIAGE JSON TOOLBAR STRIP -->
+<div class="triage-toolbar-strip" style="margin-bottom:16px">
+  <div class="triage-warning-notification" id="triage-warning">
+    <div class="triage-warning-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2a14 14 0 1 0 14 14A14 14 0 0 0 16 2zm-1 6h2v10h-2zm1 14a1.5 1.5 0 1 1 1.5-1.5A1.5 1.5 0 0 1 16 22z"/></svg>
+    </div>
+    <div class="triage-warning-content">
+      <div class="triage-warning-title">Unsaved changes</div>
+      <div class="triage-warning-subtitle">Click "Copy Triage JSON" and paste it back to save your triage decisions.</div>
+    </div>
+    <div class="triage-warning-close"><button onclick="document.getElementById('triage-warning').classList.remove('visible')" aria-label="Dismiss">✕</button></div>
+  </div>
+  <button class="copy-triage-btn" id="copy-triage-btn" onclick="copyTriageJSON()">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M28,10H22V4a2,2,0,0,0-2-2H4A2,2,0,0,0,2,4V20a2,2,0,0,0,2,2h6v6a2,2,0,0,0,2,2H28a2,2,0,0,0,2-2V12A2,2,0,0,0,28,10ZM4,20V4H20v6H12a2,2,0,0,0-2,2V20Zm24,10H12V12H28Z"/></svg>
+    Copy Triage JSON
+  </button>
+</div>
+
+<!-- SUMMARY -->
+<div class="section" style="margin-bottom:2px">
+  <div class="section-heading">Summary</div>
+  <p style="font-size:13px;color:#393939;margin-bottom:10px">
+    <strong>Screen 1 — Replicas tab:</strong> Runtime detail view showing a data table of container replicas with status and icon-only action buttons. &nbsp;
+    <strong>Screen 2 — Security tab:</strong> Pairing tokens table and Credentials card with password inputs and Regenerate buttons.
+  </p>
+  <p style="font-size:13px;color:#393939;margin-bottom:10px">
+    The Figma design uses Carbon Design System components throughout — IWHI navigation shell, Carbon DataTable, Carbon Tabs, Carbon PasswordInput, and Carbon Buttons are all correctly named in the layer tree and use correct Carbon tokens (<code>Text/text-primary</code>, <code>Layer/layer-01</code>, <code>Border/border-subtle-01</code>, <code>Button/button-tertiary</code>, IBM Plex Sans throughout).
+  </p>
+  <p style="font-size:13px;color:#393939">
+    Two critical accessibility gaps exist: icon-only action buttons in both tables have no accessible name annotation in the design. Five major issues span row height mismatch between Figma (64px pairing-token rows) and dev (~48px), a non-Carbon key icon on the Generate button, a tooltip component that is statically positioned in the layout rather than triggered on hover/focus, and a confirmed icon mismatch on the Sync button — the dev implementation uses a different icon shape than the one specified in the Figma design. One additional finding (◆ Unknown badge) was previously rejected and is tracked in Accepted UI Gaps.
+  </p>
+  <div class="ceil" style="margin-top:14px">
+    ⚠ <strong>Token validation note.</strong> All findings are grounded in Figma MCP data (<code>get_variable_defs</code> + <code>get_metadata</code> + <code>get_design_context</code>) and confirmed against Carbon MCP docs. Token assignments in the Figma file are correct. The gaps identified are structural/pattern-level, not token-level violations.
+  </div>
+</div>
+
+<!-- CARBON VIOLATIONS -->
+<div class="section" style="margin-bottom:2px" id="section-carbon-violations">
+  <div class="section-heading">Carbon Violations</div>
+  <div class="cds-table-container">
+    <div class="cds-table-toolbar">
+      <span style="font-size:12px;font-weight:600;color:#525252">Carbon Violations</span>
+      <div class="cds-table-toolbar-content">
+        <input class="cds-table-search" type="search" placeholder="Search findings…"
+               oninput="filterSectionTable(this,'section-carbon-violations')" aria-label="Search Carbon Violations" />
+      </div>
+    </div>
+    <table class="overview-table finding-table" id="table-carbon-violations">
+      <thead>
+        <tr><th>#</th><th>Screen</th><th>Category</th><th>Finding</th><th>Severity</th><th>Status</th><th>Rationale</th></tr>
+      </thead>
+      <tbody>
+        <tr data-id="f1" data-severity="Critical" data-category="Accessibility" data-screen="Replicas">
+          <td><span class="ctag ctag-c" onclick="openFinding('modal-f1')" style="cursor:pointer">F1</span></td>
+          <td>Replicas</td>
+          <td><span class="overview-cat">Accessibility</span></td>
+          <td><a class="finding-title-link" onclick="openFinding('modal-f1')" href="javascript:void(0)" role="button">Icon-only action buttons in Replicas table lack accessible name (iconDescription)</a></td>
+          <td><span class="pill pill-c" style="font-size:10px">Critical</span></td>
+          <td><select class="triage-select" data-id="f1" onchange="updateTriageStatus(this)"><option value="unreviewed">○ Unreviewed</option><option value="resolved" selected>R Resolved</option><option value="backlog">B Backlog</option><option value="rejected">X Rejected</option></select></td>
+          <td><input class="triage-rationale" data-id="f1" type="text" placeholder="Rationale (required for Backlog / Rejected)" oninput="markTriageDirty()" style="width:100%" /></td>
+        </tr>
+        <tr data-id="f2" data-severity="Critical" data-category="Accessibility" data-screen="Security">
+          <td><span class="ctag ctag-c" onclick="openFinding('modal-f2')" style="cursor:pointer">F2</span></td>
+          <td>Security</td>
+          <td><span class="overview-cat">Accessibility</span></td>
+          <td><a class="finding-title-link" onclick="openFinding('modal-f2')" href="javascript:void(0)" role="button">Delete icon-only button in Pairing tokens table lacks iconDescription</a></td>
+          <td><span class="pill pill-c" style="font-size:10px">Critical</span></td>
+          <td><select class="triage-select" data-id="f2" onchange="updateTriageStatus(this)"><option value="unreviewed" selected>○ Unreviewed</option><option value="resolved">R Resolved</option><option value="backlog">B Backlog</option><option value="rejected">X Rejected</option></select></td>
+          <td><input class="triage-rationale" data-id="f2" type="text" placeholder="Rationale (required for Backlog / Rejected)" oninput="markTriageDirty()" style="width:100%" /></td>
+        </tr>
+        <tr data-id="f3" data-severity="Major" data-category="Carbon Compliance" data-screen="Security">
+          <td><span class="ctag ctag-m" onclick="openFinding('modal-f3')" style="cursor:pointer">F3</span></td>
+          <td>Security</td>
+          <td><span class="overview-cat">Carbon Compliance</span></td>
+          <td><a class="finding-title-link" onclick="openFinding('modal-f3')" href="javascript:void(0)" role="button">Generate button uses non-standard key icon — not from @carbon/icons-react</a></td>
+          <td><span class="pill pill-m" style="font-size:10px">Major</span></td>
+          <td><select class="triage-select" data-id="f3" onchange="updateTriageStatus(this)"><option value="unreviewed" selected>○ Unreviewed</option><option value="resolved">R Resolved</option><option value="backlog">B Backlog</option><option value="rejected">X Rejected</option></select></td>
+          <td><input class="triage-rationale" data-id="f3" type="text" placeholder="Rationale (required for Backlog / Rejected)" oninput="markTriageDirty()" style="width:100%" /></td>
+        </tr>
+        <tr data-id="f6" data-severity="Major" data-category="Carbon Compliance" data-screen="Security">
+          <td><span class="ctag ctag-m" onclick="openFinding('modal-f6')" style="cursor:pointer">F6</span></td>
+          <td>Security</td>
+          <td><span class="overview-cat">Carbon Compliance</span></td>
+          <td><a class="finding-title-link" onclick="openFinding('modal-f6')" href="javascript:void(0)" role="button">Tooltip body statically placed (x:319, y:3) over password input — pattern misuse</a></td>
+          <td><span class="pill pill-m" style="font-size:10px">Major</span></td>
+          <td><select class="triage-select" data-id="f6" onchange="updateTriageStatus(this)"><option value="unreviewed" selected>○ Unreviewed</option><option value="resolved">R Resolved</option><option value="backlog">B Backlog</option><option value="rejected">X Rejected</option></select></td>
+          <td><input class="triage-rationale" data-id="f6" type="text" placeholder="Rationale (required for Backlog / Rejected)" oninput="markTriageDirty()" style="width:100%" /></td>
+        </tr>
+        <tr data-id="f7" data-severity="Major" data-category="Token &amp; Spacing" data-screen="Security">
+          <td><span class="ctag ctag-m" onclick="openFinding('modal-f7')" style="cursor:pointer">F7</span></td>
+          <td>Security</td>
+          <td><span class="overview-cat">Token &amp; Spacing</span></td>
+          <td><a class="finding-title-link" onclick="openFinding('modal-f7')" href="javascript:void(0)" role="button">Tooltip uses background-inverse (#393939) — correct token, but tooltip is persistently rendered</a></td>
+          <td><span class="pill pill-m" style="font-size:10px">Major</span></td>
+          <td><select class="triage-select" data-id="f7" onchange="updateTriageStatus(this)"><option value="unreviewed" selected>○ Unreviewed</option><option value="resolved">R Resolved</option><option value="backlog">B Backlog</option><option value="rejected">X Rejected</option></select></td>
+          <td><input class="triage-rationale" data-id="f7" type="text" placeholder="Rationale (required for Backlog / Rejected)" oninput="markTriageDirty()" style="width:100%" /></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- IMPLEMENTATION GAPS -->
+<div class="section" style="margin-bottom:2px" id="section-implementation-gaps">
+  <div class="section-heading">Implementation Gaps</div>
+  <p style="font-size:12px;color:#6f6f6f;font-style:italic;margin-bottom:16px">The design is correct for these findings — the deviation was introduced in implementation.</p>
+  <div class="ceil" style="margin-bottom:16px">
+    <strong>AI vision ceiling:</strong> Hardcoded hex vs Carbon tokens in code · Sub-4px spacing differences · Hover, focus, and active states · Responsive breakpoints · Keyboard navigation · Screen reader announcements. Provide a Figma URL or code branch for token-level analysis.
+  </div>
+  <div class="cds-table-container">
+    <div class="cds-table-toolbar">
+      <span style="font-size:12px;font-weight:600;color:#525252">Implementation Gaps</span>
+      <div class="cds-table-toolbar-content">
+        <input class="cds-table-search" type="search" placeholder="Search findings…"
+               oninput="filterSectionTable(this,'section-implementation-gaps')" aria-label="Search Implementation Gaps" />
+      </div>
+    </div>
+    <table class="overview-table finding-table" id="table-implementation-gaps">
+      <thead>
+        <tr><th>#</th><th>Screen</th><th>Category</th><th>Finding</th><th>Severity</th><th>Status</th><th>Rationale</th></tr>
+      </thead>
+      <tbody>
+        <tr data-id="f4" data-severity="Major" data-category="Visual Drift" data-screen="Replicas">
+          <td><span class="ctag ctag-m" onclick="openFinding('modal-f4')" style="cursor:pointer">F4</span></td>
+          <td>Replicas</td>
+          <td><span class="overview-cat">Visual Drift</span></td>
+          <td><a class="finding-title-link" onclick="openFinding('modal-f4')" href="javascript:void(0)" role="button">Replicas table row height: 48px design spec vs visually taller dev render</a></td>
+          <td><span class="pill pill-m" style="font-size:10px">Major</span></td>
+          <td><select class="triage-select" data-id="f4" onchange="updateTriageStatus(this)"><option value="unreviewed" selected>○ Unreviewed</option><option value="resolved">R Resolved</option><option value="backlog">B Backlog</option><option value="rejected">X Rejected</option></select></td>
+          <td><input class="triage-rationale" data-id="f4" type="text" placeholder="Rationale (required for Backlog / Rejected)" oninput="markTriageDirty()" style="width:100%" /></td>
+        </tr>
+        <tr data-id="f5" data-severity="Major" data-category="Visual Drift" data-screen="Security">
+          <td><span class="ctag ctag-m" onclick="openFinding('modal-f5')" style="cursor:pointer">F5</span></td>
+          <td>Security</td>
+          <td><span class="overview-cat">Visual Drift</span></td>
+          <td><a class="finding-title-link" onclick="openFinding('modal-f5')" href="javascript:void(0)" role="button">Pairing tokens table: 64px rows in Figma vs ~48px in dev</a></td>
+          <td><span class="pill pill-m" style="font-size:10px">Major</span></td>
+          <td><select class="triage-select" data-id="f5" onchange="updateTriageStatus(this)"><option value="unreviewed" selected>○ Unreviewed</option><option value="resolved">R Resolved</option><option value="backlog">B Backlog</option><option value="rejected">X Rejected</option></select></td>
+          <td><input class="triage-rationale" data-id="f5" type="text" placeholder="Rationale (required for Backlog / Rejected)" oninput="markTriageDirty()" style="width:100%" /></td>
+        </tr>
+        <tr data-id="f8" data-severity="Major" data-category="Icons" data-screen="Both">
+          <td><span class="ctag ctag-m" onclick="openFinding('modal-f8')" style="cursor:pointer">F8</span></td>
+          <td>Both</td>
+          <td><span class="overview-cat">Icons</span></td>
+          <td><a class="finding-title-link" onclick="openFinding('modal-f8')" href="javascript:void(0)" role="button">Sync button: dev uses a different icon than the Figma design — implementation gap</a></td>
+          <td><span class="pill pill-m" style="font-size:10px">Major</span></td>
+          <td><select class="triage-select" data-id="f8" onchange="updateTriageStatus(this)"><option value="unreviewed" selected>○ Unreviewed</option><option value="resolved">R Resolved</option><option value="backlog">B Backlog</option><option value="rejected">X Rejected</option></select></td>
+          <td><input class="triage-rationale" data-id="f8" type="text" placeholder="Rationale (required for Backlog / Rejected)" oninput="markTriageDirty()" style="width:100%" /></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ACCEPTED UI GAPS -->
+<div class="gaps-section" style="margin-bottom:2px">
+  <div class="section-heading">Accepted UI Gaps</div>
+  <p style="font-size:13px;color:#393939;margin-bottom:16px">These findings were reviewed and accepted by the team. They will not surface as active findings in future reviews.</p>
+  <table class="ctable">
+    <thead>
+      <tr><th>#</th><th>Finding</th><th>Severity</th><th>Category</th><th>Rationale</th><th>First reviewed</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="white-space:nowrap;color:#6f6f6f">—</td>
+        <td>◆ Unknown status uses a custom grey diamond pill instead of Carbon Tag <code>type="gray"</code> (node 4533:40840)</td>
+        <td><span class="pill pill-m" style="font-size:10px">Major</span></td>
+        <td>Carbon Compliance</td>
+        <td><span class="status-rejected">X Rejected</span> &nbsp; accepted gap by UX</td>
+        <td style="white-space:nowrap">2025-08-20</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+</div><!-- /overall padding div -->
+</div><!-- /view-overall -->
+
+</div><!-- /view-panels wrapper -->
+
+<!-- ═══════════════════ LEGEND ACCORDION ═══════════════════ -->
+<div class="accordion" id="legend-accordion" style="margin-top:8px">
+  <button class="accordion-header" onclick="toggleAccordion('legend-body')" aria-expanded="false">
+    Legend
+    <span class="accordion-indicator" id="legend-indicator">▶</span>
+  </button>
+  <div class="accordion-body" id="legend-body">
+    <p style="font-size:13px;font-weight:600;color:#161616;margin-bottom:10px">Severity</p>
+    <table class="ctable" style="margin-bottom:20px">
+      <thead><tr><th>Level</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td><span class="pill pill-c" style="font-size:10px">Critical</span></td><td>Carbon violation that breaks a core pattern or creates an accessibility barrier (e.g. custom component where a Carbon one exists, missing keyboard-accessible target)</td></tr>
+        <tr><td><span class="pill pill-m" style="font-size:10px">Major</span></td><td>Deviation from Carbon standards that creates visual or behavioural inconsistency (e.g. wrong spacing token, incorrect variant)</td></tr>
+        <tr><td><span class="pill pill-n" style="font-size:10px">Minor</span></td><td>Improvement opportunity; does not violate standards (e.g. suboptimal pattern choice, minor alignment drift)</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:13px;font-weight:600;color:#161616;margin-bottom:10px">Categories</p>
+    <table class="ctable">
+      <thead><tr><th>Category</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td><span class="overview-cat">Accessibility</span></td><td>Missing or incorrect ARIA labels, icon-only buttons without accessible names, keyboard navigation issues</td></tr>
+        <tr><td><span class="overview-cat">Component usage</span></td><td>Custom or non-Carbon component where a Carbon equivalent exists; incorrect component variant</td></tr>
+        <tr><td><span class="overview-cat">Tokens</span></td><td>Hard-coded colour or spacing value where a Carbon design token should be used</td></tr>
+        <tr><td><span class="overview-cat">Visual Drift</span></td><td>Design-to-implementation spacing, sizing, or layout gap where the Figma spec is correct</td></tr>
+        <tr><td><span class="overview-cat">Icons</span></td><td>Icon not from <code>@carbon/icons-react</code> or used incorrectly</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div style="padding: 0 28px;">
+  <div class="report-footer">
+    Made with IBM Bob · UX Reviewer v1.8.0 · Figma-sourced findings · All findings are advisory
+  </div>
+</div>
+
+</div><!-- /.wrapper -->
+
+<!-- ═══════════════════ PER-FINDING MODALS ═══════════════════ -->
+
+<!-- MODAL F1 — Critical: Icon-only action buttons in Replicas table lack iconDescription -->
+<div class="modal-overlay" id="modal-f1" onclick="closeOnBackdrop(event,'modal-f1')">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-header-left"><span class="ctag ctag-c">F1</span><h3>Icon-only action buttons in Replicas table lack accessible name (iconDescription)</h3></div>
+      <button class="modal-close" onclick="closeFinding('modal-f1')">✕</button>
+    </div>
+    <div class="modal-action-bar">Add <code>iconDescription</code> to every icon-only button in the Replicas table Actions column before next release.</div>
+    <div class="modal-zone">
+      <div class="zone-caption">Screen 1 — Replicas tab · full zone map</div>
+      <div class="zone-map">┌──────────────────────────────────────────────────────────────────────┐
+│  [Nav✓]  IWHI navigation                                             │
+├──────────────────────────────────────────────────────────────────────┤
+│  [Hdr✓]  Page header     [◆Unknown gap]  [Sync✓]                    │
+├──────────────────────────────────────────────────────────────────────┤
+│  [Tabs✓] Replicas active                                             │
+├────────────────────────────────────────────────┬─────────────────────┤
+│  [ColHdr✓] Container ID | Status               │  ▶ [F1] ◀ Actions  │
+│  [Row✓]  bc6917196338_c525b9 · Unknown         │  ↺ 🗑 ↓  no labels │
+│  [F4]  Dev row height drift                    │                     │
+└────────────────────────────────────────────────┴─────────────────────┘</div>
+      <p style="font-size:11px;color:var(--cds-text-helper);margin-top:6px">▶ [F1] ◀ marks the Actions column. All icon-only buttons (restart, delete, download) have no accessible name annotation in the Figma layer tree (node 4533:40978 — Col 3, 48px wide).</p>
+    </div>
+    <div class="modal-detail-row"><div class="modal-detail-label">Severity</div><div class="modal-detail-value"><span class="pill pill-c" style="font-size:10px">Critical</span></div></div>
+    <div class="modal-detail-row"><div class="modal-detail-label">Category</div><div class="modal-detail-value"><span class="overview-cat">Accessibility</span></div></div>
+    <div class="modal-detail-row"><div class="modal-detail-label">Screen</div><div class="modal-detail-value"><span class="loc-chip">Replicas</span> <span class="loc-pos">Actions column · node 4533:40978 · Col 3 · 48×48px</span></div></div>
+    <div class="modal-detail-row"><div class="modal-detail-label">Source</div><div class="modal-detail-value">Figma MCP <code>get_metadata</code> + <code>get_design_context</code> — node 4533:40978 is an icon-only instance with no label text child. <a href="https://carbondesignsystem.com/components/button/usage/#icon-only-button" target="_blank" rel="noopener">Carbon docs: icon-only buttons require <code>iconDescription</code></a> for screen-reader accessible name.</div></div>
+    <div class="modal-detail-row"><div class="modal-detail-label">Issue &amp; why</div><div class="modal-detail-value">The Actions column (Col 4 header at x:1120, 144px) contains 3 icon-only button instances per body row. Figma layer names are generic ("Col 3"). No accessible name is annotated. In dev, the same 3 icons (refresh, delete, download) are rendered without visible labels. Without <code>iconDescription</code>, screen readers announce the button as unlabelled — a WCAG 4.1.2 violation.</div></div>
+    <div class="modal-fix-row">
+      <div class="modal-fix-label">Fix</div>
+      <div class="modal-fix-cell">
+        <div class="fix-instruction">Add <code>iconDescription</code> to each icon-only button. Import Button and icons from <code>@carbon/react</code> and <code>@carbon/icons-react</code>.</div>
+        <div class="fix-code"><span class="fc">import</span> { Button } <span class="fc">from</span> '@carbon/react';
+<span class="fc">import</span> { Restart, TrashCan, Download } <span class="fc">from</span> '@carbon/icons-react';
+
+<span class="fc">&lt;Button</span>
+  kind="ghost"
+  hasIconOnly
+  renderIcon={Restart}
+  iconDescription="Restart replica"
+  tooltipPosition="bottom"
+/&gt;
+<span class="fc">&lt;Button</span>
+  kind="ghost"
+  hasIconOnly
+  renderIcon={TrashCan}
+  iconDescription="Delete replica"
+  tooltipPosition="bottom"
+/&gt;
+<span class="fc">&lt;Button</span>
+  kind="ghost"
+  hasIconOnly
+  renderIcon={Download}
+  iconDescription="Download logs"
+  tooltipPosition="bottom"
+/&gt;</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL F2 — Critical: Delete icon-only button in Pairing tokens table lacks iconDescription -->
+<div class="modal-overlay" id="modal-f2" onclick="closeOnBackdrop(event,'modal-f2')">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-header-left"><span class="ctag ctag-c">F2</span><h3>Delete icon-only button in Pairing tokens table lacks iconDescription</h3></div>
+      <button class="modal-close" onclick="closeFinding('modal-f2')">✕</button>
+    </div>
+    <div class="modal-action-bar">Add <code>iconDescription</code> to the delete button in each Pairing tokens table row — destructive actions must have an accessible name.</div>
+    <div class="modal-zone">
+      <div class="zone-caption">Screen 2 — Security tab · full zone map</div>
+      <div class="zone-map">┌────────────────────────────────┬─────────────────────────────────────┐
+│  PAIRING TOKENS CARD           │  CREDENTIALS CARD                   │
+│  [F3] Generate + non-Carbon ●  │  [PwdIn✓] Password input OK         │
+│  Header: Label|Expiring|Gen    │  [F6] Tooltip body static y:3       │
+│  [F5] 64px rows / dev ~48px    │  [Regen✓] Regenerate btn OK         │
+│  ▶ [F2] ◀ Delete col (52px)    │  [F7] Same tooltip issue row 2      │
+│  icon only — no label          │  [Regen✓] Regenerate btn OK         │
+└────────────────────────────────┴─────────────────────────────────────┘</div>
+      <p style="font-size:11px;color:var(--cds-text-helper);margin-top:6px">▶ [F2] ◀ marks the delete icon column (Col 14, node 4533:40945, 52px wide). Each of 5 visible rows has a delete icon with no accessible name.</p>
+    </div>
+    <div class="modal-detail-row"><div class="modal-detail-label">Severity</div><div class="modal-detail-value"><span class="pill pill-c" style="font-size:10px">Critical</span></div></div>
+    <div class="modal-detail-row"><div class="modal-detail-label">Category</div><div class="modal-detail-value"><span class="overview-cat">Accessibility</span></div></div>
+    <div class="modal-detail-row"><div class="modal-detail-label">Screen</div><div class="modal-detail-value"><span class="loc-chip">Security</span> <span class="loc-pos">Pairing tokens delete column · node 4533:40945 · Col 14 · 52×49px</span></div></div>
+    <div class="modal-detail-row"><div class="modal-detail-label">Source</div><div class="modal-detail-value">Figma MCP — Col 14 at x:540, 52px wide in the header row. All 5 body rows have a corresponding delete icon instance (48×48px) in Col 3 at x:544. No label text child. Delete is a destructive action — <a href="https://carbondesignsystem.com/components/button/usage/#icon-only-button" target="_blank" rel="noopener">Carbon docs require <code>iconDescription</code></a> for accessibility.</div></div>
+    <div class="modal-detail-row"><div class="modal-detail-label">Issue &amp; why</div><div class="modal-detail-value">Without an accessible name on a destructive delete button, keyboard-only and screen reader users cannot identify or safely trigger the action. WCAG 4.1.2 (Name, Role, Value) is violated.</div></div>
+    <div class="modal-fix-row">
+      <div class="modal-fix-label">Fix</div>
+      <div class="modal-fix-cell">
+        <div class="fix-instruction">Add <code>iconDescription</code> to the delete button in each table row.</div>
+        <div class="fix-code"><span class="fc">import</span> { Button } <span class="fc">from</span> '@carbon/react';
+<span class="fc">import</span> { TrashCan } <span class="fc">from</span> '@carbon/icons-react';
+
+<span class="fc">&lt;Button</span>
+  kind="ghost"
+  hasIconOnly
+  renderIcon={TrashCan}
+  iconDescription={`Delete pairing token ${row.label}`}
+  tooltipPosition="bottom"
+  onClick={() =&gt; handleDelete(row.id)}
+/&gt;</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL F3 — Major: Generate button uses non-standard key icon -->
+<div class="modal-overlay" id="modal-f3" onclick="closeOnBackdrop(event,'modal-f3')">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-header-left"><span class="ctag ctag-m">F3</span><h3>Generate button uses non-standard key icon — not from @carbon/icons-react</h3></div>
+      <button class="modal-close" onclick="closeFinding('modal-f3')">✕</button>
+    </div>
+    <div class="modal-action-bar">Replace the custom key icon with the nearest Carbon equivalent (<code>Password</code> or <code>Key</code> from <code>@carbon/icons-react</code>) and verify at the Carbon icon library.</div>
+    <div class="modal-zone">
+      <div class="zone-caption">Screen 2 — Security tab · full zone map</div>
+      <div class="zone-map">┌────────────────────────────────┬─────────────────────────────────────┐
+│  PAIRING TOKENS CARD           │  CREDENTIALS CARD                   │
+│  ▶ [F3] ◀ Generate + key icon  │  [PwdIn✓] Password inputs OK        │
+│  [F2] Delete col no label      │  [F6][F7] Tooltip issues            │
+│  [F5] Row height 64/48px       │  [Regen✓] Regenerate btn OK         │
+└────────────────────────────────┴─────────────────────────────────────┘</div>
+      <p style="font-size:11px;color:var(--cds-text-helper);margin-top:6px">▶ [F3] ◀ marks the Generate button (top of Pairing tokens card, blue primary with key/lock icon).</p>
+    </div>
+    <div class="modal-detail-row"><div class="modal-detail-label">Severity</div><div class="modal-detail-value"><span class="pill pill-m" style="font-size:10px">Major</span></div></div>
+    <div class="modal-detail-row"><div class="modal-detail-label">Category</div><div class="modal-detail-value"><span class="overview-cat">Component usage</span></div></div>
+    <div class="modal-detail-row"><div class="modal-detail-label">Screen</div><div class="modal-detail-value"><span class="loc-chip">Security</span> <span class="loc-pos">Generate button — Pairing tokens card · node 4533:40904</span></div></div>
+    <div class="modal-detail-row"><div class="modal-detail-label">Source</div><div class="modal-detail-value">Visual analysis of Figma screenshot and dev screenshot. The button renders a key/padlock icon. Carbon icon library contains <code>Password</code> (key-like) and <code>Key</code>. The exact icon shape visible (outlined key pointing up-right) does not match standard Carbon icon catalog shapes. If a custom SVG is being used, this violates <a href="https://carbondesignsystem.com/elements/icons/usage/" target="_blank" rel="noopener">Carbon icon usage guidelines</a>.</div></div>
+    <div class="modal-detail-row"><div class="modal-detail-label">Issue &amp; why</div><div class="modal-detail-value">Custom SVG icons break visual consistency across Carbon products and prevent theming. All icons must come from <code>@carbon/icons-react</code> to stay in compliance.</div></div>
+    <div class="modal-fix-row">
+      <div class="modal-fix-label">Fix</div>
+      <div class="modal-fix-cell">
+        <div class="fix-instruction">Replace the custom key icon with the closest Carbon equivalent. Verify at <a href="https://carbondesignsystem.com/elements/icons/library/" target="_blank" rel="noopener">carbondesignsystem.com/elements/icons/library/</a></div>
+        <div class="fix-code"><span class="fc">import</span> { Button } <span class="fc">from</span> '@carbon/react';
+<span class="fc">// Option 1 — Password icon (key shape)</span>
+<span class="fc">import</span> { Password } <span class="fc">from</span> '@carbon/icons-react';
+<span class="fc">// Option 2 — if a generic key shape is needed</span>
+<span class="fc">import</span> { Key } <span class="fc">from</span> '@carbon/icons-react';
+
+<span class="fc">&lt;Button</span>
+  kind="primary"
+  renderIcon={Password}
+  onClick={handleGenerate}
+&gt;
+  Generate
+&lt;/Button&gt;</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL F4 — Major: Replicas table row height 48px design vs taller dev render -->
+<div class="modal-overlay" id="modal-f4" onclick="closeOnBackdrop(event,'modal-f4')">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-header-left"><span class="ctag ctag-m">F4</span><h3>Replicas table row height: 48px design vs visually taller dev render</h3></div>
+      <button class="modal-close" onclick="closeFinding('modal-f4')">✕</button>
+    </div>
+    <div class="modal-action-bar">Set <code>size="md"</code> on the Replicas DataTable to enforce the 48px row height specified in Figma.</div>
+    <div class="modal-zone">
+      <div class="zone-caption">Screen 1 — Replicas tab · full zone map</div>
+      <div class="zone-map">┌──────────────────────────────────────────────────────────────────────┐
+│  [Nav✓][Hdr✓][◆Unknown gap][Sync✓]                                  │
+│  [Tabs✓]                                                             │
+├──────────────────────────────────────────────────────────────────────┤
+│  "1 replica" heading                                                 │
+│  [ColHdr✓] 48px column header row                                    │
+│  ▶ [F4] ◀ Body row — Figma 48px / dev visually ~64–72px             │
+│  [F1] icon-only Actions                                              │
+└──────────────────────────────────────────────────────────────────────┘</div>
+      <p style="font-size:11px;color:var(--cds-text-helper);margin-top:6px">▶ [F4] ◀ marks the data table body row zone. Figma node 4533:40841 "Replica (Data table body row item)" height = 48px. Dev screenshot shows the single row taller.</p>
+    </div>
+    <div class="modal-detail-row"><div class="modal-detail-label">Severity</div><div class="modal-detail-value"><span class="pill pill-m" style="font-size:10px">Major</span></div></div>
+    <div class="modal-detail-row"><div class="modal-detail-label">Category</div><div class="modal-detail-value"><span class="overview-cat">Visual Drift</span></div></div>
+    <div class="modal-detail-row"><div class="modal-detail-label">Screen</div><div class="modal-detail-value"><span class="loc-chip">Replicas</span> <span class="loc-pos">DataTable body rows · node 4533:40841</span></div></div>
+    <div class="modal-detail-row"><div class="modal-detail-label">Source</div><div class="modal-detail-value">Figma MCP <code>get_variable_defs</code>: <code>Cell specs/Min-height: 48</code> on node 4533:40841. Body row instance height confirmed at 48px in metadata. Dev screenshot shows a visually taller row. Carbon DataTable <code>size="md"</code> = 48px, <code>size="lg"</code> = 64px. Likely a missing <code>size</code> prop in dev.</div></div>
+    <div class="modal-detail-row"><div class="modal-detail-label">Issue &amp; why</div><div class="modal-detail-value">The Figma design is the source of truth here. The dev build renders rows at a larger size than specified, indicating a missing or incorrect <code>size</code> prop on the Carbon DataTable component.</div></div>
+    <div class="modal-fix-row">
+      <div class="modal-fix-label">Fix</div>
+      <div class="modal-fix-cell">
+        <div class="fix-instruction">Explicitly set <code>size="md"</code> on the Carbon DataTable to enforce 48px row height matching the Figma spec.</div>
+        <div class="fix-code"><span class="fc">import</span> { DataTable, Table, TableBody,
+  TableCell, TableContainer, TableHead,
+  TableHeader, TableRow } <span class="fc">from</span> '@carbon/react';
+
+<span class="fc">&lt;DataTable</span> rows={rows} headers={headers} size="md"&gt;
+  {({ rows, headers, getTableProps,
+      getHeaderProps, getRowProps }) =&gt; (
+    <span class="fc">&lt;TableContainer&gt;</span>
+      <span class="fc">&lt;Table</span> {...getTableProps()}&gt;
+        <span class="fc">&lt;TableHead&gt;</span>
+          ...headers
+        &lt;/TableHead&gt;
+        <span class="fc">&lt;TableBody&gt;</span>
+          ...rows  <span class="fc">// 48px height enforced</span>
+        &lt;/TableBody&gt;
+      &lt;/Table&gt;
+    &lt;/TableContainer&gt;
+  )}
+&lt;/DataTable&gt;</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL F5 — Major: Pairing tokens table 64px rows in Figma vs ~48px in dev -->
+<div class="modal-overlay" id="modal-f5" onclick="closeOnBackdrop(event,'modal-f5')">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-header-left"><span class="ctag ctag-m">F5</span><h3>Pairing tokens table: 64px rows in Figma vs ~48px in dev</h3></div>
+      <button class="modal-close" onclick="closeFinding('modal-f5')">✕</button>
+    </div>
+    <div class="modal-action-bar">Set <code>size="lg"</code> on the Pairing tokens DataTable to accommodate the two-line Generated cell content as designed in Figma.</div>
+    <div class="modal-zone">
+      <div class="zone-caption">Screen 2 — Security tab · full zone map</div>
+      <div class="zone-map">┌────────────────────────────────┬─────────────────────────────────────┐
+│  PAIRING TOKENS CARD           │  CREDENTIALS CARD                   │
+│  [F3] Generate + icon          │  [PwdIn✓] inputs OK                 │
+│  Header 49px (OK)              │  [F6][F7] Tooltip issues            │
+│  ▶ [F5] ◀ Body 64px / dev 48px │  [Regen✓] btn OK                    │
+│  [F2] Delete icon no label     │                                     │
+└────────────────────────────────┴─────────────────────────────────────┘</div>
+      <p style="font-size:11px;color:var(--cds-text-helper);margin-top:6px">▶ [F5] ◀ marks the pairing tokens table body rows. Figma node 4533:40956 height = 64px. The 64px is intentional — Generated column has two lines (name + date). Dev renders at ~48px, truncating the content.</p>
+    </div>
+    <div class="modal-detail-row"><div class="modal-detail-label">Severity</div><div class="modal-detail-value"><span class="pill pill-m" style="font-size:10px">Major</span></div></div>
+    <div class="modal-detail-row"><div class="modal-detail-label">Category</div><div class="modal-detail-value"><span class="overview-cat">Visual Drift</span></div></div>
+    <div class="modal-detail-row"><div class="modal-detail-label">Screen</div><div class="modal-detail-value"><span class="loc-chip">Security</span> <span class="loc-pos">Pairing tokens DataTable body rows · node 4533:40956 · height 64px</span></div></div>
+    <div class="modal-detail-row"><div class="modal-detail-label">Source</div><div class="modal-detail-value">Figma MCP <code>get_design_context</code>: node 4533:40956 "Data table body row item" height = 64.0009px. The "Generated" cell (node 4533:40966) contains a two-line text group (name on line 1, date on line 2 at y:18). This requires <code>size="lg"</code> (64px) in Carbon DataTable. Dev is likely using <code>size="md"</code> or default, cutting off the second line.</div></div>
+    <div class="modal-detail-row"><div class="modal-detail-label">Issue &amp; why</div><div class="modal-detail-value">The 64px row height is intentional — the Generated cell contains two lines of content. Dev using <code>size="md"</code> (48px) truncates the second line, hiding when the token was generated and by whom.</div></div>
+    <div class="modal-fix-row">
+      <div class="modal-fix-label">Fix</div>
+      <div class="modal-fix-cell">
+        <div class="fix-instruction">Set <code>size="lg"</code> on the Pairing tokens DataTable to accommodate the two-line Generated cell content.</div>
+        <div class="fix-code"><span class="fc">// Pairing tokens table — use size="lg" for 64px rows</span>
+<span class="fc">&lt;DataTable</span> rows={pairingTokens} headers={headers} size="lg"&gt;
+  ...
+  <span class="fc">// Generated column cell — two lines</span>
+  <span class="fc">&lt;TableCell&gt;</span>
+    <span class="fc">&lt;div&gt;</span>{token.generatedBy}&lt;/div&gt;
+    <span class="fc">&lt;div</span> style={{ color: '#525252', fontSize: '12px' }}&gt;
+      {token.generatedDate}
+    &lt;/div&gt;
+  &lt;/TableCell&gt;
+&lt;/DataTable&gt;</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL F6 — Major: Tooltip body item statically placed over password input -->
+<div class="modal-overlay" id="modal-f6" onclick="closeOnBackdrop(event,'modal-f6')">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-header-left"><span class="ctag ctag-m">F6</span><h3>Tooltip body item statically placed (x:319, y:3) over password input — pattern misuse in Figma</h3></div>
+      <button class="modal-close" onclick="closeFinding('modal-f6')">✕</button>
+    </div>
+    <div class="modal-action-bar">No dev code change needed — dev behavior is already correct. Update the Figma spec: remove static Tooltip body item layers and replace with hover-state interaction prototyping.</div>
+    <div class="modal-zone">
+      <div class="zone-caption">Screen 2 — Security tab · full zone map</div>
+      <div class="zone-map">┌────────────────────────────────┬─────────────────────────────────────┐
+│  PAIRING TOKENS CARD           │  CREDENTIALS CARD                   │
+│  [F3] Generate + icon          │  "Administrator password"           │
+│  [F2] Delete col no label      │  [PwdIn✓] 422px input (OK)          │
+│  [F5] Row height 64/48px       │  ▶ [F6] ◀ Tooltip y:3 — overlapping │
+│                                │   icon buttons (copy/view)          │
+│                                │  [Regen✓] Regenerate OK             │
+│                                │  "Password manager encryption key"  │
+│                                │  [F7] same — row 2 tooltip overlap  │
+└────────────────────────────────┴─────────────────────────────────────┘</div>
+      <p style="font-size:11px;color:var(--cds-text-helper);margin-top:6px">▶ [F6] ◀ marks the "Tooltip body item" layer at x:319, y:3 within the Administrator password row. In Carbon, tooltips are triggered by hover/focus — they should not be static layers in the design spec.</p>
+    </div>
+    <div class="modal-detail-row"><div class="modal-detail-label">Severity</div><div class="modal-detail-value"><span class="pill pill-m" style="font-size:10px">Major</span></div></div>
+    <div class="modal-detail-row"><div class="modal-detail-label">Category</div><div class="modal-detail-value"><span class="overview-cat">Component usage</span></div></div>
+    <div class="modal-detail-row"><div class="modal-detail-label">Screen</div><div class="modal-detail-value"><span class="loc-chip">Security</span> <span class="loc-pos">Credentials card · Administrator password row · nodes 4533:41139/41140</span></div></div>
+    <div class="modal-detail-row"><div class="modal-detail-label">Source</div><div class="modal-detail-value">Figma MCP <code>get_design_context</code>: node 4533:41140 "Tooltip body item" placed at x:319, y:3 (within a 592px-wide row). The tooltip layer sits directly on top of the password input layer (422px). This represents a hover/interaction state as a persistent static layer — not the correct way to spec a tooltip in <a href="https://carbondesignsystem.com/components/tooltip/usage/" target="_blank" rel="noopener">Carbon Tooltip usage</a>.</div></div>
+    <div class="modal-detail-row"><div class="modal-detail-label">Issue &amp; why</div><div class="modal-detail-value">Dev correctly implements this as a hover-triggered tooltip (Copy, Show password). The Figma design spec needs to be updated — static tooltip layers will be misread as always-visible UI and confuse future implementers.</div></div>
+    <div class="modal-fix-row">
+      <div class="modal-fix-label">Fix</div>
+      <div class="modal-fix-cell">
+        <div class="fix-instruction">No code fix needed — dev behavior is already correct. Update the Figma design: remove static Tooltip body item layers, use Figma interaction prototype with hover state, or use annotation overlays.</div>
+        <div class="fix-code"><span class="fc">// Dev implementation is already correct:</span>
+<span class="fc">import</span> { PasswordInput, IconButton } <span class="fc">from</span> '@carbon/react';
+<span class="fc">import</span> { Copy, View } <span class="fc">from</span> '@carbon/icons-react';
+
+<span class="fc">// Tooltip triggers automatically via IconButton</span>
+<span class="fc">&lt;PasswordInput</span>
+  id="admin-password"
+  labelText="Administrator password"
+  value={password}
+  readOnly
+/&gt;
+<span class="fc">&lt;IconButton</span>
+  label="Copy password"
+  renderIcon={Copy}
+  kind="ghost"
+  size="md"
+  onClick={handleCopy}
+/&gt;
+<span class="fc">// Carbon IconButton shows tooltip on hover automatically</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL F7 — Major: Tooltip token background-inverse correct but tooltip persistently rendered in Figma -->
+<div class="modal-overlay" id="modal-f7" onclick="closeOnBackdrop(event,'modal-f7')">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-header-left"><span class="ctag ctag-m">F7</span><h3>Tooltip token background-inverse (#393939) is correct — but tooltip is persistently rendered in Figma spec</h3></div>
+      <button class="modal-close" onclick="closeFinding('modal-f7')">✕</button>
+    </div>
+    <div class="modal-action-bar">Token is correct — no dev change needed. Update Figma: remove static tooltip layer on row 2, replace with hover-state interaction prototype (same fix as F6).</div>
+    <div class="modal-zone">
+      <div class="zone-caption">Screen 2 — Security tab · full zone map</div>
+      <div class="zone-map">┌────────────────────────────────┬─────────────────────────────────────┐
+│  PAIRING TOKENS CARD           │  CREDENTIALS CARD                   │
+│  [F3][F2][F5] (see above)      │  Row 1: [F6] Tooltip body static    │
+│                                │  ▶ [F7] ◀ Row 2: same pattern      │
+│                                │  "Password manager encryption key"  │
+│                                │  Tooltip body at x:285, y:2         │
+│                                │  background-inverse #393939 (OK tok)│
+└────────────────────────────────┴─────────────────────────────────────┘</div>
+      <p style="font-size:11px;color:var(--cds-text-helper);margin-top:6px">▶ [F7] ◀ marks the second Tooltip body item on the "Password manager encryption key" row (node 4533:41144, x:285, y:2). Token is correct; static placement is the issue.</p>
+    </div>
+    <div class="modal-detail-row"><div class="modal-detail-label">Severity</div><div class="modal-detail-value"><span class="pill pill-m" style="font-size:10px">Major</span></div></div>
+    <div class="modal-detail-row"><div class="modal-detail-label">Category</div><div class="modal-detail-value"><span class="overview-cat">Tokens / Component usage</span></div></div>
+    <div class="modal-detail-row"><div class="modal-detail-label">Screen</div><div class="modal-detail-value"><span class="loc-chip">Security</span> <span class="loc-pos">Credentials card · Password manager encryption key row · node 4533:41144</span></div></div>
+    <div class="modal-detail-row"><div class="modal-detail-label">Source</div><div class="modal-detail-value">Figma MCP <code>get_variable_defs</code> on node 4533:41140: <code>Background/background-inverse: #393939</code>, <code>Icon/icon-inverse: #ffffff</code> — these are the correct Carbon tooltip tokens. The tooltip dark background on a white card is intentional Carbon styling. The violation is the static placement, not the token choice. Same pattern as F6 on the second password row.</div></div>
+    <div class="modal-detail-row"><div class="modal-detail-label">Issue &amp; why</div><div class="modal-detail-value">Token values are verified correct. The Figma layer is a static tooltip overlay rather than an interaction state — same anti-pattern as F6. Both rows need their Figma spec corrected to use prototype hover states.</div></div>
+    <div class="modal-fix-row">
+      <div class="modal-fix-label">Fix</div>
+      <div class="modal-fix-cell">
+        <div class="fix-instruction">Token is correct. Figma spec needs updating — remove static tooltip layer, use hover state interaction. No dev code change needed if already implemented as hover tooltip.</div>
+        <div class="fix-code"><span class="fc">// Token verification (correct):</span>
+<span class="fc">// background-inverse = #393939  ✓ Carbon tooltip background token</span>
+<span class="fc">// icon-inverse = #ffffff         ✓ Carbon tooltip icon token</span>
+<span class="fc">// body-01 font on dark bg        ✓ Carbon tooltip typography</span>
+
+<span class="fc">// Figma design action:</span>
+<span class="fc">// Remove "Tooltip body item" at x:285, y:2</span>
+<span class="fc">// Replace with Figma prototype interaction:</span>
+<span class="fc">//   Trigger: Hover on Copy / View icon button</span>
+<span class="fc">//   Action: Show tooltip overlay component</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL F8 — Major: Sync button dev icon differs from Figma design -->
+<div class="modal-overlay" id="modal-f8" onclick="closeOnBackdrop(event,'modal-f8')">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-header-left"><span class="ctag ctag-m">F8</span><h3>Sync button: dev uses a different icon than the Figma design — implementation gap</h3></div>
+      <button class="modal-close" onclick="closeFinding('modal-f8')">✕</button>
+    </div>
+    <div class="modal-action-bar">Update the dev implementation to use the Carbon icon specified in the Figma design. The Figma design is the source of truth for the icon shape. Button tertiary token is already correct in both design and dev.</div>
+    <div class="modal-zone">
+      <div class="zone-caption">Both screens — Page header · full zone map</div>
+      <div class="zone-map">┌──────────────────────────────────────────────────────────────────────┐
+│  [Nav✓]  IWHI navigation                                             │
+├──────────────────────────────────────────────────────────────────────┤
+│  [Hdr✓]  Page header · runtime name     [◆Unknown gap]  ▶[F8]◀Sync  │
+│  Description · webMethods · version                                  │
+├──────────────────────────────────────────────────────────────────────┤
+│  [Tabs✓][F1/F4 Replicas] / [F2/F3/F5/F6/F7 Security]               │
+└──────────────────────────────────────────────────────────────────────┘</div>
+      <p style="font-size:11px;color:var(--cds-text-helper);margin-top:6px">▶ [F8] ◀ marks the Sync button (top-right of page header, present on both screens). The Figma design specifies one icon shape; the dev screenshot shows a visually different icon. Button-tertiary token is correctly applied in both.</p>
+    </div>
+    <div class="modal-detail-row"><div class="modal-detail-label">Severity</div><div class="modal-detail-value"><span class="pill pill-m" style="font-size:10px">Major</span></div></div>
+    <div class="modal-detail-row"><div class="modal-detail-label">Category</div><div class="modal-detail-value"><span class="overview-cat">Icons</span></div></div>
+    <div class="modal-detail-row"><div class="modal-detail-label">Source</div><div class="modal-detail-value">Confirmed by visual comparison of Figma design screenshot and dev implementation screenshot. The icon shape on the Sync button differs between the two. <code>Button/button-tertiary: #0f62fe</code> is confirmed correct via <code>get_variable_defs</code> — the token is not in question. The icon shape itself is the gap.</div></div>
+    <div class="modal-detail-row"><div class="modal-detail-label">Screen</div><div class="modal-detail-value"><span class="loc-chip loc-both">Both screens</span> <span class="loc-pos">Page header · Sync button · top-right action</span></div></div>
+    <div class="modal-detail-row"><div class="modal-detail-label">Issue &amp; why</div><div class="modal-detail-value">The dev build renders a different icon on the Sync button than what the Figma design specifies. Icon shape is part of the visual spec — using a different icon breaks fidelity with the approved design and may signal a completely different action to users. The Figma design is the source of truth; dev must match it. If the Figma icon is from <code>@carbon/icons-react</code> (e.g. <code>Renew</code>), dev must use the same. If the Figma icon is a custom SVG, that is a separate Carbon violation — but either way, design and dev must be consistent.</div></div>
+    <div class="modal-fix-row">
+      <div class="modal-fix-label">Fix</div>
+      <div class="modal-fix-cell">
+        <div class="fix-instruction">Identify the icon used in the Figma design and match it in the dev implementation. Carbon sync/refresh candidates are shown below — pick the one that matches the Figma spec. Button tertiary token is already correct.</div>
+        <div class="fix-code"><span class="fc">import</span> { Button } <span class="fc">from</span> '@carbon/react';
+
+<span class="fc">// Match whichever icon is shown in the Figma design:</span>
+<span class="fc">// Option A — Renew (circular arrows, most common for "sync")</span>
+<span class="fc">import</span> { Renew } <span class="fc">from</span> '@carbon/icons-react';
+<span class="fc">// Option B — Reset (arrow reset arc)</span>
+<span class="fc">import</span> { Reset } <span class="fc">from</span> '@carbon/icons-react';
+<span class="fc">// Option C — Sync (two-arrow circular sync)</span>
+<span class="fc">import</span> { Sync } <span class="fc">from</span> '@carbon/icons-react';
+
+<span class="fc">&lt;Button</span>
+  kind="tertiary"
+  renderIcon={Renew}  <span class="fc">// ← replace with icon matching Figma design</span>
+  onClick={handleSync}
+&gt;
+  Sync
+&lt;/Button&gt;
+
+<span class="fc">// button-tertiary token: #0f62fe ✓ (already correct in dev)</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── VIEW + SCREEN SWITCHING ── */
+function switchView(v) {
+  document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.cs-btn[data-view]').forEach(b => b.classList.remove('active'));
+  document.getElementById('view-' + v).classList.add('active');
+  document.querySelector('.cs-btn[data-view="' + v + '"]').classList.add('active');
+}
+function switchScreen(s) {
+  document.querySelectorAll('.screen-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.cds-tab').forEach(function(t) {
+    t.classList.remove('active');
+    t.setAttribute('aria-selected', 'false');
+  });
+  document.getElementById('screen-' + s).classList.add('active');
+  var activeTab = document.getElementById('tab-' + s);
+  if (activeTab) {
+    activeTab.classList.add('active');
+    activeTab.setAttribute('aria-selected', 'true');
+  }
+}
+
+/* ── MODAL MANAGEMENT ── */
+var _activeModal = null;
+function openFinding(id) {
+  var overlay = document.getElementById(id);
+  if (!overlay) return;
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  _activeModal = id;
+}
+function closeFinding(id) {
+  var overlay = document.getElementById(id);
+  if (overlay) { overlay.classList.remove('open'); }
+  document.body.style.overflow = '';
+  _activeModal = null;
+}
+function closeOnBackdrop(e, id) {
+  if (e.target === document.getElementById(id)) closeFinding(id);
+}
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape' && _activeModal) closeFinding(_activeModal);
+});
+
+/* ── TRIAGE STATUS UPDATE ── */
+function updateTriageStatus(sel) {
+  var id = sel.getAttribute('data-id');
+  var row = document.querySelector('tr[data-id="' + id + '"]');
+  if (row) row.setAttribute('data-status', sel.value);
+  markTriageDirty();
+}
+
+/* ── DIRTY STATE — shows Carbon inline warning notification ── */
+function markTriageDirty() {
+  var warn = document.getElementById('triage-warning');
+  if (warn) warn.classList.add('visible');
+}
+
+/* ── FILTER SECTION TABLE (used by all three finding section tables) ── */
+function filterSectionTable(input, sectionId) {
+  var term = input.value.toLowerCase();
+  var section = document.getElementById(sectionId);
+  if (!section) return;
+  section.querySelectorAll('tbody tr[data-id]').forEach(function(row) {
+    var text = row.textContent.toLowerCase();
+    row.style.display = (!term || text.indexOf(term) !== -1) ? '' : 'none';
+  });
+}
+
+/* ── ACCORDION ── */
+function toggleAccordion(bodyId) {
+  var body = document.getElementById(bodyId);
+  if (!body) return;
+  var isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  var btn = body.previousElementSibling;
+  if (btn) btn.setAttribute('aria-expanded', String(!isOpen));
+  var indicator = btn ? btn.querySelector('.accordion-indicator') : null;
+  if (indicator) indicator.textContent = isOpen ? '▶' : '▼';
+}
+
+/* ── COPY TRIAGE JSON (reads from all three finding-table tables) ── */
+function copyTriageJSON() {
+  var rows = document.querySelectorAll('.finding-table tbody tr[data-id]');
+  var findings = [];
+  rows.forEach(function(row) {
+    var id      = row.getAttribute('data-id');
+    var sel     = row.querySelector('.triage-select[data-id="' + id + '"]');
+    var inp     = row.querySelector('.triage-rationale[data-id="' + id + '"]');
+    var titleEl = row.querySelector('.finding-title-link');
+    findings.push({
+      id:        id,
+      title:     titleEl ? titleEl.textContent.trim() : '',
+      severity:  row.getAttribute('data-severity') || '',
+      category:  row.getAttribute('data-category') || '',
+      screen:    row.getAttribute('data-screen')   || '',
+      status:    sel  ? sel.value  : 'unreviewed',
+      rationale: inp  ? inp.value.trim() : ''
+    });
+  });
+  var payload = {
+    schema_version: '1.0',
+    report_slug:    document.title.replace(/^UX Review Report — /, '').replace(/\s+/g, '-').toLowerCase(),
+    screen:         (findings[0] || {}).screen || '',
+    figma_node_id:  (document.querySelector('meta[name="figma-node-id"]') || {}).content || null,
+    exported_at:    new Date().toISOString(),
+    findings:       findings
+  };
+  var json = JSON.stringify(payload, null, 2);
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(json).then(function() {
+      _flashCopyBtn();
+    }).catch(function() {
+      _fallbackCopy(json);
+    });
+  } else {
+    _fallbackCopy(json);
+  }
+  var warn = document.getElementById('triage-warning');
+  if (warn) warn.classList.remove('visible');
+}
+
+function _flashCopyBtn() {
+  var btn = document.getElementById('copy-triage-btn');
+  if (!btn) return;
+  btn.textContent = '✓ Copied!';
+  btn.classList.add('copied');
+  setTimeout(function() {
+    btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M28,10H22V4a2,2,0,0,0-2-2H4A2,2,0,0,0,2,4V20a2,2,0,0,0,2,2h6v6a2,2,0,0,0,2,2H28a2,2,0,0,0,2-2V12A2,2,0,0,0,28,10ZM4,20V4H20v6H12a2,2,0,0,0-2,2V20Zm24,10H12V12H28Z"/></svg> Copy Triage JSON';
+    btn.classList.remove('copied');
+  }, 2000);
+}
+
+function _fallbackCopy(text) {
+  var ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  try { document.execCommand('copy'); _flashCopyBtn(); } catch (e) {}
+  document.body.removeChild(ta);
+}
+</script>
+</body>
+</html>

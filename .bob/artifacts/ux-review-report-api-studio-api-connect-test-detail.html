@@ -1,0 +1,611 @@
+
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>UX Review Report — API Studio / API Connect</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, "Segoe UI", system-ui, sans-serif; font-size: 14px; line-height: 1.6; background: #ffffff; color: #1f2328; }
+  .wrapper { max-width: 800px; margin: 0 auto; padding: 32px 24px 64px; }
+
+  /* Header */
+  .report-header { border-left: 4px solid #0f62fe; padding: 0 0 0 16px; margin-bottom: 32px; }
+  .report-header h1 { font-size: 22px; font-weight: 600; color: #161616; margin-bottom: 4px; }
+  .report-header .meta { font-size: 13px; color: #525252; margin-bottom: 12px; }
+  .badge-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+  .badge { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 12px; border: 1px solid; }
+  .badge-critical { background: #fff1f1; border-color: #da1e28; color: #da1e28; }
+  .badge-major { background: #fff8e1; border-color: #f1620d; color: #f1620d; }
+  .badge-minor { background: #f4f4f4; border-color: #8d8d8d; color: #525252; }
+  .badge-info { background: #edf5ff; border-color: #0f62fe; color: #0043ce; }
+  .badge-inferred { background: #f6f2ff; border-color: #8a3ffc; color: #6929c4; }
+
+  /* Section */
+  .section { background: #f4f4f4; border-radius: 8px; padding: 20px; margin-bottom: 24px; }
+  .section-title { font-size: 16px; font-weight: 600; color: #161616; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid #e0e0e0; }
+  .section-clean { font-size: 13px; color: #525252; font-style: italic; }
+
+  /* Finding card */
+  .finding { background: #ffffff; border-radius: 6px; padding: 16px; margin-bottom: 12px; border-left: 3px solid #e0e0e0; }
+  .finding:last-child { margin-bottom: 0; }
+  .finding-critical { border-left-color: #da1e28; }
+  .finding-major { border-left-color: #f1620d; }
+  .finding-minor { border-left-color: #8d8d8d; }
+  .finding-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+  .finding-title { font-weight: 600; font-size: 14px; color: #161616; flex: 1; }
+  .finding-body { font-size: 13px; color: #393939; margin-bottom: 10px; line-height: 1.6; }
+  .finding-rule { font-size: 12px; color: #525252; margin-bottom: 12px; }
+  .finding-rule a { color: #0f62fe; text-decoration: none; }
+  .finding-rule a:hover { text-decoration: underline; }
+  .inferred-label { font-size: 11px; color: #6929c4; background: #f6f2ff; padding: 2px 6px; border-radius: 4px; font-weight: 500; white-space: nowrap; }
+
+  /* Fix block */
+  .fix-block { background: #001141; border-radius: 6px; padding: 14px 16px; margin-top: 10px; }
+  .fix-label { font-size: 11px; color: #a8c7fa; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 8px; }
+  .fix-instruction { font-size: 13px; color: #e0e0e0; margin-bottom: 10px; }
+  .fix-code { font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace; font-size: 12px; color: #f4f4f4; line-height: 1.7; white-space: pre-wrap; word-break: break-word; }
+  .fix-comment { color: #78a9ff; }
+
+  /* Comparison table */
+  .compare-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 8px; }
+  .compare-table th { background: #e0e0e0; padding: 8px 12px; text-align: left; font-weight: 600; }
+  .compare-table td { padding: 8px 12px; border-bottom: 1px solid #e0e0e0; vertical-align: top; }
+  .compare-table tr:last-child td { border-bottom: none; }
+  .diff-flag { color: #da1e28; font-weight: 600; }
+
+  /* Actions */
+  .actions-section { background: #f4f4f4; border-radius: 8px; padding: 20px; margin-bottom: 24px; }
+  .action-group { margin-bottom: 16px; }
+  .action-group:last-child { margin-bottom: 0; }
+  .action-group-title { font-size: 15px; font-weight: 600; margin-bottom: 10px; }
+  .action-item { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; border-bottom: 1px solid #e0e0e0; font-size: 13px; }
+  .action-item:last-child { border-bottom: none; }
+  .action-num { font-weight: 700; min-width: 20px; color: #525252; }
+
+  /* Ceiling note */
+  .ceiling-note { background: #fff8e1; border: 1px solid #f1620d; border-radius: 6px; padding: 12px 14px; font-size: 12px; color: #3d3d3d; margin-top: 12px; }
+  .ceiling-note strong { color: #f1620d; }
+
+  /* Footer */
+  .report-footer { text-align: center; font-size: 12px; color: #8d8d8d; padding-top: 24px; border-top: 1px solid #e0e0e0; margin-top: 48px; }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  
+  <div class="report-header">
+    <h1>UX Review Report — API Studio &amp; API Connect<br />Test Detail / API Path Detail</h1>
+    <div class="meta">August 2026  ·  IBM API Management product suite</div>
+    <div class="badge-row">
+      <span class="badge badge-critical">● 3 Critical</span>
+      <span class="badge badge-major">● 7 Major</span>
+      <span class="badge badge-minor">● 4 Minor</span>
+      <span class="badge badge-info">📷 Screenshot input</span>
+      <span class="badge badge-inferred">⚠ Image-inferred</span>
+    </div>
+  </div>
+
+  
+  <div class="section">
+    <div class="section-title">Summary</div>
+    <p style="font-size:13px;color:#393939;margin-bottom:12px">
+      Two screenshots analysed: <strong>IBM API Studio — Test detail screen</strong> (design) and <strong>IBM API Connect — API Manager path detail screen</strong> (dev implementation). Both appear to be live dev builds rather than a Figma design vs dev pair — noted below. Input is screenshot-only; all findings are <span style="color:#6929c4;font-weight:600">image-inferred</span> (no Figma URL or Code Connect data). Carbon MCP token verification was not available in this session — findings reference Carbon v11 standards from published guidelines.
+    </p>
+    <p style="font-size:13px;color:#393939">
+      The two screens are from related but distinct products — API Studio and API Connect. The comparison reveals meaningful <strong>cross-product visual inconsistency</strong> in navigation patterns, tab components, button hierarchy, and typography treatment. These are flagged as Major findings.
+    </p>
+  </div>
+
+  
+  <div class="section">
+    <div class="section-title">Carbon Compliance Findings</div>
+
+    
+    <div class="finding finding-critical">
+      <div class="finding-header">
+        <div class="finding-title">F1 — "Create new assertion +" button: non-Carbon ghost/outline button pattern</div>
+        <div class="badge badge-critical">● Critical</div>
+      </div>
+      <div class="finding-body">
+        In API Studio, the "Create new assertion +" button uses a custom outlined blue button style (blue border, blue text, white fill). This does not match any Carbon Button variant. The correct Carbon variant for a secondary additive action alongside a primary field is <strong>Tertiary</strong> or <strong>Ghost</strong> — not a custom-bordered style. The "+" icon should be a Carbon icon rendered via <code>Add</code> from <code>@carbon/icons-react</code>, placed as <code>renderIcon</code> prop.
+      </div>
+      <div class="finding-rule">Carbon standard: Button usage — <a href="https://carbondesignsystem.com/components/button/usage/">carbondesignsystem.com/components/button/usage</a></div>
+      <span class="inferred-label">image-inferred</span>
+      <div class="fix-block">
+        <div class="fix-label">▸ Carbon fix</div>
+        <div class="fix-instruction">Replace the custom outlined button with a Carbon Tertiary or Ghost Button with the Add icon.</div>
+        <div class="fix-code"><span class="fix-comment">// Before (custom style)</span>
+&lt;button class="custom-outline-btn"&gt;Create new assertion +&lt;/button&gt;
+
+<span class="fix-comment">// After</span>
+import { Button } from '@carbon/react';
+import { Add } from '@carbon/icons-react';
+
+&lt;Button kind="tertiary" renderIcon={Add}&gt;
+  Create new assertion
+&lt;/Button&gt;</div>
+      </div>
+    </div>
+
+    
+    <div class="finding finding-critical">
+      <div class="finding-header">
+        <div class="finding-title">F2 — Left navigation tree: missing Carbon TreeView or SideNav — custom implementation detected</div>
+        <div class="badge badge-critical">● Critical</div>
+      </div>
+      <div class="finding-body">
+        Both screens show a left-panel tree navigator (APIs, Policy sequences, Tests, Environment, Assertion hierarchy). In API Studio the tree items have no visible expand/collapse affordance consistent with Carbon's <strong>TreeView</strong> pattern — caret icons are custom SVGs, indentation is inconsistent, and the active item highlight (solid blue-left bar) does not match Carbon's <code>TreeNode</code> selected state which uses <code>$layer-selected-01</code> as a background, not a left border. API Connect uses a different treatment entirely (chevrons as separate clickable targets, <code>+</code> icons for add actions inline with tree labels) — a different custom implementation.
+      </div>
+      <div class="finding-rule">Carbon standard: Tree view usage — <a href="https://carbondesignsystem.com/components/tree-view/usage/">carbondesignsystem.com/components/tree-view/usage</a></div>
+      <span class="inferred-label">image-inferred</span>
+      <div class="fix-block">
+        <div class="fix-label">▸ Carbon fix</div>
+        <div class="fix-instruction">Replace the custom tree with Carbon's TreeView component. Selected state should use the built-in <code>selected</code> prop, not a custom border.</div>
+        <div class="fix-code"><span class="fix-comment">// After</span>
+import { TreeView, TreeNode } from '@carbon/react';
+
+&lt;TreeView label="Explorer"&gt;
+  &lt;TreeNode id="apis" label="APIs"&gt;
+    &lt;TreeNode id="api1" label="API 1" /&gt;
+  &lt;/TreeNode&gt;
+  &lt;TreeNode id="tests" label="Tests" isExpanded&gt;
+    &lt;TreeNode id="test-name" label="Test name" selected /&gt;
+  &lt;/TreeNode&gt;
+&lt;/TreeView&gt;</div>
+      </div>
+    </div>
+
+    
+    <div class="finding finding-critical">
+      <div class="finding-header">
+        <div class="finding-title">F3 — Cross-product inconsistency: two different Tab implementations for the same pattern</div>
+        <div class="badge badge-critical">● Critical</div>
+      </div>
+      <div class="finding-body">
+        API Studio uses a line-tab pattern (underline on active tab, no background) with tab labels: Parameters, Body, Header, Authorization, Variables, <strong>Assertions</strong>, Conditions. API Connect uses a filled/contained tab pattern (solid background on active tab: API Specification, Policy, API Set) AND a second set of tabs below it (General information, Security, Paths and Operations, Components, Documentation) using the line pattern. These are two different visual treatments of the same Carbon Tab component across the same product suite. Carbon's <strong>Tabs</strong> component must be used consistently — one style per product context.
+      </div>
+      <div class="finding-rule">Carbon standard: Tabs usage — <a href="https://carbondesignsystem.com/components/tabs/usage/">carbondesignsystem.com/components/tabs/usage</a></div>
+      <span class="inferred-label">image-inferred</span>
+      <div class="fix-block">
+        <div class="fix-label">▸ Carbon fix</div>
+        <div class="fix-instruction">Align both products to the same Tabs variant. For a product UI (not a content site), the <code>line</code> variant is the Carbon default. Do not mix <code>contained</code> and <code>line</code> within the same product suite.</div>
+        <div class="fix-code"><span class="fix-comment">// Consistent usage across both products</span>
+import { Tabs, TabList, Tab, TabPanels, TabPanel } from '@carbon/react';
+
+&lt;Tabs&gt;
+  &lt;TabList aria-label="API detail sections"&gt;
+    &lt;Tab&gt;Parameters&lt;/Tab&gt;
+    &lt;Tab&gt;Body&lt;/Tab&gt;
+    &lt;Tab&gt;Assertions&lt;/Tab&gt;
+  &lt;/TabList&gt;
+  &lt;TabPanels&gt;
+    &lt;TabPanel&gt;...&lt;/TabPanel&gt;
+  &lt;/TabPanels&gt;
+&lt;/Tabs&gt;</div>
+      </div>
+    </div>
+
+    
+    <div class="finding finding-major">
+      <div class="finding-header">
+        <div class="finding-title">F4 — "Refer to existing assertion" dropdown: non-Carbon Select/ComboBox pattern</div>
+        <div class="badge badge-major">● Major</div>
+      </div>
+      <div class="finding-body">
+        The "Refer to existing assertion" dropdown in API Studio has a flat bottom border only (no box border), which matches neither Carbon <strong>Dropdown</strong> (full border box) nor Carbon <strong>Select</strong>. The placeholder text sits left-aligned inside with no label above — Carbon requires a visible <code>titleText</code> label above all Dropdown instances.
+      </div>
+      <div class="finding-rule">Carbon standard: Dropdown usage — <a href="https://carbondesignsystem.com/components/dropdown/usage/">carbondesignsystem.com/components/dropdown/usage</a></div>
+      <span class="inferred-label">image-inferred</span>
+      <div class="fix-block">
+        <div class="fix-label">▸ Carbon fix</div>
+        <div class="fix-instruction">Replace with Carbon Dropdown and add a visible <code>titleText</code> label.</div>
+        <div class="fix-code"><span class="fix-comment">// After</span>
+import { Dropdown } from '@carbon/react';
+
+&lt;Dropdown
+  id="assertion-ref"
+  titleText="Refer to existing assertion"
+  label="Select assertion..."
+  items={assertionItems}
+  itemToString={(item) =&gt; (item ? item.label : '')}
+/&gt;</div>
+      </div>
+    </div>
+
+    
+    <div class="finding finding-major">
+      <div class="finding-header">
+        <div class="finding-title">F5 — Breadcrumb: active/current page item is not distinguished from parent links</div>
+        <div class="badge badge-major">● Major</div>
+      </div>
+      <div class="finding-body">
+        In API Studio, the breadcrumb reads "Test 1 / GET/petId". "GET/petId" is the current page — it should not be a link and should be rendered with <code>isCurrentPage</code> prop (no <code>href</code>). Currently it appears visually identical to "Test 1" (same blue link colour). Carbon's Breadcrumb pattern requires the current page item to be non-interactive and visually distinct.
+      </div>
+      <div class="finding-rule">Carbon standard: Breadcrumb usage — <a href="https://carbondesignsystem.com/components/breadcrumb/usage/">carbondesignsystem.com/components/breadcrumb/usage</a></div>
+      <span class="inferred-label">image-inferred</span>
+      <div class="fix-block">
+        <div class="fix-label">▸ Carbon fix</div>
+        <div class="fix-instruction">Add <code>isCurrentPage</code> to the last BreadcrumbItem and remove its <code>href</code>.</div>
+        <div class="fix-code"><span class="fix-comment">// After</span>
+import { Breadcrumb, BreadcrumbItem } from '@carbon/react';
+
+&lt;Breadcrumb&gt;
+  &lt;BreadcrumbItem href="/tests"&gt;Test 1&lt;/BreadcrumbItem&gt;
+  &lt;BreadcrumbItem isCurrentPage&gt;GET/petId&lt;/BreadcrumbItem&gt;
+&lt;/Breadcrumb&gt;</div>
+      </div>
+    </div>
+
+    
+    <div class="finding finding-major">
+      <div class="finding-header">
+        <div class="finding-title">F6 — API Connect: "Get Started" floating overlay — not a Carbon pattern</div>
+        <div class="badge badge-major">● Major</div>
+      </div>
+      <div class="finding-body">
+        A "Get Started" panel is visible in the bottom-right of the API Connect screen with an <code>✕</code> close button. This is a custom floating element — not a Carbon <strong>Notification</strong>, <strong>Popover</strong>, or <strong>Tooltip</strong>. Carbon has no "floating onboarding card" pattern; the closest sanctioned pattern would be an <strong>inline notification</strong> or a <strong>guided tour</strong> using Carbon's coachmark pattern from IBM Products. The custom implementation has no visible focus trap, no role annotation, and no keyboard-dismissal affordance visible.
+      </div>
+      <div class="finding-rule">Carbon standard: Notification usage — <a href="https://carbondesignsystem.com/components/notification/usage/">carbondesignsystem.com/components/notification/usage</a></div>
+      <span class="inferred-label">image-inferred</span>
+      <div class="fix-block">
+        <div class="fix-label">▸ Carbon fix</div>
+        <div class="fix-instruction">Replace with a Carbon ActionableNotification or, for onboarding, the Coachmark from @carbon/ibm-products.</div>
+        <div class="fix-code"><span class="fix-comment">// Option A — inline notification</span>
+import { ActionableNotification } from '@carbon/react';
+
+&lt;ActionableNotification
+  kind="info"
+  title="Get started"
+  subtitle="Explore the API Manager features."
+  actionButtonLabel="Learn more"
+  onClose={() =&gt; setVisible(false)}
+/&gt;
+
+<span class="fix-comment">// Option B — IBM Products Coachmark (onboarding)</span>
+import { Coachmark } from '@carbon/ibm-products';</div>
+      </div>
+    </div>
+
+  </div>
+
+  
+  <div class="section">
+    <div class="section-title">Token &amp; Spacing Findings</div>
+
+    
+    <div class="finding finding-major">
+      <div class="finding-header">
+        <div class="finding-title">F7 — Active nav item: custom blue left-border instead of $layer-selected-01 background</div>
+        <div class="badge badge-major">● Major</div>
+      </div>
+      <div class="finding-body">
+        API Studio's selected tree/nav item ("Test name", "GET/petID") uses a solid blue <code>#0f62fe</code> left border as the selected indicator. Carbon's TreeView and SideNav selected state uses <code>$layer-selected-01</code> as a background fill across the full row width, not a border. The left blue bar is a custom pattern that breaks the Carbon selected-state token contract.
+      </div>
+      <div class="finding-rule">Carbon token: <code>$layer-selected-01</code> — background of selected interactive layer items</div>
+      <span class="inferred-label">image-inferred</span>
+      <div class="fix-block">
+        <div class="fix-label">▸ Carbon fix</div>
+        <div class="fix-instruction">Remove the custom left-border selected indicator. Use Carbon's built-in <code>selected</code> state which applies <code>$layer-selected-01</code> automatically.</div>
+        <div class="fix-code"><span class="fix-comment">// Before (custom SCSS)</span>
+.nav-item--active {
+  border-left: 3px solid #0f62fe;
+}
+
+<span class="fix-comment">// After — use Carbon TreeNode selected prop</span>
+&lt;TreeNode id="test-name" label="Test name" selected /&gt;
+<span class="fix-comment">// Carbon applies $layer-selected-01 automatically — no custom CSS needed</span></div>
+      </div>
+    </div>
+
+    
+    <div class="finding finding-major">
+      <div class="finding-header">
+        <div class="finding-title">F8 — Top header bar: custom black (#161616 or #000000) background instead of Carbon Shell token</div>
+        <div class="badge badge-major">● Major</div>
+      </div>
+      <div class="finding-body">
+        Both screens use a near-black top header. API Studio header appears to be <code>#161616</code> (Carbon Gray 100 — correct for the Gray 100 theme shell). API Connect header appears lighter — closer to <code>#1a1a1a</code> or a custom dark value — creating a visible inconsistency between the two products. The correct token for the Carbon shell header background is <code>$background-inverse</code> in Gray 100 theme or <code>$shell-header-bg-01</code>. Both products must use the same theme token.
+      </div>
+      <div class="finding-rule">Carbon token: <code>$background-inverse</code> / <code>$shell-header-bg-01</code></div>
+      <span class="inferred-label">image-inferred</span>
+      <div class="fix-block">
+        <div class="fix-label">▸ Carbon fix</div>
+        <div class="fix-instruction">Align both product headers to the same Carbon Gray 100 shell theme token. Do not hardcode background colours.</div>
+        <div class="fix-code"><span class="fix-comment">// Before</span>
+.header { background: #1a1a1a; }
+
+<span class="fix-comment">// After (SCSS)</span>
+@use '@carbon/react/scss/theme' as *;
+.header { background: $background-inverse; }</div>
+      </div>
+    </div>
+
+    
+    <div class="finding finding-minor">
+      <div class="finding-header">
+        <div class="finding-title">F9 — API Connect: "Path parameters" section heading spacing appears larger than $spacing-05</div>
+        <div class="badge badge-minor">● Minor</div>
+      </div>
+      <div class="finding-body">
+        The vertical gap between the "Path parameters" section heading and the table below it appears to be approximately 24–28px — consistent with <code>$spacing-06</code> (24px). However, the gap above the section heading (from the textarea above) appears closer to 40px, which would be <code>$spacing-08</code>. Without Figma metadata this cannot be confirmed precisely, but the spacing rhythm appears inconsistent within the same screen.
+      </div>
+      <div class="finding-rule">Carbon spacing scale: <code>$spacing-06</code> = 24px · <code>$spacing-07</code> = 32px · <code>$spacing-08</code> = 40px</div>
+      <span class="inferred-label">image-inferred</span>
+      <div class="fix-block">
+        <div class="fix-label">▸ Carbon fix</div>
+        <div class="fix-instruction">Audit section-to-section vertical spacing and align to a consistent spacing token — either <code>$spacing-06</code> or <code>$spacing-07</code> throughout, not a mix.</div>
+        <div class="fix-code"><span class="fix-comment">// Consistent vertical rhythm (SCSS)</span>
+.section + .section { margin-top: $spacing-07; } <span class="fix-comment">// 32px</span>
+.section__heading { margin-bottom: $spacing-05; } <span class="fix-comment">// 16px</span></div>
+      </div>
+    </div>
+
+  </div>
+
+  
+  <div class="section">
+    <div class="section-title">Typography Findings</div>
+
+    
+    <div class="finding finding-major">
+      <div class="finding-header">
+        <div class="finding-title">F10 — Page title typography inconsistent between products</div>
+        <div class="badge badge-major">● Major</div>
+      </div>
+      <div class="finding-body">
+        API Studio renders the page title "GET/petId" at approximately 28–32px, bold — consistent with Carbon's <code>$productive-heading-04</code> (28px, semibold) or <code>$productive-heading-05</code> (32px). API Connect renders "jacobson_goldner_soap_api" at approximately 24px — closer to <code>$productive-heading-03</code>. Two products serving the same user role (API developer) use visibly different heading sizes for equivalent page-level titles. Both should use the same type token.
+      </div>
+      <div class="finding-rule">Carbon type token: <code>$productive-heading-04</code> — 28px / semibold / recommended for page-level titles in productive UIs</div>
+      <span class="inferred-label">image-inferred</span>
+      <div class="fix-block">
+        <div class="fix-label">▸ Carbon fix</div>
+        <div class="fix-instruction">Align both product page titles to <code>$productive-heading-04</code>.</div>
+        <div class="fix-code"><span class="fix-comment">// Before — inconsistent sizes</span>
+/* API Studio  */ .page-title { font-size: 30px; font-weight: 600; }
+/* API Connect */ .page-title { font-size: 24px; font-weight: 400; }
+
+<span class="fix-comment">// After (SCSS) — both products</span>
+@use '@carbon/react/scss/type' as *;
+.page-title { @include type-style('productive-heading-04'); }</div>
+      </div>
+    </div>
+
+    
+    <div class="finding finding-minor">
+      <div class="finding-header">
+        <div class="finding-title">F11 — Table column headers: font weight appears medium (500) instead of semibold (600)</div>
+        <div class="badge badge-minor">● Minor</div>
+      </div>
+      <div class="finding-body">
+        The DataTable column headers (Name, Key, Action, Value in API Studio; Name, Located in, Ref name in API Connect) appear to use a medium font weight rather than the semibold that Carbon's DataTable header style specifies (<code>$label-01</code> token: 12px, 400 weight for column labels OR <code>$productive-heading-01</code>: 14px, 600 weight depending on table density).
+      </div>
+      <div class="finding-rule">Carbon token: DataTable header uses <code>$productive-heading-01</code> (14px, 600 weight)</div>
+      <span class="inferred-label">image-inferred</span>
+      <div class="fix-block">
+        <div class="fix-label">▸ Carbon fix</div>
+        <div class="fix-instruction">Ensure the DataTable component's header row uses <code>$productive-heading-01</code> — do not override font-weight on table headers.</div>
+        <div class="fix-code"><span class="fix-comment">// Do not override Carbon DataTable header typography</span>
+<span class="fix-comment">// If overridden in custom CSS, remove:</span>
+.bx--table-header-label { font-weight: 400; } <span class="fix-comment">// ← remove this</span>
+
+<span class="fix-comment">// Use Carbon DataTable directly — it applies correct tokens automatically</span>
+import { DataTable, Table, TableHead,
+  TableRow, TableHeader, TableBody,
+  TableCell } from '@carbon/react';</div>
+      </div>
+    </div>
+
+  </div>
+
+  
+  <div class="section">
+    <div class="section-title">Accessibility Flags <span style="font-size:12px;font-weight:400;color:#525252">(Carbon pattern level)</span></div>
+
+    
+    <div class="finding finding-major">
+      <div class="finding-header">
+        <div class="finding-title">F12 — Edit and link icons in assertion header: icon-only buttons with no visible accessible name</div>
+        <div class="badge badge-major">● Major</div>
+      </div>
+      <div class="finding-body">
+        The assertion section header in API Studio shows two icon-only action buttons (pencil/edit icon and a link/chain icon) with no visible label. Carbon requires all icon-only interactive controls to have an <code>iconDescription</code> prop (renders as <code>aria-label</code>). Without this, screen readers cannot announce the button's purpose. Same pattern appears in API Connect's edit (pencil) and delete (trash) icons next to the API title.
+      </div>
+      <div class="finding-rule">Carbon a11y pattern: all icon-only Buttons must include <code>iconDescription</code> — <a href="https://carbondesignsystem.com/components/button/accessibility/">carbondesignsystem.com/components/button/accessibility</a></div>
+      <span class="inferred-label">image-inferred</span>
+      <div class="fix-block">
+        <div class="fix-label">▸ Carbon fix</div>
+        <div class="fix-instruction">Add <code>iconDescription</code> (and <code>hasIconOnly</code>) to every icon-only Button.</div>
+        <div class="fix-code"><span class="fix-comment">// Before — missing accessible name</span>
+&lt;Button kind="ghost"&gt;&lt;EditIcon /&gt;&lt;/Button&gt;
+
+<span class="fix-comment">// After</span>
+import { Button } from '@carbon/react';
+import { Edit, TrashCan } from '@carbon/icons-react';
+
+&lt;Button kind="ghost" hasIconOnly
+  renderIcon={Edit}
+  iconDescription="Edit assertion"
+  tooltipAlignment="center"
+/&gt;
+&lt;Button kind="ghost" hasIconOnly
+  renderIcon={TrashCan}
+  iconDescription="Delete assertion"
+  tooltipAlignment="center"
+/&gt;</div>
+      </div>
+    </div>
+
+    
+    <div class="finding finding-minor">
+      <div class="finding-header">
+        <div class="finding-title">F13 — "Use custom endpoint" Toggle: label placement follows Carbon pattern but tooltip icon needs accessible name</div>
+        <div class="badge badge-minor">● Minor</div>
+      </div>
+      <div class="finding-body">
+        The Toggle + label "Use custom endpoint" pattern in API Studio is structurally correct — label is visible and placed correctly to the right of the toggle. However, there is a <code>ⓘ</code> tooltip icon immediately after the label with no visible accessible name annotation. Carbon's Tooltip trigger (when used as an icon button) requires <code>iconDescription</code> for the trigger icon, typically "More information" or a context-specific description.
+      </div>
+      <div class="finding-rule">Carbon a11y pattern: Tooltip triggers must have an accessible name</div>
+      <span class="inferred-label">image-inferred</span>
+      <div class="fix-block">
+        <div class="fix-label">▸ Carbon fix</div>
+        <div class="fix-instruction">Add <code>iconDescription</code> to the Tooltip trigger icon.</div>
+        <div class="fix-code"><span class="fix-comment">// After</span>
+import { Toggle, Tooltip } from '@carbon/react';
+import { Information } from '@carbon/icons-react';
+
+&lt;Toggle labelText="Use custom endpoint" id="custom-endpoint" /&gt;
+&lt;Tooltip description="Custom endpoint allows you to override the default API base URL."&gt;
+  &lt;button type="button" className="tooltip-trigger"&gt;
+    &lt;Information aria-label="More information about custom endpoint" /&gt;
+  &lt;/button&gt;
+&lt;/Tooltip&gt;</div>
+      </div>
+    </div>
+
+    <p style="font-size:12px;color:#525252;font-style:italic;margin-top:12px">
+      Note: Mechanical WCAG checks (contrast ratios, tab order, screen reader announcement) are out of scope for this review. Use <strong>IBM Equal Access Checker</strong> for those.
+    </p>
+  </div>
+
+  
+  <div class="section">
+    <div class="section-title">Handoff Completeness</div>
+
+    <div class="finding finding-minor">
+      <div class="finding-header">
+        <div class="finding-title">F14 — No empty state, loading state, or error state visible for the assertions table</div>
+        <div class="badge badge-minor">● Minor</div>
+      </div>
+      <div class="finding-body">
+        The assertions DataTable in API Studio shows data rows but no indication of how the table behaves when: empty (no assertions created yet), loading (async fetch in progress), or in an error state (fetch failed). Carbon's DataTable pattern includes built-in empty state and skeleton loading row variants. If these states are not designed, developers will create ad-hoc solutions.
+      </div>
+      <div class="finding-rule">Carbon pattern: DataTable empty state — <a href="https://carbondesignsystem.com/components/data-table/usage/#empty-state">carbondesignsystem.com/components/data-table/usage/#empty-state</a></div>
+      <span class="inferred-label">image-inferred</span>
+      <div class="fix-block">
+        <div class="fix-label">▸ Carbon fix</div>
+        <div class="fix-instruction">Design and annotate the empty, loading, and error states for the DataTable. Use Carbon's TableToolbarContent for empty state messaging and DataTableSkeleton for loading.</div>
+        <div class="fix-code"><span class="fix-comment">// Loading state</span>
+import { DataTableSkeleton } from '@carbon/react';
+{isLoading &amp;&amp; &lt;DataTableSkeleton columnCount={4} rowCount={3} /&gt;}
+
+<span class="fix-comment">// Empty state (no rows)</span>
+{!isLoading &amp;&amp; rows.length === 0 &amp;&amp; (
+  &lt;p className="empty-state"&gt;No assertions added yet.&lt;/p&gt;
+)}</div>
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="section">
+    <div class="section-title">Design-to-Implementation Comparison</div>
+    <p style="font-size:13px;color:#525252;margin-bottom:16px;font-style:italic">
+      Note: Both inputs are live dev builds (not a Figma design vs dev pair). This section compares cross-product consistency — API Studio (screen 1) vs API Connect (screen 2) — as both serve the same IBM API management user.
+    </p>
+
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>Element</th>
+          <th>API Studio (screen 1)</th>
+          <th>API Connect (screen 2)</th>
+          <th>Assessment</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Top nav header</td>
+          <td>Black bar, icon + text logo left, action buttons right</td>
+          <td>Black bar, text logo + product name left, user/help icons right</td>
+          <td><span class="diff-flag">⚠ Inconsistent</span> — different header content density and icon treatment</td>
+        </tr>
+        <tr>
+          <td>Left nav width</td>
+          <td>~330px, text labels with small icons</td>
+          <td>~330px, text labels with larger icons + inline add buttons</td>
+          <td><span class="diff-flag">⚠ Inconsistent</span> — icon sizes and inline actions differ</td>
+        </tr>
+        <tr>
+          <td>Tab style</td>
+          <td>Line tabs (underline active)</td>
+          <td>Contained tabs (top) + line tabs (nested)</td>
+          <td><span class="diff-flag">⚠ Inconsistent</span> — mixed tab variants (see F3)</td>
+        </tr>
+        <tr>
+          <td>Primary button</td>
+          <td>"Publish" — Carbon Blue-60 primary style ✓</td>
+          <td>"Stage or Publish" — split button with dropdown arrow</td>
+          <td><span style="color:#198038;font-weight:600">✓ Both use Carbon primary button</span> — split button is a valid Carbon pattern</td>
+        </tr>
+        <tr>
+          <td>Breadcrumb</td>
+          <td>Blue links, current page not distinguished</td>
+          <td>Blue links, current page not distinguished</td>
+          <td><span class="diff-flag">⚠ Consistent but both wrong</span> — see F5</td>
+        </tr>
+        <tr>
+          <td>Page title size</td>
+          <td>~30px, bold</td>
+          <td>~22px, regular weight</td>
+          <td><span class="diff-flag">⚠ Inconsistent</span> — see F10</td>
+        </tr>
+        <tr>
+          <td>Table</td>
+          <td>DataTable with checkbox, 4 columns, zebra rows</td>
+          <td>DataTable with 3 columns, no zebra, no checkbox</td>
+          <td>Different densities and configurations — both may be valid for their contexts</td>
+        </tr>
+        <tr>
+          <td>Icon-only action buttons</td>
+          <td>Pencil + link icon, no labels</td>
+          <td>Pencil + trash icon, no labels</td>
+          <td><span class="diff-flag">⚠ Both missing iconDescription</span> — see F12</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="ceiling-note" style="margin-top:16px">
+      <strong>AI vision ceiling — what this review cannot confirm:</strong> Sub-4px spacing differences · Token violations where the visual output looks correct but the underlying CSS uses hardcoded values · Hover, focus, and active states (not visible in screenshots) · Responsive behaviour at different breakpoints · Keyboard navigation order · Screen reader announcement
+    </div>
+  </div>
+
+  
+  <div class="actions-section">
+    <div class="section-title">Recommended Actions</div>
+
+    <div class="action-group">
+      <div class="action-group-title">🔴 Critical (3)</div>
+      <div class="action-item"><div class="action-num">1</div><div>F1 — Replace "Create new assertion +" custom outlined button with Carbon <code>Button kind="tertiary"</code> and <code>renderIcon={Add}</code></div></div>
+      <div class="action-item"><div class="action-num">2</div><div>F2 — Replace custom tree navigation in both products with Carbon <code>TreeView</code> / <code>TreeNode</code> — remove custom left-border selected state</div></div>
+      <div class="action-item"><div class="action-num">3</div><div>F3 — Align both products to a single Carbon Tabs variant (<code>line</code> recommended) — remove <code>contained</code> tabs from API Connect's top-level navigation</div></div>
+    </div>
+
+    <div class="action-group">
+      <div class="action-group-title">🟠 Major (7)</div>
+      <div class="action-item"><div class="action-num">4</div><div>F4 — Replace "Refer to existing assertion" dropdown with Carbon <code>Dropdown</code> and add visible <code>titleText</code> label above it</div></div>
+      <div class="action-item"><div class="action-num">5</div><div>F5 — Add <code>isCurrentPage</code> to the last BreadcrumbItem on both screens — remove <code>href</code> from current page item</div></div>
+      <div class="action-item"><div class="action-num">6</div><div>F6 — Replace custom "Get Started" floating card in API Connect with Carbon <code>ActionableNotification</code> or IBM Products <code>Coachmark</code></div></div>
+      <div class="action-item"><div class="action-num">7</div><div>F7 — Remove custom left-border selected indicator; use Carbon TreeNode's built-in <code>selected</code> prop (<code>$layer-selected-01</code> background)</div></div>
+      <div class="action-item"><div class="action-num">8</div><div>F8 — Align both product header backgrounds to <code>$background-inverse</code> token — no hardcoded dark hex values</div></div>
+      <div class="action-item"><div class="action-num">9</div><div>F10 — Align both product page titles to <code>@include type-style('productive-heading-04')</code></div></div>
+      <div class="action-item"><div class="action-num">10</div><div>F12 — Add <code>iconDescription</code> + <code>hasIconOnly</code> to all icon-only Button instances in both screens (edit, delete, link icons)</div></div>
+    </div>
+
+    <div class="action-group">
+      <div class="action-group-title">🟡 Minor (4)</div>
+      <div class="action-item"><div class="action-num">11</div><div>F9 — Audit and standardise section-to-section vertical spacing in API Connect to a consistent token (<code>$spacing-06</code> or <code>$spacing-07</code>)</div></div>
+      <div class="action-item"><div class="action-num">12</div><div>F11 — Verify DataTable column header font weight is not overridden — should use Carbon's <code>$productive-heading-01</code> (600 weight) automatically</div></div>
+      <div class="action-item"><div class="action-num">13</div><div>F13 — Add <code>aria-label="More information about custom endpoint"</code> to the ⓘ tooltip trigger icon</div></div>
+      <div class="action-item"><div class="action-num">14</div><div>F14 — Design and annotate empty, loading, and error states for the assertions DataTable before next handoff</div></div>
+    </div>
+  </div>
+
+  <div class="report-footer">
+    Made with IBM Bob  ·  UX Reviewer skill v1.1.0  ·  All findings are image-inferred and advisory — for human review
+  </div>
+
+</div>
+</body>
+</html>
