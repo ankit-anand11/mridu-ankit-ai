@@ -922,8 +922,8 @@ confirming a component is correct), immediately:
 2. Explain *why* the false positive occurred (image-inferred limitation)
 3. Remove the finding from the active report — regenerate with corrected count
 4. Use this as a teaching moment: note that a Figma URL + Code Connect
-   would have prevented the false positive by returning the exact component
-   and variant from `get_code_connect_map`
+    would have prevented the false positive by returning the exact component
+    and variant from `get_code_connect_map`
 
 Do not defend the original finding. The user's source-of-truth beats
 image inference every time.

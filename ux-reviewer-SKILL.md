@@ -314,120 +314,545 @@ reviewer knows what to check manually.
 
 ## Output Format — HTML Report
 
-Use `create_html_artifact` to generate the report. Apply the IBM-aligned
-design spec below exactly.
+Use `create_html_artifact` to generate the report. The HTML must exactly
+replicate the v6 report design — every structural pattern below is mandatory.
 
 **Artifact metadata:**
 - `id`: `ux-review-report`
 - `title`: `UX Review Report — [Screen name]`
 - `description`: `[N] findings · [n] Critical · [n] Major · [n] Minor · [date]`
 
-**HTML design spec:**
+---
 
+### CSS — paste verbatim into every report's `<style>` block
+
+```css
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'IBM Plex Sans', sans-serif; font-size: 14px; line-height: 1.6; background: #f4f4f4; color: #161616; }
+code { font-family: 'IBM Plex Mono', monospace; font-size: 12px; background: #e8e8e8; padding: 1px 5px; border-radius: 3px; color: #161616; }
+a { color: #0f62fe; text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.wrapper { max-width: 920px; margin: 0 auto; padding: 40px 28px 80px; }
+
+/* PAGE HEADER */
+.page-header { background: #ffffff; border-left: 4px solid #0f62fe; padding: 24px 28px; margin-bottom: 2px; }
+.page-header h1 { font-size: 22px; font-weight: 600; color: #161616; margin-bottom: 4px; }
+.page-header .sub { font-size: 12px; color: #6f6f6f; margin-bottom: 16px; }
+.pill-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.pill { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; padding: 3px 11px; border-radius: 20px; border: 1.5px solid; }
+.pill-c  { background:#fff1f1; border-color:#da1e28; color:#da1e28; }
+.pill-m  { background:#fff8e1; border-color:#f1620d; color:#f1620d; }
+.pill-n  { background:#f4f4f4; border-color:#8d8d8d; color:#6f6f6f; }
+.pill-i  { background:#edf5ff; border-color:#0f62fe; color:#0043ce; }
+.pill-w  { background:#f6f2ff; border-color:#8a3ffc; color:#6929c4; }
+
+/* CARBON TAG — used for finding ID badges */
+.ctag { display: inline-flex; align-items: center; font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; padding: 0 8px; height: 20px; border-radius: 24px; white-space: nowrap; flex-shrink: 0; }
+.ctag-c  { background: #fff1f1; color: #da1e28; outline: 1.5px solid #da1e28; }
+.ctag-m  { background: #fff8e1; color: #b5430a; outline: 1.5px solid #f1620d; }
+.ctag-n  { background: #f4f4f4; color: #525252; outline: 1.5px solid #8d8d8d; }
+.ctag-ok { background: #defbe6; color: #0e6027; outline: 1.5px solid #198038; }
+
+/* WHITE CARD / SECTION */
+.section { background: #ffffff; padding: 24px 28px; margin-bottom: 2px; }
+.section-heading { font-size: 14px; font-weight: 600; color: #161616; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #e0e0e0; }
+
+/* TABLE OF CONTENTS */
+.toc-group { margin-bottom: 24px; }
+.toc-group:last-child { margin-bottom: 0; }
+.toc-group-label { font-size: 11px; font-weight: 600; color: #6f6f6f; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 8px; }
+.toc-tile { display: flex; align-items: center; gap: 14px; padding: 12px 16px; background: #f4f4f4; border: 1px solid #e0e0e0; border-bottom: none; text-decoration: none; color: #161616; cursor: pointer; }
+.toc-tile:first-of-type { border-radius: 4px 4px 0 0; }
+.toc-tile:last-of-type  { border-bottom: 1px solid #e0e0e0; border-radius: 0 0 4px 4px; }
+.toc-tile:only-of-type  { border-radius: 4px; border-bottom: 1px solid #e0e0e0; }
+.toc-tile:hover { background: #e8e8e8; border-color: #c6c6c6; }
+.toc-tile-text { flex: 1; font-size: 13px; font-weight: 400; line-height: 1.4; }
+.toc-tile-sub  { font-size: 11px; color: #6f6f6f; margin-top: 2px; }
+.toc-arrow { font-size: 14px; color: #8d8d8d; flex-shrink: 0; }
+
+/* ZONE MAP */
+.zone-caption { font-size: 11px; font-weight: 600; color: #6f6f6f; margin-bottom: 6px; }
+.zone-map { font-family: 'IBM Plex Mono', monospace; font-size: 11px; line-height: 1.6; background: #f4f4f4; border: 1px solid #e0e0e0; padding: 14px 16px; white-space: pre; overflow-x: auto; color: #393939; margin-bottom: 6px; }
+.zc  { color: #da1e28; font-weight: 600; }
+.zm  { color: #c45000; font-weight: 600; }
+.zn  { color: #6f6f6f; font-weight: 600; }
+.zok { color: #198038; font-weight: 600; }
+
+/* FINDING CARD */
+.card { border: 1px solid #e0e0e0; overflow: hidden; margin-bottom: 16px; background: #ffffff; scroll-margin-top: 24px; }
+.card:last-of-type { margin-bottom: 0; }
+.card-header { padding: 12px 20px; border-bottom: 1px solid #e0e0e0; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.card-header-c { background: #fff1f1; }
+.card-header-m { background: #fff8e1; }
+.card-header-n { background: #f9f9f9; }
+.card-title { font-size: 13px; font-weight: 600; color: #161616; flex: 1; }
+.inferred-tag { font-size: 10px; color: #6929c4; background: #f6f2ff; padding: 2px 8px; border-radius: 10px; font-weight: 500; white-space: nowrap; }
+
+/* 4-col grid body: severity | location | issue | fix */
+.card-body { display: grid; grid-template-columns: 80px 1fr 1fr 1fr; }
+.col-head-blank { background: #fafafa; border-bottom: 1px solid #e0e0e0; padding: 8px 14px; }
+.col-head { background: #fafafa; border-bottom: 1px solid #e0e0e0; padding: 8px 14px; font-size: 11px; font-weight: 600; color: #6f6f6f; border-left: 1px solid #f0f0f0; }
+.col-sev  { padding: 16px 14px; border-right: 1px solid #f0f0f0; display: flex; align-items: flex-start; }
+.col-cell { padding: 16px; border-right: 1px solid #f0f0f0; font-size: 13px; line-height: 1.65; color: #161616; vertical-align: top; }
+.col-cell:last-child { border-right: none; }
+
+/* location chips inside col-cell */
+.loc-chip { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 4px; border: 1px solid; }
+.loc-s1   { background: #edf5ff; color: #0043ce; border-color: #0f62fe; }
+.loc-s2   { background: #defbe6; color: #0e6027; border-color: #198038; }
+.loc-both { background: #f6f2ff; color: #4f2196; border-color: #8a3ffc; }
+.loc-pos  { font-size: 12px; color: #525252; margin-top: 6px; line-height: 1.5; }
+
+/* fix column — dark background */
+.fix-cell { padding: 0; background: #001141; }
+.fix-inner { padding: 14px 16px; }
+.fix-instruction { font-size: 12px; color: #c6c6c6; margin-bottom: 10px; font-style: italic; line-height: 1.5; }
+.fix-code { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #f4f4f4; line-height: 1.75; white-space: pre-wrap; word-break: break-word; }
+.fc { color: #78a9ff; }   /* blue comment colour inside fix-code */
+
+/* COMPARISON TABLE */
+.ctable { width: 100%; border-collapse: collapse; font-size: 13px; }
+.ctable th { background: #f4f4f4; padding: 8px 12px; text-align: left; font-weight: 600; font-size: 12px; color: #525252; border-bottom: 2px solid #e0e0e0; }
+.ctable td { padding: 10px 12px; border-bottom: 1px solid #f0f0f0; vertical-align: top; }
+.ctable tr:last-child td { border-bottom: none; }
+.diff { color: #da1e28; font-weight: 500; }
+.good { color: #198038; font-weight: 500; }
+
+/* NOTES */
+.inferred-note { font-size: 12px; color: #4f2196; background: #f6f2ff; border: 1px solid #d4bbff; padding: 10px 14px; margin-top: 14px; line-height: 1.6; }
+.ceil { background: #fff8e1; border: 1px solid #f1620d; padding: 10px 14px; font-size: 12px; color: #3d3d3d; margin-top: 14px; line-height: 1.6; }
+
+/* ACTION LIST */
+.action-group-label { font-size: 13px; font-weight: 600; margin: 20px 0 10px; display: flex; align-items: center; gap: 8px; }
+.action-group-label:first-of-type { margin-top: 0; }
+.action-item { display: flex; gap: 12px; padding: 9px 0; border-bottom: 1px solid #f0f0f0; font-size: 13px; align-items: flex-start; }
+.action-item:last-child { border-bottom: none; }
+.anum { font-weight: 600; min-width: 22px; color: #8d8d8d; padding-top: 1px; }
+
+/* SECTION GROUP SPACING */
+.section-group { margin-bottom: 28px; }
+.section-group:last-child { margin-bottom: 0; }
+
+/* RESPONSIVE */
+@media (max-width: 680px) {
+  .card-body { grid-template-columns: 1fr; }
+  .col-head, .col-head-blank { display: none; }
+  .col-cell, .col-sev { border-right: none; border-bottom: 1px solid #f0f0f0; }
+  .fix-cell { border-bottom: none; }
+}
+
+.report-footer { text-align: center; font-size: 12px; color: #8d8d8d; padding-top: 24px; border-top: 1px solid #e0e0e0; margin-top: 56px; }
 ```
-Layout:       Single column, max-width 840px, centred, bg #ffffff
-Font:         -apple-system, "Segoe UI", system-ui, sans-serif, 13px, line-height 1.6
-Header:       IBM blue (#0f62fe) left border 4px, screen name + date, findings badges
-Sections:     Each section has a surface bg (#f4f4f4), 20px padding, 8px border-radius
-Finding card: bg #ffffff, border 1px #e0e0e0, left severity bar 4px wide
-Severity bars + badges:
-  Critical → bar #da1e28, badge bg #fff1f1, border #da1e28, text #da1e28
-  Major    → bar #f1620d, badge bg #fff8e1, border #f1620d, text #f1620d
-  Minor    → bar #8d8d8d, badge bg #f4f4f4, border #8d8d8d, text #525252
-  Correct  → bar #198038, badge bg #e6f4ea, border #198038, text #198038
-Zone callout: border 1px #e0e0e0, screen label bar coloured (blue/green/purple),
-              each row shows position label + description, left severity accent border
-Fix block:    bg #001141, text #ffffff, font monospace 12px, label "▸ Carbon fix"
-Footer:       "Made with IBM Bob", centred, 12px, muted, thin top border
+
+---
+
+### Page skeleton — outer wrapper
+
+```html
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>UX Review Report</title>
+<style>
+  /* paste full CSS block above */
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <!-- 1. PAGE HEADER -->
+  <!-- 2. TABLE OF CONTENTS -->
+  <!-- 3. SUMMARY -->
+  <!-- 4. SCREEN ZONE MAPS -->
+  <!-- 5-N. SECTION GROUPS (one per category) -->
+  <!-- N+1. DESIGN-TO-IMPLEMENTATION COMPARISON (if applicable) -->
+  <!-- N+2. RECOMMENDED ACTIONS -->
+
+  <div class="report-footer">
+    Made with IBM Bob · UX Reviewer v1.1.0 · All findings are [image-inferred / Figma-sourced] and advisory
+  </div>
+
+</div>
+</body>
+</html>
 ```
 
-**Section order (do not omit any — write "No issues found" if clean):**
+---
 
-1. **Summary** — total finding count by severity, input type badge
-   (Figma URL / Screenshot / Figma + Dev), confidence note if image-inferred
-2. **Screen Zone Maps** — ASCII layout diagrams, one per screen, with every
-   finding number `[Fn]` mapped to its approximate screen region.
-   Colour-code labels: red = Critical, orange = Major, grey = Minor.
-   (See "Screen Zone Map Format" section below.)
-3. **Carbon Compliance Findings** — each finding as a card with zone callout
-4. **Token & Spacing Findings** — each finding as a card with zone callout
-5. **Typography Findings** — each finding as a card with zone callout
-6. **Accessibility Flags** — each finding as a card with zone callout;
-   footer note: *"Mechanical WCAG checks are out of scope — use IBM Equal
-   Access Checker for contrast ratios, tab order, and screen reader testing."*
-7. **Handoff Completeness** — flag missing hover, focus, or error state
-   variants. Mark as Minor. Write "All key states present" if clean.
-8. **Design-to-Implementation Comparison** — only if dev artefact provided;
-   otherwise write "No implementation provided — design-only review."
-   Always include the below-threshold ceiling note.
-9. **Recommended Actions** — severity-ranked:
-   🔴 Critical → 🟠 Major → 🟡 Minor
-   Each entry: what to fix, where, exact Carbon replacement or token
+### 1 — Page header
+
+```html
+<div class="page-header">
+  <h1>UX Review Report</h1>
+  <div class="sub">[Screen name(s)]  ·  [Month Year]</div>
+  <div class="pill-row">
+    <span class="pill pill-c">● [N] Critical</span>
+    <span class="pill pill-m">● [N] Major</span>
+    <span class="pill pill-n">● [N] Minor</span>
+    <span class="pill pill-i">📷 Screenshot input</span>   <!-- or: 🔗 Figma URL -->
+    <!-- add pill-w if image-inferred: -->
+    <span class="pill pill-w">⚠ Image-inferred</span>
+  </div>
+</div>
+```
+
+Pills: `pill-c` = Critical count · `pill-m` = Major count · `pill-n` = Minor count ·
+`pill-i` = input type · `pill-w` = image-inferred warning (omit if Figma URL was used).
+
+---
+
+### 2 — Table of Contents
+
+The ToC must appear **before** the Summary. It is the primary navigation
+element — readers click a tile to jump to any finding.
+
+One `toc-group` per report section (Carbon Compliance, Token & Spacing,
+Typography, Accessibility, Handoff Completeness). Each tile links to the
+finding's card via `href="#fN"`.
+
+```html
+<div class="section" style="margin-bottom:28px">
+  <div class="section-heading">Table of Contents</div>
+
+  <div class="toc-group">
+    <div class="toc-group-label">Carbon Compliance</div>
+    <a class="toc-tile" href="#f2">
+      <span class="ctag ctag-c">F2</span>
+      <div class="toc-tile-text">
+        [Finding title]
+        <div class="toc-tile-sub">[Location]  ·  [Severity]</div>
+      </div>
+      <span class="toc-arrow">→</span>
+    </a>
+    <!-- repeat one <a class="toc-tile"> per finding in this group -->
+  </div>
+
+  <!-- repeat one toc-group per section -->
+</div>
+```
+
+ctag severity mapping: `ctag-c` = Critical · `ctag-m` = Major · `ctag-n` = Minor ·
+`ctag-ok` = correct/positive finding.
+
+---
+
+### 3 — Summary
+
+```html
+<div class="section" style="margin-bottom:28px">
+  <div class="section-heading">Summary</div>
+  <p style="font-size:13px;color:#393939;margin-bottom:10px">
+    <strong>Screen 1:</strong> [description]  ·  <strong>Screen 2:</strong> [description]
+  </p>
+  <p style="font-size:13px;color:#393939">
+    [2–3 sentence high-level summary of the review findings]
+  </p>
+  <!-- include this block ONLY when findings are image-inferred -->
+  <div class="inferred-note">
+    ⚠ <strong>Image-inferred.</strong> All findings are based on visual inspection
+    — no Figma URL or Code Connect data was provided. Token-level violations
+    cannot be confirmed from screenshots alone. [Note any false positives corrected.]
+  </div>
+</div>
+```
+
+---
+
+### 4 — Screen Zone Maps
+
+```html
+<div class="section" style="margin-bottom:28px">
+  <div class="section-heading">Screen Zone Maps</div>
+  <p style="font-size:12px;color:#6f6f6f;margin-bottom:16px">
+    Finding numbers are placed at their approximate location on each screen.
+  </p>
+
+  <div class="zone-caption">Screen 1 — [Product · Screen name]</div>
+  <div class="zone-map">┌────────────────────────────────────────────────────────┐
+│  <span class="zm">[F8]</span>  TOP HEADER BAR                                 │
+├────────────────────┬───────────────────────────────────────┤
+│ <span class="zc">[F2]</span>  LEFT NAV    │  <span class="zm">[F5]</span>  BREADCRUMB                     │
+│                    │  <span class="zm">[F10]</span>  PAGE TITLE                    │
+│  <span class="zm">[F7]</span>  active item │  <span class="zc">[F3]</span>  TAB BAR                       │
+│                    ├───────────────────────────────────────┤
+│                    │  <span class="zm">[F4]</span>  DROPDOWN    <span class="zm">[F12]</span>  ICON BTNS  │
+│                    │  <span class="zn">[F11]</span>  DATA TABLE                   │
+│                    │  <span class="zn">[F14]</span>  (no empty state)             │
+└────────────────────┴───────────────────────────────────────┘</div>
+
+  <!-- repeat zone-caption + zone-map for Screen 2 -->
+</div>
+```
+
+Colour spans for finding labels inside `.zone-map`:
+- `<span class="zc">[Fn]</span>` — Critical (red)
+- `<span class="zm">[Fn]</span>` — Major (orange)
+- `<span class="zn">[Fn]</span>` — Minor (grey)
+- `<span class="zok">[Fn✓]</span>` — correct/positive (green)
+
+---
+
+### 5–N — Section groups (one per finding category)
+
+Each category (Carbon Compliance, Token & Spacing, Typography, Accessibility,
+Handoff Completeness) is a `section-group` wrapping a single `section`.
+Finding cards live inside the `section`.
+
+```html
+<div class="section-group">
+  <div class="section">
+    <div class="section-heading">Carbon Compliance</div>
+
+    <!-- one .card per finding — see Finding Card structure below -->
+
+  </div>
+</div>
+```
+
+Section heading for Accessibility must add the scoping note inline:
+```html
+<div class="section-heading">
+  Accessibility
+  <span style="font-size:12px;font-weight:400;color:#6f6f6f">(Carbon pattern level)</span>
+</div>
+```
+
+After all Accessibility cards, add the WCAG scope note:
+```html
+<p style="font-size:12px;color:#6f6f6f;font-style:italic;margin-top:16px">
+  Mechanical WCAG checks (contrast ratios, tab order, screen reader output) are out
+  of scope. Use <strong>IBM Equal Access Checker</strong> for those.
+</p>
+```
+
+---
+
+### Finding Card — full structure
+
+Every finding, regardless of severity, uses this identical card structure.
+Do not omit any column.
+
+```html
+<div class="card" id="fN">
+  <!-- card header: colour matches severity -->
+  <div class="card-header card-header-[c|m|n]">
+    <span class="ctag ctag-[c|m|n]">FN</span>
+    <span class="card-title">[Finding title — concise, < 80 chars]</span>
+    <span class="pill pill-[c|m|n]" style="font-size:10px">[Critical|Major|Minor]</span>
+    <!-- add only when image-inferred: -->
+    <span class="inferred-tag">image-inferred</span>
+  </div>
+
+  <!-- card body: 4-column grid -->
+  <div class="card-body">
+    <!-- row 1: column headers -->
+    <div class="col-head-blank"></div>
+    <div class="col-head">Location</div>
+    <div class="col-head">Issue &amp; Why it matters</div>
+    <div class="col-head">Fix</div>
+
+    <!-- row 2: content -->
+    <div class="col-sev">
+      <span class="ctag ctag-[c|m|n]">FN</span>
+    </div>
+
+    <!-- LOCATION column -->
+    <div class="col-cell">
+      <!-- use one of: loc-s1 (screen 1), loc-s2 (screen 2), loc-both (both) -->
+      <span class="loc-chip loc-[s1|s2|both]">● [Screen label]</span>
+      <div class="loc-pos">
+        <strong>Screen 1</strong> — [exact position description]<br /><br />
+        <strong>Screen 2</strong> — [exact position description]
+        <!-- omit Screen 2 row if finding is screen-1-only -->
+      </div>
+    </div>
+
+    <!-- ISSUE column -->
+    <div class="col-cell">
+      [Issue description — 3–6 sentences explaining what was found, why it
+      violates Carbon, and why it matters. Use <code>token-names</code> and
+      <strong>component names</strong> inline. End with a Carbon docs link.]
+      <br /><br />
+      <a href="https://carbondesignsystem.com/components/[component]/usage/">
+        Carbon [Component] usage →
+      </a>
+    </div>
+
+    <!-- FIX column: dark background -->
+    <div class="fix-cell">
+      <div class="fix-inner">
+        <div class="fix-instruction">
+          [One plain-English sentence describing what to do]
+        </div>
+        <div class="fix-code">import { Component } from '@carbon/react';
+
+&lt;Component
+  prop="value"
+/&gt;
+
+<span class="fc">// Remove: .custom-class { ... }</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+```
+
+Card header class mapping:
+- Critical → `card-header-c`
+- Major    → `card-header-m`
+- Minor    → `card-header-n`
+
+ctag class mapping:
+- Critical → `ctag-c`
+- Major    → `ctag-m`
+- Minor    → `ctag-n`
+
+pill class mapping:
+- Critical → `pill-c`
+- Major    → `pill-m`
+- Minor    → `pill-n`
+
+Inside `.fix-code`, wrap comment lines with `<span class="fc">...</span>` to
+render them in blue (`#78a9ff`).
+
+---
+
+### Design-to-Implementation Comparison
+
+Only include when the user provided both a design source and a dev artefact.
+
+```html
+<div class="section" style="margin-bottom:28px">
+  <div class="section-heading">Design-to-Implementation Comparison</div>
+  <p style="font-size:12px;color:#6f6f6f;font-style:italic;margin-bottom:16px">
+    [Context sentence about the two inputs being compared.]
+  </p>
+  <table class="ctable">
+    <thead>
+      <tr><th>Element</th><th>Screen 1 — [Name]</th><th>Screen 2 — [Name]</th><th>Verdict</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>[Element]</td>
+        <td>[S1 observation]</td>
+        <td>[S2 observation]</td>
+        <td><span class="diff">⚠ [Issue summary] — <a href="#fN">FN</a></span></td>
+      </tr>
+      <tr>
+        <td>[Element]</td>
+        <td>[S1 observation]</td>
+        <td>[S2 observation]</td>
+        <td><span class="good">✓ [Positive note]</span></td>
+      </tr>
+    </tbody>
+  </table>
+  <!-- mandatory ceiling note — always include -->
+  <div class="ceil">
+    <strong>AI vision ceiling:</strong> Hardcoded hex vs Carbon tokens in code ·
+    Sub-4px spacing differences · Hover, focus, and active states · Responsive
+    breakpoints · Keyboard navigation · Screen reader announcements.
+    Provide a Figma URL or code branch for token-level analysis.
+  </div>
+</div>
+```
+
+Table verdict cells:
+- Inconsistency / violation → `<span class="diff">⚠ ... — <a href="#fN">FN</a></span>`
+- Correct / aligned         → `<span class="good">✓ ...</span>`
+
+---
+
+### Recommended Actions
+
+```html
+<div class="section">
+  <div class="section-heading">Recommended Actions</div>
+
+  <div class="action-group-label">🔴 Critical — fix before next sprint review ([N])</div>
+  <div class="action-item">
+    <div class="anum">1</div>
+    <div><a href="#f2"><strong>F2</strong></a> — [One-sentence fix instruction with exact Carbon component/token.]</div>
+  </div>
+  <!-- repeat one action-item per Critical finding -->
+
+  <div class="action-group-label">🟠 Major — fix before next handoff or PR ([N])</div>
+  <div class="action-item">
+    <div class="anum">3</div>
+    <div><a href="#f4"><strong>F4</strong></a> — [One-sentence fix instruction.]</div>
+  </div>
+  <!-- repeat -->
+
+  <div class="action-group-label">🟡 Minor — improve before next design review ([N])</div>
+  <div class="action-item">
+    <div class="anum">10</div>
+    <div><a href="#f9"><strong>F9</strong></a> — [One-sentence fix instruction.]</div>
+  </div>
+  <!-- repeat -->
+</div>
+```
+
+Action numbering is sequential across all severity groups (1, 2, 3 … N).
+
+---
+
+### Section order — do not change this sequence
+
+1. Page header (`.page-header`)
+2. Table of Contents (`.section` with `.toc-group`s) — `margin-bottom:28px`
+3. Summary (`.section`) — `margin-bottom:28px`
+4. Screen Zone Maps (`.section`) — `margin-bottom:28px`
+5. Carbon Compliance (`.section-group > .section`)
+6. Token & Spacing (`.section-group > .section`)
+7. Typography (`.section-group > .section`)
+8. Accessibility (`.section-group > .section`)
+9. Handoff Completeness (`.section-group > .section`)
+10. Design-to-Implementation Comparison (`.section`) — only if dev artefact provided
+11. Recommended Actions (`.section`)
+12. Footer (`.report-footer`)
+
+If a category has no findings, still render the section with:
+```html
+<p style="font-size:13px;color:#198038">✓ No issues found in this category.</p>
+```
 
 ---
 
 ## Screen Zone Map Format
 
-Every report must open with an ASCII zone map for each screen, placed in a
-`Screen Zone Maps` section immediately after the Summary. This is the
-primary visual navigation aid — it lets the reviewer locate every finding
-in the screenshot without pixel annotations.
+The zone map is the ASCII layout diagram in section 4 (Screen Zone Maps).
+See `## Output Format — HTML Report → 4 — Screen Zone Maps` for the exact
+HTML structure and span colour classes.
 
 **Rules:**
-- Draw a simple ASCII box layout representing the screen's major regions
-- Place each finding number `[Fn]` at the approximate region it affects
-- Colour-code inline: use HTML `<span>` with the severity colour when
-  rendering in the HTML artifact
-- Label each region plainly (TOP NAV, LEFT NAV, BREADCRUMB, TAB BAR, etc.)
-- For findings that appear on both screens, place the number on both maps
-
-**Example zone map structure:**
-```
-┌──────────────────────────────────────────────────┐
-│  [F8] TOP NAV HEADER BAR                         │
-├──────────────┬───────────────────────────────────┤
-│ [F2] LEFT    │  [F5] BREADCRUMB                  │
-│ NAV TREE     │  [F10] PAGE TITLE                 │
-│              │  [F3] TAB BAR                     │
-│ [F7] active  ├───────────────────────────────────┤
-│ item border  │  [F4] DROPDOWN FIELD              │
-│              │  [F1] BUTTON                      │
-│              │  [F12] ICON BUTTONS               │
-│              │  [F14] DATA TABLE                 │
-└──────────────┴───────────────────────────────────┘
-```
+- One `.zone-map` block per screen, preceded by a `.zone-caption` label
+- Draw a simple ASCII box representing the screen's major regions
+- Place `[Fn]` at the approximate location of each finding
+- Wrap each `[Fn]` label in the correct severity span:
+  `<span class="zc">` Critical · `<span class="zm">` Major ·
+  `<span class="zn">` Minor · `<span class="zok">` correct/positive
+- For findings that appear on both screens, place the label on both maps
+- Second map follows immediately after first, with `style="margin-top:18px"` on its caption
 
 ---
 
 ## Zone Callout Format (per finding card)
 
-**Every finding card must include a zone callout block** placed between
-the finding description and the fix block. This visually anchors the finding
-to its location on screen — no external annotation tool required.
+In the v6 card layout, location information is the **Location column** of the
+4-column `card-body` grid — not a separate callout block. See
+`## Output Format — HTML Report → Finding Card — full structure` for the HTML.
 
-Structure:
-```
-┌─ [Screen label bar] ─────────────────────────────┐
-│  Position label     │  What was observed there    │
-│  (e.g. "Left nav    │  (plain language, one        │
-│   · active item")   │   sentence)                  │
-└──────────────────────────────────────────────────┘
-```
-
-**Screen label bar colours:**
-- Screen 1 / Design → `#0f62fe` (IBM blue)
-- Screen 2 / Dev    → `#198038` (IBM green)
-- Both screens      → `#6929c4` (IBM purple)
+**Location column structure (inside `.col-cell`):**
+- A `.loc-chip` badge: `loc-s1` (Screen 1, blue) · `loc-s2` (Screen 2, green) · `loc-both` (both, purple)
+- A `.loc-pos` div below it with a short plain-language position description per screen
 
 **Rules:**
-- One row per affected location within the finding
-- Position label: short, specific — "Right panel · middle", "Bottom-right corner",
-  "Tab bar row", "Left nav · 'Test name' item"
-- Description: what was visually observed, not the rule — save the rule for
-  the finding body text
-- Apply the severity accent border (left 3px) to each row matching the
-  finding's severity colour
-- Positive findings (correct usage worth noting) use the green `#198038` accent
+- One `loc-chip` per finding (not per location row)
+- `.loc-pos` text: short, specific — "Left nav tree panel", "Bottom-right corner", "Tab bar row"
+- Use `<strong>Screen 1</strong> —` and `<strong>Screen 2</strong> —` labels when
+  the finding affects both screens
+- Description states what was visually observed, not the Carbon rule
 
 ---
 
@@ -450,68 +875,38 @@ image inference every time.
 
 ## Inline Fix Example Format
 
-**Every finding card must end with a Carbon fix example block.**
-This is mandatory — do not omit it for any finding, including Minor ones.
+**Every finding card must contain a fix example** in the `.fix-cell` column
+(the 4th column of the `card-body` grid). This is mandatory for every finding,
+including Minor ones.
 
-Structure inside each finding card:
+See `## Output Format — HTML Report → Finding Card — full structure` for the
+exact HTML. In summary:
 
-```
-▸ Carbon fix
+```html
+<div class="fix-cell">
+  <div class="fix-inner">
+    <div class="fix-instruction">
+      [One plain-English sentence — what to do]
+    </div>
+    <div class="fix-code">import { Component } from '@carbon/react';
 
-[Plain-English one-sentence instruction]
+&lt;Component prop="value" /&gt;
 
-// Before (what was found)
-<wrong code or value>
-
-// After (Carbon standard)
-<correct Carbon code, token, or component with import>
-```
-
-**Rules for fix examples:**
-- Use `code_search` to get the exact import path and component API before
-  writing any fix example. Never construct import paths from memory.
-- For token fixes: name the exact `$spacing-*`, `$layer-*`, or type token.
-- For component fixes: include the full import statement and minimal
-  usage example showing the correct props.
-- For icon fixes: query `code_search` with `asset_type: "icon"` first —
-  never assume the export name.
-- Keep examples minimal — show only what changes. Do not write full files.
-
-**Example fix block for a custom dropdown:**
-
-```
-▸ Carbon fix
-
-Replace the custom dropdown with Carbon's Dropdown component.
-
-// Before
-<div class="my-dropdown" style="border: 1px solid #8d8d8d">...</div>
-
-// After
-import { Dropdown } from '@carbon/react';
-
-<Dropdown
-  id="my-dropdown"
-  titleText="Select option"
-  label="Choose..."
-  items={items}
-  itemToString={(item) => (item ? item.text : '')}
-/>
+<span class="fc">// Remove: .custom { border-left: 3px solid #0f62fe; }</span></div>
+  </div>
+</div>
 ```
 
-**Example fix block for a hardcoded spacing token:**
-
-```
-▸ Carbon fix
-
-Replace the hardcoded px value with the Carbon spacing token.
-
-// Before (in SCSS)
-padding: 20px;
-
-// After
-padding: $spacing-06; // 24px — the nearest Carbon spacing token
-```
+**Content rules:**
+- `.fix-instruction` — one sentence, italic, grey (`#c6c6c6`) — says *what* to do
+- `.fix-code` — monospace code example showing the Carbon fix
+  - Start with the `import` statement (exact path from `code_search`)
+  - Show only what changes — no full file dumps
+  - Wrap all comment lines in `<span class="fc">` (renders blue `#78a9ff`)
+- Use `code_search` to confirm the exact import path and props before writing
+  any example — never construct import paths from memory
+- For token fixes: name the exact `$spacing-*`, `$layer-*`, or type-style token
+- For icon fixes: query `code_search` with `asset_type: "icon"` first
 
 ---
 
@@ -635,9 +1030,10 @@ confirms — do not create tickets without explicit confirmation.
 
 Before calling `create_html_artifact`, verify:
 
+**Content checks**
 - [ ] Every Critical and Major finding has a Carbon MCP source reference
 - [ ] No finding names a Carbon rule not verified via MCP this session
-- [ ] Every finding card has an inline Carbon fix example
+- [ ] Every finding card has a `.fix-cell` with `.fix-instruction` + `.fix-code`
 - [ ] Fix examples use exact import paths from `code_search` — never constructed
       from memory
 - [ ] Icon fix examples queried `code_search` with `asset_type: "icon"` first
@@ -645,12 +1041,28 @@ Before calling `create_html_artifact`, verify:
       not Figma layer names
 - [ ] Accessibility findings cite Carbon accessibility guidelines, not WCAG directly
 - [ ] Token findings name the exact `$spacing-*` or `$layer-*` token
-- [ ] Handoff Completeness section is present (even if "All key states present")
+- [ ] Handoff Completeness section is present (even if "✓ No issues found")
 - [ ] Design-to-implementation section present only if dev artefact was provided;
-      includes the below-threshold ceiling note
-- [ ] Image-inferred findings are labelled as such in the report
+      always includes the `.ceil` AI vision ceiling note
+- [ ] Image-inferred findings carry `<span class="inferred-tag">image-inferred</span>`
+      in their card header AND the `.inferred-note` banner in the Summary section
 - [ ] Severity levels match definitions
-- [ ] Bob-generated code check was run if code was provided (non-`@carbon` imports flagged)
+
+**HTML structure checks (v6 format)**
+- [ ] Full CSS block from `## Output Format — HTML Report → CSS` is pasted verbatim
+- [ ] Page header uses `.page-header` with IBM blue left border (`#0f62fe`)
+- [ ] Table of Contents section appears before Summary, uses `.toc-group` / `.toc-tile` structure
+- [ ] Each finding has its own `.card` with `id="fN"` matching ToC `href="#fN"`
+- [ ] Every `.card` uses the 4-column `.card-body` grid
+  (`80px 1fr 1fr 1fr` — severity badge · location · issue · fix)
+- [ ] Fix column uses `.fix-cell` with dark background (`#001141`)
+- [ ] Section groups (Carbon Compliance, Token & Spacing, Typography,
+  Accessibility, Handoff Completeness) each use `.section-group > .section`
+- [ ] Section order matches the 12-item sequence in the Output Format section
+- [ ] Footer reads "Made with IBM Bob · UX Reviewer v1.1.0 · … advisory"
+- [ ] Responsive `@media (max-width: 680px)` block is present
+
+**Ticket checks (if Jira was requested)**
 - [ ] Jira tickets (if created) have AC in Given/When/Then format
 
 ---
