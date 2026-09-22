@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="figma-node-id" content="2201:112762" />
+<title>UI Review Report — API Studio Published Endpoints</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'IBM Plex Sans', sans-serif; font-size: 14px; line-height: 1.6; background: #f4f4f4; color: #161616; display: flex; flex-direction: column; min-height: 100vh; }
+code { font-family: 'IBM Plex Mono', monospace; font-size: 12px; background: #e8e8e8; padding: 1px 5px; border-radius: 3px; color: #161616; }
+a { color: #0f62fe; text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.carbon-page-header { background: #161616; color: #ffffff; padding: 24px 32px; border-bottom: 1px solid #393939; display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; }
+.carbon-page-header-main { flex: 1; }
+.carbon-page-header-title { font-size: 24px; font-weight: 600; color: #f4f4f4; margin-bottom: 6px; letter-spacing: -0.01em; }
+.carbon-page-header-sub { font-size: 13px; color: #c6c6c6; margin-bottom: 14px; }
+.carbon-page-header-actions { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+
+.pill-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.cds-tag { display: inline-flex; align-items: center; font-family: 'IBM Plex Sans', sans-serif; font-size: 12px; font-weight: 400; line-height: 1; padding: 0 8px; height: 24px; border-radius: 12px; border: none; white-space: nowrap; }
+.cds-tag-red { background: #ffd7d9; color: #a2191f; }
+.cds-tag-gray { background: #e0e0e0; color: #393939; }
+.tag-critical { background: #ffd7d9; color: #a2191f; }
+.tag-major { background: #ffe0b2; color: #b24000; }
+.tag-minor { background: #e0e0e0; color: #393939; }
+.pill { display: inline-flex; align-items: center; font-size: 12px; font-weight: 400; padding: 0 8px; height: 24px; border-radius: 12px; border: none; white-space: nowrap; }
+.pill-c { background: #ffd7d9; color: #a2191f; }
+.pill-m { background: #ffe0b2; color: #b24000; }
+.pill-n { background: #e0e0e0; color: #393939; }
+.pill-dark-c { background: rgba(255,131,137,0.2); color: #ff8389; }
+.pill-dark-m { background: rgba(255,131,43,0.2); color: #ff832b; }
+.pill-dark-n { background: rgba(224,224,224,0.2); color: #e0e0e0; }
+.pill-dark-i { background: rgba(120,169,255,0.2); color: #78a9ff; }
+
+.app-container { display: flex; flex: 1; min-height: calc(100vh - 120px); }
+
+.carbon-left-nav { width: 260px; background: #ffffff; border-right: 1px solid #e0e0e0; flex-shrink: 0; display: flex; flex-direction: column; }
+.left-nav-header { padding: 16px 20px 12px; font-size: 11px; font-weight: 600; color: #6f6f6f; text-transform: uppercase; letter-spacing: 0.08em; border-bottom: 1px solid #f4f4f4; }
+.left-nav-list { list-style: none; padding: 8px 0; margin: 0; }
+.left-nav-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; font-size: 13px; color: #393939; cursor: pointer; border-left: 3px solid transparent; transition: background 0.1s; }
+.left-nav-item:hover { background: #e8e8e8; color: #161616; }
+.left-nav-item.active { background: #e0e0e0; color: #161616; font-weight: 600; border-left: 3px solid #0f62fe; }
+.nav-badge-count { font-size: 11px; font-weight: 600; padding: 1px 7px; border-radius: 10px; background: #e0e0e0; color: #525252; }
+.left-nav-item.active .nav-badge-count { background: #0f62fe; color: #ffffff; }
+
+.carbon-main-body { flex: 1; padding: 28px 32px 60px; background: #f4f4f4; overflow-x: auto; }
+
+.ctag { display: inline-flex; align-items: center; font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 400; padding: 0 8px; height: 22px; border-radius: 11px; border: none; outline: none; white-space: nowrap; flex-shrink: 0; }
+.ctag-c { background: #ffd7d9; color: #a2191f; }
+.ctag-m { background: #ffe0b2; color: #b24000; }
+.ctag-n { background: #e0e0e0; color: #393939; }
+
+.section-heading { font-size: 14px; font-weight: 600; color: #161616; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #e0e0e0; }
+.overview-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.overview-table th { background: #f4f4f4; padding: 10px 14px; text-align: left; font-weight: 600; font-size: 12px; color: #525252; border-bottom: 2px solid #e0e0e0; letter-spacing: 0.02em; }
+.overview-table td { padding: 12px 14px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
+.overview-table tr:hover td { background: #fafafa; }
+.overview-cat { font-size: 11px; color: #525252; background: #f4f4f4; padding: 2px 8px; border-radius: 3px; white-space: nowrap; }
+.finding-title-link { font-size: 13px; color: #0f62fe; cursor: pointer; text-decoration: none; border-bottom: 1px solid transparent; font-weight: 500; }
+.finding-title-link:hover { color: #0043ce; border-bottom: 1px solid #0043ce; }
+
+.cds-table-container { background: #ffffff; border: 1px solid #e0e0e0; margin-bottom: 24px; }
+.cds-table-toolbar { display: flex; align-items: center; justify-content: space-between; padding: 0 16px; height: 48px; background: #ffffff; border-bottom: 1px solid #e0e0e0; }
+.cds-table-toolbar-title { font-size: 14px; font-weight: 600; color: #161616; }
+.cds-table-toolbar-content { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+.cds-table-search { display: inline-flex; align-items: center; background: #f4f4f4; border: none; border-bottom: 1px solid #8d8d8d; padding: 0 16px; height: 40px; font-size: 13px; color: #161616; outline: none; min-width: 220px; }
+.cds-table-search:focus { border-bottom: 2px solid #0f62fe; background: #ffffff; }
+.cds-table-search::placeholder { color: #8d8d8d; }
+
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(22,22,22,0.7); z-index: 9000; align-items: center; justify-content: center; padding: 40px 24px; overflow-y: auto; }
+.modal-overlay.open { display: flex; }
+.cds-modal { background: #ffffff; max-width: 980px; width: 100%; box-shadow: 0 12px 24px 0 rgba(0,0,0,0.2); margin: auto; position: relative; display: flex; flex-direction: column; }
+.cds-modal-header { padding: 24px 24px 16px 24px; background: #ffffff; position: relative; border-bottom: 1px solid #e0e0e0; }
+.cds-modal-header-label { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.cds-modal-heading { font-size: 20px; font-weight: 400; line-height: 1.35; color: #161616; padding-right: 48px; }
+.cds-modal-close { position: absolute; top: 0; right: 0; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; background: transparent; border: none; cursor: pointer; color: #161616; }
+.cds-modal-close:hover { background: #e8e8e8; }
+.cds-modal-close svg { width: 20px; height: 20px; fill: currentColor; }
+.cds-modal-content { padding: 0; background: #ffffff; }
+.modal-card-body { display: grid; grid-template-columns: 64px 1.1fr 1.3fr 1.4fr; background: #ffffff; }
+.modal-col-head { background: #f4f4f4; border-bottom: 1px solid #e0e0e0; padding: 10px 16px; font-size: 11px; font-weight: 600; color: #525252; text-transform: uppercase; letter-spacing: 0.05em; border-right: 1px solid #e0e0e0; }
+.modal-col-head:last-child { border-right: none; }
+.modal-col-head-blank { background: #f4f4f4; border-bottom: 1px solid #e0e0e0; border-right: 1px solid #e0e0e0; padding: 10px 16px; }
+.modal-col-sev { padding: 20px 16px; border-right: 1px solid #e0e0e0; display: flex; align-items: flex-start; justify-content: center; }
+.modal-col-cell { padding: 20px 18px; border-right: 1px solid #e0e0e0; font-size: 13px; line-height: 1.65; color: #161616; vertical-align: top; }
+.modal-col-cell:last-child { border-right: none; }
+.cds-modal-footer { display: flex; justify-content: flex-end; background: #ffffff; border-top: 1px solid #e0e0e0; height: 64px; }
+.cds-btn-secondary { height: 100%; padding: 0 24px; background: #393939; color: #ffffff; border: none; font-size: 14px; font-weight: 400; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.cds-btn-secondary:hover { background: #4c4c4c; }
+.modal-fix-cell { padding: 0; background: #001141; border-right: none; }
+.modal-fix-inner { padding: 16px 18px; }
+.fix-instruction { font-size: 12px; color: #c6c6c6; margin-bottom: 12px; font-style: italic; line-height: 1.5; }
+.fix-code { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #f4f4f4; line-height: 1.75; white-space: pre-wrap; word-break: break-word; }
+.fc { color: #78a9ff; }
+.loc-chip { display: inline-block; font-size: 11px; padding: 2px 10px; border-radius: 12px; background: #d0e2ff; color: #0043ce; margin-bottom: 8px; }
+
+.triage-select { font-size: 12px; padding: 4px 8px; border: 1px solid #c5d6ff; border-radius: 3px; background: #ffffff; color: #161616; cursor: pointer; min-width: 125px; }
+.triage-rationale { font-size: 12px; padding: 4px 8px; border: 1px solid #c5d6ff; border-radius: 3px; background: #ffffff; color: #161616; }
+.triage-rationale::placeholder { color: #a8b8d8; }
+
+.copy-triage-btn { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 400; padding: 0 16px; height: 40px; border: none; border-radius: 0; background: #0f62fe; color: #ffffff; cursor: pointer; white-space: nowrap; transition: background 70ms ease; }
+.copy-triage-btn:hover { background: #0353e9; }
+.copy-triage-btn.copied { background: #198038; }
+
+.triage-warning-notification { display: none; align-items: flex-start; gap: 0; background: #fcf4d6; border-left: 3px solid #f1c21b; padding: 0; margin-bottom: 16px; }
+.triage-warning-notification.visible { display: flex; }
+.triage-warning-icon { flex-shrink: 0; display: flex; align-items: flex-start; padding: 14px 12px; }
+.triage-warning-icon svg { width: 16px; height: 16px; fill: #f1c21b; }
+.triage-warning-content { flex: 1; padding: 14px 0; }
+.triage-warning-title { font-size: 14px; font-weight: 600; color: #161616; margin-bottom: 2px; }
+.triage-warning-subtitle { font-size: 14px; color: #393939; }
+.triage-warning-close { flex-shrink: 0; display: flex; align-items: flex-start; padding: 14px 12px; }
+.triage-warning-close button { background: none; border: none; cursor: pointer; padding: 2px; color: #525252; font-size: 16px; line-height: 1; }
+
+.gaps-section { background: #fff8e1; border-left: 4px solid #f1620d; padding: 24px 28px; margin-bottom: 24px; }
+.accordion { border: 1px solid #e0e0e0; margin-bottom: 24px; background: #ffffff; }
+.accordion-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; cursor: pointer; font-size: 13px; font-weight: 600; color: #161616; border: none; background: none; width: 100%; text-align: left; }
+.accordion-header:hover { background: #f4f4f4; }
+.accordion-indicator { font-size: 12px; color: #525252; }
+.accordion-body { display: none; padding: 16px 20px 20px; border-top: 1px solid #e0e0e0; }
+.accordion-body.open { display: block; }
+.report-footer { text-align: center; font-size: 12px; color: #8d8d8d; padding-top: 24px; border-top: 1px solid #e0e0e0; margin-top: 40px; }
+
+@media (max-width: 800px) {
+  .app-container { flex-direction: column; }
+  .carbon-left-nav { width: 100%; border-right: none; border-bottom: 1px solid #e0e0e0; }
+  .modal-card-body { grid-template-columns: 1fr; }
+  .modal-col-head, .modal-col-head-blank { display: none; }
+  .modal-col-cell, .modal-col-sev { border-right: none; border-bottom: 1px solid #e0e0e0; }
+  .modal-fix-cell { border-bottom: none; }
+}
+</style>
+</head>
+<body>
+
+<header class="carbon-page-header">
+  <div class="carbon-page-header-main">
+    <h1 class="carbon-page-header-title">UI Review Report</h1>
+    <div class="carbon-page-header-sub">API Studio — Published Endpoints · July 2025</div>
+    <div class="pill-row">
+      <span class="pill pill-dark-c">● 1 Critical</span>
+      <span class="pill pill-dark-m">● 3 Major</span>
+      <span class="pill pill-dark-n">● 2 Minor</span>
+      <span class="pill pill-dark-i">📷 Figma MCP + Code Connect</span>
+    </div>
+  </div>
+  <div class="carbon-page-header-actions">
+    <button class="copy-triage-btn" id="copy-triage-btn" onclick="copyTriageJSON()">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M28,10H22V4a2,2,0,0,0-2-2H4A2,2,0,0,0,2,4V20a2,2,0,0,0,2,2h6v6a2,2,0,0,0,2,2H28a2,2,0,0,0,2-2V12A2,2,0,0,0,28,10ZM4,20V4H20v6H12a2,2,0,0,0-2,2V20Zm24,10H12V12H28Z"/></svg>
+      Copy Triage JSON
+    </button>
+  </div>
+</header>
+
+<div class="app-container">
+
+  <aside class="carbon-left-nav" aria-label="Review Navigation">
+    <div class="left-nav-header">Issues</div>
+    <ul class="left-nav-list" id="nav-category-list">
+      <li class="left-nav-item active" onclick="filterByCategory('all', this)">
+        <span>All Issues</span>
+        <span class="nav-badge-count" id="count-all">6</span>
+      </li>
+      <li class="left-nav-item" onclick="filterByCategory('Carbon Compliance', this)">
+        <span>Carbon Compliance</span>
+        <span class="nav-badge-count" id="count-compliance">1</span>
+      </li>
+      <li class="left-nav-item" onclick="filterByCategory('Token & Spacing', this)">
+        <span>Token &amp; Spacing</span>
+        <span class="nav-badge-count" id="count-token">1</span>
+      </li>
+      <li class="left-nav-item" onclick="filterByCategory('Typography', this)">
+        <span>Typography</span>
+        <span class="nav-badge-count" id="count-typography">0</span>
+      </li>
+      <li class="left-nav-item" onclick="filterByCategory('Accessibility', this)">
+        <span>Accessibility</span>
+        <span class="nav-badge-count" id="count-a11y">2</span>
+      </li>
+      <li class="left-nav-item" onclick="filterByCategory('Layout', this)">
+        <span>Layout</span>
+        <span class="nav-badge-count" id="count-layout">1</span>
+      </li>
+      <li class="left-nav-item" onclick="filterByCategory('Visual Drift', this)">
+        <span>Visual Drift</span>
+        <span class="nav-badge-count" id="count-drift">1</span>
+      </li>
+    </ul>
+  </aside>
+
+  <main class="carbon-main-body">
+
+    <div class="triage-warning-notification" id="triage-warning" role="alert">
+      <div class="triage-warning-icon">
+        <svg viewBox="0 0 20 20"><path d="M10 1c-5 0-9 4-9 9s4 9 9 9 9-4 9-9-4-9-9-9zm-.8 4.2h1.6v6.4H9.2V5.2zm.8 10.4c-.6 0-1-.4-1-1s.4-1 1-1 1 .4 1 1-.4 1-1 1z"/></svg>
+      </div>
+      <div class="triage-warning-content">
+        <div class="triage-warning-title">Unsaved triage changes</div>
+        <div class="triage-warning-subtitle">You have modified finding statuses or rationales. Click <strong>Copy Triage JSON</strong> in the header and import into Bob.</div>
+      </div>
+      <div class="triage-warning-close">
+        <button onclick="document.getElementById('triage-warning').classList.remove('visible')">✕</button>
+      </div>
+    </div>
+
+    <div class="cds-table-container">
+      <div class="cds-table-toolbar">
+        <div class="cds-table-toolbar-title" id="table-view-title">All Review Findings</div>
+        <div class="cds-table-toolbar-content">
+          <input class="cds-table-search" type="search" placeholder="Search findings…" oninput="filterTableSearch()" aria-label="Search findings" />
+        </div>
+      </div>
+      <table class="overview-table finding-table" id="table-main-findings">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Category</th>
+            <th>Finding</th>
+            <th>Severity</th>
+            <th>Status</th>
+            <th>Rationale</th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <!-- F1 Critical — Carbon Compliance -->
+          <tr data-id="f1" data-severity="Critical" data-category="Carbon Compliance" data-screen="API Studio Published Endpoints">
+            <td><span class="ctag ctag-c" onclick="openFinding('modal-f1')" style="cursor:pointer">F1</span></td>
+            <td><span class="overview-cat">Carbon Compliance</span></td>
+            <td><a class="finding-title-link" onclick="openFinding('modal-f1')" href="javascript:void(0)" role="button">Tearsheet used without footer action buttons</a></td>
+            <td><span class="pill pill-c" style="font-size:10px">Critical</span></td>
+            <td>
+              <select class="triage-select" data-id="f1" onchange="updateTriageStatus(this)">
+                <option value="unreviewed" selected>○ Unreviewed</option>
+                <option value="resolved">R Resolved</option>
+                <option value="backlog">B Backlog</option>
+                <option value="rejected">X Rejected</option>
+              </select>
+            </td>
+            <td><input class="triage-rationale" data-id="f1" type="text" placeholder="Rationale (required for Backlog / Rejected)" oninput="markTriageDirty()" style="width:100%" /></td>
+          </tr>
+
+          <!-- F2 Major — Accessibility -->
+          <tr data-id="f2" data-severity="Major" data-category="Accessibility" data-screen="API Studio Published Endpoints">
+            <td><span class="ctag ctag-m" onclick="openFinding('modal-f2')" style="cursor:pointer">F2</span></td>
+            <td><span class="overview-cat">Accessibility</span></td>
+            <td><a class="finding-title-link" onclick="openFinding('modal-f2')" href="javascript:void(0)" role="button">Icon-only ghost buttons in Tryout column missing iconDescription</a></td>
+            <td><span class="pill pill-m" style="font-size:10px">Major</span></td>
+            <td>
+              <select class="triage-select" data-id="f2" onchange="updateTriageStatus(this)">
+                <option value="unreviewed" selected>○ Unreviewed</option>
+                <option value="resolved">R Resolved</option>
+                <option value="backlog">B Backlog</option>
+                <option value="rejected">X Rejected</option>
+              </select>
+            </td>
+            <td><input class="triage-rationale" data-id="f2" type="text" placeholder="Rationale (required for Backlog / Rejected)" oninput="markTriageDirty()" style="width:100%" /></td>
+          </tr>
+
+          <!-- F3 Major — Accessibility -->
+          <tr data-id="f3" data-severity="Major" data-category="Accessibility" data-screen="API Studio Published Endpoints">
+            <td><span class="ctag ctag-m" onclick="openFinding('modal-f3')" style="cursor:pointer">F3</span></td>
+            <td><span class="overview-cat">Accessibility</span></td>
+            <td><a class="finding-title-link" onclick="openFinding('modal-f3')" href="javascript:void(0)" role="button">Copy URL icon-only buttons missing accessible name annotation</a></td>
+            <td><span class="pill pill-m" style="font-size:10px">Major</span></td>
+            <td>
+              <select class="triage-select" data-id="f3" onchange="updateTriageStatus(this)">
+                <option value="unreviewed" selected>○ Unreviewed</option>
+                <option value="resolved">R Resolved</option>
+                <option value="backlog">B Backlog</option>
+                <option value="rejected">X Rejected</option>
+              </select>
+            </td>
+            <td><input class="triage-rationale" data-id="f3" type="text" placeholder="Rationale (required for Backlog / Rejected)" oninput="markTriageDirty()" style="width:100%" /></td>
+          </tr>
+
+          <!-- F4 Major — Token & Spacing -->
+          <tr data-id="f4" data-severity="Major" data-category="Token & Spacing" data-screen="API Studio Published Endpoints">
+            <td><span class="ctag ctag-m" onclick="openFinding('modal-f4')" style="cursor:pointer">F4</span></td>
+            <td><span class="overview-cat">Token &amp; Spacing</span></td>
+            <td><a class="finding-title-link" onclick="openFinding('modal-f4')" href="javascript:void(0)" role="button">Contextual layer token used instead of semantic $layer-01</a></td>
+            <td><span class="pill pill-m" style="font-size:10px">Major</span></td>
+            <td>
+              <select class="triage-select" data-id="f4" onchange="updateTriageStatus(this)">
+                <option value="unreviewed" selected>○ Unreviewed</option>
+                <option value="resolved">R Resolved</option>
+                <option value="backlog">B Backlog</option>
+                <option value="rejected">X Rejected</option>
+              </select>
+            </td>
+            <td><input class="triage-rationale" data-id="f4" type="text" placeholder="Rationale (required for Backlog / Rejected)" oninput="markTriageDirty()" style="width:100%" /></td>
+          </tr>
+
+          <!-- F5 Minor — Layout -->
+          <tr data-id="f5" data-severity="Minor" data-category="Layout" data-screen="API Studio Published Endpoints">
+            <td><span class="ctag ctag-n" onclick="openFinding('modal-f5')" style="cursor:pointer">F5</span></td>
+            <td><span class="overview-cat">Layout</span></td>
+            <td><a class="finding-title-link" onclick="openFinding('modal-f5')" href="javascript:void(0)" role="button">Table content left padding is 32px — deviates from Carbon $spacing-05 (16px)</a></td>
+            <td><span class="pill pill-n" style="font-size:10px">Minor</span></td>
+            <td>
+              <select class="triage-select" data-id="f5" onchange="updateTriageStatus(this)">
+                <option value="unreviewed" selected>○ Unreviewed</option>
+                <option value="resolved">R Resolved</option>
+                <option value="backlog">B Backlog</option>
+                <option value="rejected">X Rejected</option>
+              </select>
+            </td>
+            <td><input class="triage-rationale" data-id="f5" type="text" placeholder="Rationale (required for Backlog / Rejected)" oninput="markTriageDirty()" style="width:100%" /></td>
+          </tr>
+
+          <!-- F6 Minor — Visual Drift -->
+          <tr data-id="f6" data-severity="Minor" data-category="Visual Drift" data-screen="API Studio Published Endpoints">
+            <td><span class="ctag ctag-n" onclick="openFinding('modal-f6')" style="cursor:pointer">F6</span></td>
+            <td><span class="overview-cat">Visual Drift</span></td>
+            <td><a class="finding-title-link" onclick="openFinding('modal-f6')" href="javascript:void(0)" role="button">Tooltip on Tryout button uses custom dark popover — not Carbon Tooltip</a></td>
+            <td><span class="pill pill-n" style="font-size:10px">Minor</span></td>
+            <td>
+              <select class="triage-select" data-id="f6" onchange="updateTriageStatus(this)">
+                <option value="unreviewed" selected>○ Unreviewed</option>
+                <option value="resolved">R Resolved</option>
+                <option value="backlog">B Backlog</option>
+                <option value="rejected">X Rejected</option>
+              </select>
+            </td>
+            <td><input class="triage-rationale" data-id="f6" type="text" placeholder="Rationale (required for Backlog / Rejected)" oninput="markTriageDirty()" style="width:100%" /></td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+
+    <div class="gaps-section" id="section-accepted-gaps" style="margin-bottom:24px;">
+      <div class="section-heading">Accepted UI Gaps</div>
+      <p style="font-size:13px;color:#6f6f6f;font-style:italic">No previously accepted UI gaps for this screen.</p>
+    </div>
+
+    <div class="accordion" id="legend-accordion">
+      <button class="accordion-header" onclick="toggleAccordion('legend-body')" aria-expanded="false">
+        Legend &amp; Compliance Standards
+        <span class="accordion-indicator" id="legend-indicator">▶</span>
+      </button>
+      <div class="accordion-body" id="legend-body">
+        <p style="font-size:12px;font-weight:600;color:#161616;margin-bottom:8px">Severity Definitions</p>
+        <table class="overview-table" style="margin-bottom:20px">
+          <thead><tr><th>Severity</th><th>Definition</th></tr></thead>
+          <tbody>
+            <tr><td><span class="pill pill-c">● Critical</span></td><td>Carbon violation that breaks a core pattern or creates an accessibility barrier</td></tr>
+            <tr><td><span class="pill pill-m">● Major</span></td><td>Deviation from Carbon standards creating visual or behavioural inconsistency</td></tr>
+            <tr><td><span class="pill pill-n">● Minor</span></td><td>Improvement opportunity; does not violate standards</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="report-footer">
+      Made with IBM Bob · UI Reviewer v2.0.0 · All findings are advisory
+    </div>
+
+  </main>
+</div>
+
+<!-- MODALS -->
+
+<!-- F1 Critical — Tearsheet missing footer -->
+<div class="modal-overlay" id="modal-f1" onclick="closeOnBackdrop(event,'modal-f1')">
+  <div class="cds-modal">
+    <div class="cds-modal-header">
+      <div class="cds-modal-header-label">
+        <span class="ctag ctag-c">F1</span>
+        <span class="cds-tag cds-tag-red">Critical</span>
+      </div>
+      <h3 class="cds-modal-heading">Tearsheet used without footer action buttons</h3>
+      <button class="cds-modal-close" onclick="closeFinding('modal-f1')" aria-label="Close modal">
+        <svg viewBox="0 0 32 32"><path d="M24 9.4L22.6 8 16 14.6 9.4 8 8 9.4 14.6 16 8 22.6 9.4 24 16 17.4 22.6 24 24 22.6 17.4 16 24 9.4z"/></svg>
+      </button>
+    </div>
+    <div class="cds-modal-content">
+      <div class="modal-card-body">
+        <div class="modal-col-head-blank"></div>
+        <div class="modal-col-head">Location</div>
+        <div class="modal-col-head">Issue &amp; Why it matters</div>
+        <div class="modal-col-head">Fix</div>
+        <div class="modal-col-sev"><span class="ctag ctag-c">F1</span></div>
+        <div class="modal-col-cell">
+          <span class="loc-chip">● Tearsheet footer area</span>
+          <div style="margin-top:6px;font-size:13px">The <strong>Tearsheet — Wide</strong> component (node <code>2201:112765</code>) has the footer wrapper hidden (<code>hidden="true"</code>) with no primary/secondary action buttons rendered.</div>
+        </div>
+        <div class="modal-col-cell">
+          The Carbon for IBM Products <strong>Tearsheet</strong> pattern requires footer action buttons (at minimum a primary action and a Cancel/Close ghost button). The hidden footer wrapper means users have no keyboard-accessible way to confirm or dismiss the tearsheet — breaking the modal interaction pattern and creating an accessibility barrier.<br /><br />
+          The design shows the tearsheet is used as a full-screen data view with only an ✕ close button in the header, which is insufficient per Carbon tearsheet usage.<br /><br />
+          <a href="https://carbondesignsystem.com/components/tearsheet/usage/">Carbon Tearsheet usage →</a>
+        </div>
+        <div class="modal-fix-cell">
+          <div class="modal-fix-inner">
+            <div class="fix-instruction">Add a visible footer with at minimum a Cancel ghost button to the Tearsheet.</div>
+            <div class="fix-code">import { Tearsheet } from
+  '@carbon/ibm-products';
+
+&lt;Tearsheet
+  title="Published endpoints (4)"
+  actions={[
+    {
+      kind: 'ghost',
+      label: 'Close',
+      onClick: handleClose,
+    }
+  ]}
+&gt;
+  {/* table content */}
+&lt;/Tearsheet&gt;
+
+<span class="fc">// Remove hidden footer wrapper</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cds-modal-footer">
+      <button class="cds-btn-secondary" onclick="closeFinding('modal-f1')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- F2 Major — Tryout icon button missing iconDescription -->
+<div class="modal-overlay" id="modal-f2" onclick="closeOnBackdrop(event,'modal-f2')">
+  <div class="cds-modal">
+    <div class="cds-modal-header">
+      <div class="cds-modal-header-label">
+        <span class="ctag ctag-m">F2</span>
+        <span class="cds-tag tag-major">Major</span>
+      </div>
+      <h3 class="cds-modal-heading">Icon-only ghost buttons in Tryout column missing iconDescription</h3>
+      <button class="cds-modal-close" onclick="closeFinding('modal-f2')" aria-label="Close modal">
+        <svg viewBox="0 0 32 32"><path d="M24 9.4L22.6 8 16 14.6 9.4 8 8 9.4 14.6 16 8 22.6 9.4 24 16 17.4 22.6 24 24 22.6 17.4 16 24 9.4z"/></svg>
+      </button>
+    </div>
+    <div class="cds-modal-content">
+      <div class="modal-card-body">
+        <div class="modal-col-head-blank"></div>
+        <div class="modal-col-head">Location</div>
+        <div class="modal-col-head">Issue &amp; Why it matters</div>
+        <div class="modal-col-head">Fix</div>
+        <div class="modal-col-sev"><span class="ctag ctag-m">F2</span></div>
+        <div class="modal-col-cell">
+          <span class="loc-chip">● Tryout column</span>
+          <div style="margin-top:6px;font-size:13px">Code Connect maps these to <code>Button kind="ghost" hasIconOnly iconDescription="Button"</code> — the placeholder <code>"Button"</code> is not a meaningful accessible name. Rows 1, 2, 3, 4 (nodes <code>2374:570</code>, <code>2374:934–937</code>).</div>
+        </div>
+        <div class="modal-col-cell">
+          The Carbon <strong>Button</strong> with <code>hasIconOnly</code> requires a meaningful <code>iconDescription</code> prop. This becomes the button's accessible name for screen readers. The Code Connect snippet shows <code>iconDescription="Button"</code> — a placeholder that provides no context to assistive technology users.<br /><br />
+          Row 1 (MCP server) has an enabled Send icon; rows 2–4 follow the same pattern. Disabled rows (node <code>2201:112843</code>) are correctly disabled but still need a descriptive name.<br /><br />
+          <a href="https://carbondesignsystem.com/components/button/accessibility/">Carbon Button accessibility →</a>
+        </div>
+        <div class="modal-fix-cell">
+          <div class="modal-fix-inner">
+            <div class="fix-instruction">Replace the placeholder iconDescription with a meaningful label describing the action.</div>
+            <div class="fix-code">import { Button } from '@carbon/react';
+import { Send } from '@carbon/icons-react';
+
+<span class="fc">// Replace "Button" with real description</span>
+&lt;Button
+  kind="ghost"
+  size="xs"
+  hasIconOnly
+  iconDescription="Try out endpoint"
+  renderIcon={Send}
+  onClick={handleTryout}
+/&gt;</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cds-modal-footer">
+      <button class="cds-btn-secondary" onclick="closeFinding('modal-f2')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- F3 Major — Copy URL buttons missing accessible name -->
+<div class="modal-overlay" id="modal-f3" onclick="closeOnBackdrop(event,'modal-f3')">
+  <div class="cds-modal">
+    <div class="cds-modal-header">
+      <div class="cds-modal-header-label">
+        <span class="ctag ctag-m">F3</span>
+        <span class="cds-tag tag-major">Major</span>
+      </div>
+      <h3 class="cds-modal-heading">Copy URL icon-only buttons missing accessible name annotation</h3>
+      <button class="cds-modal-close" onclick="closeFinding('modal-f3')" aria-label="Close modal">
+        <svg viewBox="0 0 32 32"><path d="M24 9.4L22.6 8 16 14.6 9.4 8 8 9.4 14.6 16 8 22.6 9.4 24 16 17.4 22.6 24 24 22.6 17.4 16 24 9.4z"/></svg>
+      </button>
+    </div>
+    <div class="cds-modal-content">
+      <div class="modal-card-body">
+        <div class="modal-col-head-blank"></div>
+        <div class="modal-col-head">Location</div>
+        <div class="modal-col-head">Issue &amp; Why it matters</div>
+        <div class="modal-col-head">Fix</div>
+        <div class="modal-col-sev"><span class="ctag ctag-m">F3</span></div>
+        <div class="modal-col-cell">
+          <span class="loc-chip">● Published endpoint column</span>
+          <div style="margin-top:6px;font-size:13px">Each row shows <code>https://api.e…v1/products</code> followed by a copy icon button (nodes <code>2374:62</code>, <code>2374:638</code>, <code>2374:125</code>, <code>2374:524</code>). Code Connect shows <code>iconDescription="Button"</code> — a non-descriptive placeholder.</div>
+        </div>
+        <div class="modal-col-cell">
+          The copy icon buttons in the <strong>Published endpoint</strong> column are icon-only and require a descriptive <code>iconDescription</code> for screen readers. The current placeholder <code>"Button"</code> does not describe the action (copying the URL) and gives no context to the user about what endpoint is being copied.<br /><br />
+          Best practice is to include the endpoint name or a contextual label like <code>"Copy endpoint URL"</code>.<br /><br />
+          <a href="https://carbondesignsystem.com/components/button/accessibility/">Carbon Button accessibility →</a>
+        </div>
+        <div class="modal-fix-cell">
+          <div class="modal-fix-inner">
+            <div class="fix-instruction">Set iconDescription to a specific, contextual label for each copy button.</div>
+            <div class="fix-code">import { Button } from '@carbon/react';
+import { Copy } from '@carbon/icons-react';
+
+&lt;Button
+  kind="ghost"
+  size="xs"
+  hasIconOnly
+  iconDescription="Copy endpoint URL"
+  renderIcon={Copy}
+  onClick={() => handleCopy(url)}
+/&gt;
+
+<span class="fc">// Or use dynamic: `Copy ${apiName} URL`</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cds-modal-footer">
+      <button class="cds-btn-secondary" onclick="closeFinding('modal-f3')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- F4 Major — Contextual layer token -->
+<div class="modal-overlay" id="modal-f4" onclick="closeOnBackdrop(event,'modal-f4')">
+  <div class="cds-modal">
+    <div class="cds-modal-header">
+      <div class="cds-modal-header-label">
+        <span class="ctag ctag-m">F4</span>
+        <span class="cds-tag tag-major">Major</span>
+      </div>
+      <h3 class="cds-modal-heading">Contextual layer token used instead of semantic $layer-01</h3>
+      <button class="cds-modal-close" onclick="closeFinding('modal-f4')" aria-label="Close modal">
+        <svg viewBox="0 0 32 32"><path d="M24 9.4L22.6 8 16 14.6 9.4 8 8 9.4 14.6 16 8 22.6 9.4 24 16 17.4 22.6 24 24 22.6 17.4 16 24 9.4z"/></svg>
+      </button>
+    </div>
+    <div class="cds-modal-content">
+      <div class="modal-card-body">
+        <div class="modal-col-head-blank"></div>
+        <div class="modal-col-head">Location</div>
+        <div class="modal-col-head">Issue &amp; Why it matters</div>
+        <div class="modal-col-head">Fix</div>
+        <div class="modal-col-sev"><span class="ctag ctag-m">F4</span></div>
+        <div class="modal-col-cell">
+          <span class="loc-chip">● Table background + toolbar</span>
+          <div style="margin-top:6px;font-size:13px">Variable definitions show <code>layer (contextual): #f4f4f4</code> and <code>field (contextual): #f4f4f4</code> — both using contextual aliases rather than the explicit semantic tokens <code>$layer-01</code> and <code>$field-01</code>.</div>
+        </div>
+        <div class="modal-col-cell">
+          Carbon v11 uses <strong>contextual tokens</strong> (e.g. <code>layer</code>) that automatically adapt across nesting levels. Using the raw contextual alias without a defined layer context can cause unexpected colour inheritance when the component is nested inside another layered container — for example inside a Tearsheet which already establishes a layer context.<br /><br />
+          The correct tokens for a table toolbar background are <code>$layer-01</code> (white) for the DataTable surface, and <code>$layer-accent-01</code> for toolbar hover states.<br /><br />
+          <a href="https://carbondesignsystem.com/elements/color/tokens/">Carbon colour tokens →</a>
+        </div>
+        <div class="modal-fix-cell">
+          <div class="modal-fix-inner">
+            <div class="fix-instruction">Use explicit semantic Carbon layer tokens in SCSS instead of contextual aliases.</div>
+            <div class="fix-code"><span class="fc">// Instead of contextual alias:</span>
+background: var(--cds-layer);
+
+<span class="fc">// Use explicit semantic token:</span>
+background: var(--cds-layer-01);
+
+<span class="fc">// For toolbar hover:</span>
+background: var(--cds-layer-accent-01);
+
+<span class="fc">// For field inputs:</span>
+background: var(--cds-field-01);</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cds-modal-footer">
+      <button class="cds-btn-secondary" onclick="closeFinding('modal-f4')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- F5 Minor — Table left padding -->
+<div class="modal-overlay" id="modal-f5" onclick="closeOnBackdrop(event,'modal-f5')">
+  <div class="cds-modal">
+    <div class="cds-modal-header">
+      <div class="cds-modal-header-label">
+        <span class="ctag ctag-n">F5</span>
+        <span class="cds-tag cds-tag-gray">Minor</span>
+      </div>
+      <h3 class="cds-modal-heading">Table content left padding is 32px — deviates from Carbon $spacing-05 (16px)</h3>
+      <button class="cds-modal-close" onclick="closeFinding('modal-f5')" aria-label="Close modal">
+        <svg viewBox="0 0 32 32"><path d="M24 9.4L22.6 8 16 14.6 9.4 8 8 9.4 14.6 16 8 22.6 9.4 24 16 17.4 22.6 24 24 22.6 17.4 16 24 9.4z"/></svg>
+      </button>
+    </div>
+    <div class="cds-modal-content">
+      <div class="modal-card-body">
+        <div class="modal-col-head-blank"></div>
+        <div class="modal-col-head">Location</div>
+        <div class="modal-col-head">Issue &amp; Why it matters</div>
+        <div class="modal-col-head">Fix</div>
+        <div class="modal-col-sev"><span class="ctag ctag-n">F5</span></div>
+        <div class="modal-col-cell">
+          <span class="loc-chip">● DataTable toolbar &amp; header row</span>
+          <div style="margin-top:6px;font-size:13px">The toolbar wrapper (node <code>2201:112786</code>) starts at x=32 and the header row (node <code>2201:112788</code>) also starts at x=32. Variable definitions confirm <code>Cell specs/Left padding: 16</code> — but actual offset from the tearsheet content edge is doubled at 32px.</div>
+        </div>
+        <div class="modal-col-cell">
+          The variable definition shows the cell left padding should be <code>$spacing-05</code> (16px), which aligns with Carbon's DataTable default. However, the table wrapper inside the Tearsheet content area adds an additional 32px offset, creating 32px total left padding on the toolbar — twice the Carbon standard.<br /><br />
+          This is a layout inconsistency that creates visual imbalance inside the Tearsheet — the table appears indented rather than spanning edge-to-edge within the content zone.<br /><br />
+          <a href="https://carbondesignsystem.com/components/data-table/usage/">Carbon DataTable usage →</a>
+        </div>
+        <div class="modal-fix-cell">
+          <div class="modal-fix-inner">
+            <div class="fix-instruction">Remove the extra 32px wrapper offset — let the DataTable span full width inside the Tearsheet content zone.</div>
+            <div class="fix-code"><span class="fc">// Remove additional left margin on wrapper</span>
+.tearsheet-content .data-table-wrapper {
+  margin-left: 0;
+  padding-left: 0;
+}
+
+<span class="fc">// Carbon DataTable handles its own
+// internal 16px cell padding via
+// $spacing-05 automatically</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cds-modal-footer">
+      <button class="cds-btn-secondary" onclick="closeFinding('modal-f5')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- F6 Minor — Custom tooltip -->
+<div class="modal-overlay" id="modal-f6" onclick="closeOnBackdrop(event,'modal-f6')">
+  <div class="cds-modal">
+    <div class="cds-modal-header">
+      <div class="cds-modal-header-label">
+        <span class="ctag ctag-n">F6</span>
+        <span class="cds-tag cds-tag-gray">Minor</span>
+      </div>
+      <h3 class="cds-modal-heading">Tooltip on Tryout button uses custom dark popover — not Carbon Tooltip</h3>
+      <button class="cds-modal-close" onclick="closeFinding('modal-f6')" aria-label="Close modal">
+        <svg viewBox="0 0 32 32"><path d="M24 9.4L22.6 8 16 14.6 9.4 8 8 9.4 14.6 16 8 22.6 9.4 24 16 17.4 22.6 24 24 22.6 17.4 16 24 9.4z"/></svg>
+      </button>
+    </div>
+    <div class="cds-modal-content">
+      <div class="modal-card-body">
+        <div class="modal-col-head-blank"></div>
+        <div class="modal-col-head">Location</div>
+        <div class="modal-col-head">Issue &amp; Why it matters</div>
+        <div class="modal-col-head">Fix</div>
+        <div class="modal-col-sev"><span class="ctag ctag-n">F6</span></div>
+        <div class="modal-col-cell">
+          <span class="loc-chip">● Row 4 Tryout button hover</span>
+          <div style="margin-top:6px;font-size:13px">Node <code>2201:113577</code> is named <code>Tooltip body item</code> and appears as a dark-background custom popover showing "Available for APIs only" — positioned at x=1233, y=422. Code Connect maps it to <code>Tooltip</code> but without a standard Carbon Tooltip snippet.</div>
+        </div>
+        <div class="modal-col-cell">
+          The "Available for APIs only" message appears as a custom dark tooltip overlay rather than using Carbon's standard <strong>Tooltip</strong> component. Carbon's Tooltip ensures consistent positioning, keyboard dismissal (Escape), focus management, and ARIA <code>role="tooltip"</code> associations.<br /><br />
+          A custom popover risks inconsistent z-index stacking inside the Tearsheet and does not guarantee ARIA tooltip association with the trigger button.<br /><br />
+          <a href="https://carbondesignsystem.com/components/tooltip/usage/">Carbon Tooltip usage →</a>
+        </div>
+        <div class="modal-fix-cell">
+          <div class="modal-fix-inner">
+            <div class="fix-instruction">Wrap the disabled Tryout button in a Carbon Tooltip to explain why it is disabled.</div>
+            <div class="fix-code">import { Tooltip, Button }
+  from '@carbon/react';
+import { Send } from '@carbon/icons-react';
+
+&lt;Tooltip
+  label="Available for APIs only"
+  align="bottom"
+&gt;
+  &lt;Button
+    kind="ghost"
+    size="xs"
+    hasIconOnly
+    iconDescription="Try out endpoint"
+    renderIcon={Send}
+    disabled
+  /&gt;
+&lt;/Tooltip&gt;
+
+<span class="fc">// Remove custom Tooltip body item layer</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cds-modal-footer">
+      <button class="cds-btn-secondary" onclick="closeFinding('modal-f6')">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var _activeCategory = 'all';
+function filterByCategory(cat, el) {
+  _activeCategory = cat;
+  document.querySelectorAll('.left-nav-item').forEach(function(item) { item.classList.remove('active'); });
+  if (el) el.classList.add('active');
+  var titleEl = document.getElementById('table-view-title');
+  if (titleEl) titleEl.textContent = (cat === 'all') ? 'All Review Findings' : cat + ' Findings';
+  applyTableFilters();
+}
+function filterTableSearch() { applyTableFilters(); }
+function applyTableFilters() {
+  var searchInput = document.querySelector('.cds-table-search');
+  var term = searchInput ? searchInput.value.toLowerCase() : '';
+  document.querySelectorAll('.finding-table tbody tr[data-id]').forEach(function(row) {
+    var catMatch = (_activeCategory === 'all') || (row.getAttribute('data-category') === _activeCategory);
+    var textMatch = !term || (row.textContent.toLowerCase().indexOf(term) !== -1);
+    row.style.display = (catMatch && textMatch) ? '' : 'none';
+  });
+}
+var _activeModal = null;
+function openFinding(id) {
+  var overlay = document.getElementById(id);
+  if (!overlay) return;
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  _activeModal = id;
+}
+function closeFinding(id) {
+  var overlay = document.getElementById(id);
+  if (overlay) overlay.classList.remove('open');
+  document.body.style.overflow = '';
+  _activeModal = null;
+}
+function closeOnBackdrop(e, id) { if (e.target === document.getElementById(id)) closeFinding(id); }
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && _activeModal) closeFinding(_activeModal); });
+function updateTriageStatus(sel) {
+  var id = sel.getAttribute('data-id');
+  var row = document.querySelector('tr[data-id="' + id + '"]');
+  if (row) row.setAttribute('data-status', sel.value);
+  markTriageDirty();
+}
+function markTriageDirty() {
+  var warn = document.getElementById('triage-warning');
+  if (warn) warn.classList.add('visible');
+}
+function toggleAccordion(bodyId) {
+  var body = document.getElementById(bodyId);
+  if (!body) return;
+  var isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  var btn = body.previousElementSibling;
+  if (btn) btn.setAttribute('aria-expanded', String(!isOpen));
+  var indicator = btn ? btn.querySelector('.accordion-indicator') : null;
+  if (indicator) indicator.textContent = isOpen ? '▶' : '▼';
+}
+function copyTriageJSON() {
+  var rows = document.querySelectorAll('.finding-table tbody tr[data-id]');
+  var findings = [];
+  rows.forEach(function(row) {
+    var id = row.getAttribute('data-id');
+    var sel = row.querySelector('.triage-select[data-id="' + id + '"]');
+    var inp = row.querySelector('.triage-rationale[data-id="' + id + '"]');
+    var titleEl = row.querySelector('.finding-title-link');
+    findings.push({ id: id, title: titleEl ? titleEl.textContent.trim() : '', severity: row.getAttribute('data-severity') || '', category: row.getAttribute('data-category') || '', screen: row.getAttribute('data-screen') || '', status: sel ? sel.value : 'unreviewed', rationale: inp ? inp.value.trim() : '' });
+  });
+  var payload = { schema_version: '1.0', report_slug: 'ux-review-api-studio-published-endpoints', screen: 'API Studio Published Endpoints', figma_node_id: '2201:112762', exported_at: new Date().toISOString(), findings: findings };
+  var json = JSON.stringify(payload, null, 2);
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(json).then(function() { _flashCopyBtn(); }).catch(function() { _fallbackCopy(json); });
+  } else { _fallbackCopy(json); }
+  var warn = document.getElementById('triage-warning');
+  if (warn) warn.classList.remove('visible');
+}
+function _flashCopyBtn() {
+  var btn = document.getElementById('copy-triage-btn');
+  if (!btn) return;
+  btn.textContent = '✓ Copied!';
+  btn.classList.add('copied');
+  setTimeout(function() { btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M28,10H22V4a2,2,0,0,0-2-2H4A2,2,0,0,0,2,4V20a2,2,0,0,0,2,2h6v6a2,2,0,0,0,2,2H28a2,2,0,0,0,2-2V12A2,2,0,0,0,28,10ZM4,20V4H20v6H12a2,2,0,0,0-2,2V20Zm24,10H12V12H28Z"/></svg> Copy Triage JSON'; btn.classList.remove('copied'); }, 2000);
+}
+function _fallbackCopy(text) {
+  var ta = document.createElement('textarea'); ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.focus(); ta.select();
+  try { document.execCommand('copy'); _flashCopyBtn(); } catch(e) {}
+  document.body.removeChild(ta);
+}
+</script>
+</body>
+</html>
