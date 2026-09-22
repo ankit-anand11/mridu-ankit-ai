@@ -174,6 +174,17 @@
   .card--accent   { border-top: 4px solid var(--accent);   background: var(--accent-light); }
   .card--gap      { border: 2px solid var(--critical); background: var(--critical-bg); }
 
+  .section-tag {
+    font-size: clamp(12px, 1.1vw, 15px);
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+    display: block;
+  }
+  .slide--dark .section-tag { color: #a8a8a8; }
+
   /* ── TAGS ── */
   .tag {
     display: inline-block;
@@ -322,17 +333,21 @@
 </head>
 <body>
 
-<!-- NAV DOTS — updated to 9 slides -->
+<!-- NAV DOTS — updated to 13 slides -->
 <div class="index-dots" id="index-dots">
   <button class="dot-link active" data-index="0" title="Cover"></button>
   <button class="dot-link" data-index="1" title="The problem"></button>
   <button class="dot-link" data-index="2" title="The experiment"></button>
-  <button class="dot-link" data-index="3" title="What we heard"></button>
-  <button class="dot-link" data-index="4" title="What the market offers"></button>
-  <button class="dot-link" data-index="5" title="What we built"></button>
-  <button class="dot-link" data-index="6" title="The report"></button>
-  <button class="dot-link" data-index="7" title="The Jira"></button>
-  <button class="dot-link" data-index="8" title="Superpower"></button>
+  <button class="dot-link" data-index="3" title="User interviews"></button>
+  <button class="dot-link" data-index="4" title="Compliance spectrum"></button>
+  <button class="dot-link" data-index="5" title="What we heard"></button>
+  <button class="dot-link" data-index="6" title="What market tools get right"></button>
+  <button class="dot-link" data-index="7" title="Competitive analysis"></button>
+  <button class="dot-link" data-index="8" title="What we built"></button>
+  <button class="dot-link" data-index="9" title="The report"></button>
+  <button class="dot-link" data-index="10" title="The Jira"></button>
+  <button class="dot-link" data-index="11" title="Competitive advantage"></button>
+  <button class="dot-link" data-index="12" title="Superpower"></button>
 </div>
 
 <div class="key-hint">← → to navigate · click dots to jump</div>
@@ -345,7 +360,7 @@
 <!-- SLIDE 1 — COVER                                                         -->
 <!-- ═══════════════════════════════════════════════════════════════════════ -->
 <section class="slide slide--dark" id="s1">
-  <span class="slide-number">01 / 09</span>
+  <span class="slide-number">01 / 13</span>
   <span class="slide-label">IBM webMethods · August 2026</span>
 
   <h1>UI Reviewer</h1>
@@ -379,7 +394,7 @@
 <!-- SLIDE 2 — THE PROBLEM                                                   -->
 <!-- ═══════════════════════════════════════════════════════════════════════ -->
 <section class="slide" id="s2">
-  <span class="slide-number">02 / 09</span>
+  <span class="slide-number">02 / 13</span>
   <span class="slide-label">The problem</span>
 
   <h2 class="max-860">Why do Figma designs and implementations never quite match?</h2>
@@ -409,7 +424,7 @@
 <!-- SLIDE 3 — THE EXPERIMENT                                                -->
 <!-- ═══════════════════════════════════════════════════════════════════════ -->
 <section class="slide slide--dark" id="s3">
-  <span class="slide-number">03 / 09</span>
+  <span class="slide-number">03 / 13</span>
   <span class="slide-label">The experiment</span>
 
   <h2>We followed the AI PDLC process — step by step — to see where we'd land</h2>
@@ -429,7 +444,7 @@
     </div>
     <div class="flow-step">
       <div class="flow-dot">3</div>
-      <h4>Competitive scan</h4>
+      <h4>Market scan</h4>
       <p>5 tools surveyed — none solved it for Carbon</p>
     </div>
     <div class="flow-step">
@@ -452,10 +467,94 @@
 
 
 <!-- ═══════════════════════════════════════════════════════════════════════ -->
-<!-- SLIDE 4 — WHAT WE HEARD                                                 -->
+<!-- SLIDE 4 — USER INTERVIEWS (DISCOVERY SESSIONS)                          -->
 <!-- ═══════════════════════════════════════════════════════════════════════ -->
-<section class="slide" id="s4">
-  <span class="slide-number">04 / 09</span>
+<section class="slide slide--dark" id="s4">
+  <span class="slide-number">04 / 13</span>
+  <span class="slide-label">Research · August 2026</span>
+
+  <h2>We spoke to 6 people across 4 IBM webMethods teams</h2>
+
+  <div class="cols-2" style="margin-top: 36px;">
+    <div>
+      <span class="section-tag">3 developer interviews</span>
+      <div class="card" style="margin-top: 0; background: var(--surface); border-color: var(--border);">
+        <h4>Frontend Dev — Integration</h4>
+        <p>Carbon React. Falls back to hex when a token "doesn't look right". No review gate.</p>
+      </div>
+      <div class="card" style="margin-top: 12px; background: var(--surface); border-color: var(--border);">
+        <h4>Tech Lead — API</h4>
+        <p>100% Carbon tokens. AI PDLC rules in place. PR gate enforced. Zero compliance violations. This is the benchmark.</p>
+      </div>
+      <div class="card" style="margin-top: 12px; background: var(--surface); border-color: var(--border);">
+        <h4>Frontend Dev — Integration</h4>
+        <p>Angular / PrimeNG. No Figma dev mode. No review gate. Lowest Carbon maturity surveyed.</p>
+      </div>
+    </div>
+    <div>
+      <span class="section-tag">1 designer group session</span>
+      <div class="card" style="margin-top: 0; background: var(--surface); border-color: var(--border);">
+        <h4>Designer — webMethods B2B</h4>
+        <p>6 years. High custom component debt from Delight → Carbon migration. Components orphaned.</p>
+      </div>
+      <div class="card" style="margin-top: 12px; background: var(--surface); border-color: var(--border);">
+        <h4>Designer — API Management</h4>
+        <p>Full Carbon. PR review gate: designer must approve before merge. It works.</p>
+      </div>
+      <div class="card" style="margin-top: 12px; background: var(--surface); border-color: var(--border);">
+        <h4>Designer — webMethods Integration</h4>
+        <p>~1.5 years. Severe design–dev drift. 2 hours annotating one screen. 2-week turnaround.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- SLIDE 5 — COMPLIANCE SPECTRUM                                           -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<section class="slide" id="s5">
+  <span class="slide-number">05 / 13</span>
+  <span class="slide-label">Research finding · the compliance spectrum</span>
+
+  <h2>The compliance spectrum — and what good looks like</h2>
+
+  <div class="cols-3" style="margin-top: 36px;">
+    <div class="card card--critical">
+      <div class="tag tag--critical">Low</div>
+      <h4>Developer · Designer — Integration</h4>
+      <p>Angular / PrimeNG. No Figma dev mode. No review gate. Custom components accumulating with no path to Carbon.</p>
+    </div>
+    <div class="card card--major">
+      <div class="tag tag--major">Mid</div>
+      <h4>Developer · Designer — Integration / B2B</h4>
+      <p>Carbon React but hex fallbacks. Components from legacy migration still in use. No formal review gate.</p>
+    </div>
+    <div class="card card--green">
+      <div class="tag tag--green">High</div>
+      <h4>Tech Lead · Designer — API</h4>
+      <p>100% Carbon tokens. PR gate enforced. Designer must approve before merge. Zero compliance violations. <strong>This is achievable.</strong></p>
+    </div>
+  </div>
+
+  <div class="mt-32 max-860">
+    <p class="quote" style="font-size: clamp(17px, 1.8vw, 24px);">
+      "Unless you approve, it can't get merged — so they will get pulled up for it. So they will do it fast so that you review it."
+    </p>
+    <p class="attribution">— Designer, IBM API Management (webMethods)</p>
+  </div>
+
+  <p class="mt-24" style="color: var(--muted); font-size: clamp(14px, 1.2vw, 17px);">
+    UI Reviewer gives teams at the left end a path toward that standard — without requiring them to build the culture and discipline from scratch first.
+  </p>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- SLIDE 6 — WHAT WE HEARD (THREE FAILURES)                                -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<section class="slide" id="s6">
+  <span class="slide-number">06 / 13</span>
   <span class="slide-label">What we heard · 6 people · 4 webMethods teams</span>
 
   <h2>Three failures invisible to today's review process</h2>
@@ -488,13 +587,51 @@
 
 
 <!-- ═══════════════════════════════════════════════════════════════════════ -->
-<!-- SLIDE 5 — COMPETITIVE ANALYSIS                                          -->
+<!-- SLIDE 7 — WHAT MARKET TOOLS GET RIGHT (FRIDAY SLIDE 5)                  -->
 <!-- ═══════════════════════════════════════════════════════════════════════ -->
-<section class="slide slide--dark" id="s5">
-  <span class="slide-number">05 / 09</span>
+<section class="slide" id="s7">
+  <span class="slide-number">07 / 13</span>
+  <span class="slide-label">Market analysis · what these tools get right</span>
+
+  <h2>Good tools — each solves one piece of the puzzle</h2>
+
+  <div class="cols-3" style="margin-top: 32px;">
+    <div class="card card--accent">
+      <h4>FigmaLint</h4>
+      <p style="margin-top: 6px; font-size: clamp(13px, 1.2vw, 16px); color: var(--muted);">Good at <strong style="color:var(--text);">catching token &amp; component issues in Figma</strong> before handoff. Zero setup for designers.</p>
+    </div>
+    <div class="card card--accent">
+      <h4>Chromatic</h4>
+      <p style="margin-top: 6px; font-size: clamp(13px, 1.2vw, 16px); color: var(--muted);">Good at <strong style="color:var(--text);">visual regression CI gating</strong> — blocks pixel-level regressions on every PR.</p>
+    </div>
+    <div class="card card--accent">
+      <h4>Supernova</h4>
+      <p style="margin-top: 6px; font-size: clamp(13px, 1.2vw, 16px); color: var(--muted);">Good at <strong style="color:var(--text);">component adoption metrics</strong> — tells design system teams what's being used.</p>
+    </div>
+    <div class="card card--accent">
+      <h4>Tokens Studio</h4>
+      <p style="margin-top: 6px; font-size: clamp(13px, 1.2vw, 16px); color: var(--muted);">Good at <strong style="color:var(--text);">Figma-to-code token sync</strong> — propagates token changes automatically.</p>
+    </div>
+    <div class="card card--accent">
+      <h4>Zeroheight</h4>
+      <p style="margin-top: 6px; font-size: clamp(13px, 1.2vw, 16px); color: var(--muted);">Good at <strong style="color:var(--text);">living design system docs</strong> — MCP-exposed so AI tools can query guidelines.</p>
+    </div>
+    <div class="card card--gap">
+      <h4>The shared gap</h4>
+      <p style="margin-top: 6px; font-size: clamp(13px, 1.2vw, 16px); line-height: 1.55;">None ships Carbon-aware. Every team must configure rules from scratch — or get nothing. <strong>That is the gap UI Reviewer fills.</strong></p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- SLIDE 8 — COMPETITIVE ANALYSIS (MATRIX)                                  -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<section class="slide slide--dark" id="s8">
+  <span class="slide-number">08 / 13</span>
   <span class="slide-label">Competitive analysis · 5 tools surveyed</span>
 
-  <h2>Good tools — each solves one piece. None solves it for Carbon.</h2>
+  <h2>Five tools cover parts of the problem — none covers it for Carbon</h2>
 
   <table style="margin-top: 28px;">
     <thead>
@@ -566,10 +703,10 @@
 
 
 <!-- ═══════════════════════════════════════════════════════════════════════ -->
-<!-- SLIDE 6 — WHAT WE BUILT                                                 -->
+<!-- SLIDE 9 — WHAT WE BUILT                                                 -->
 <!-- ═══════════════════════════════════════════════════════════════════════ -->
-<section class="slide slide--accent" id="s6">
-  <span class="slide-number">06 / 09</span>
+<section class="slide slide--accent" id="s9">
+  <span class="slide-number">09 / 13</span>
   <span class="slide-label">What we built</span>
 
   <h2>UI Reviewer — a Bob skill that catches what human review misses</h2>
@@ -618,10 +755,10 @@
 
 
 <!-- ═══════════════════════════════════════════════════════════════════════ -->
-<!-- SLIDE 7 — THE REPORT                                                    -->
+<!-- SLIDE 10 — THE REPORT                                                   -->
 <!-- ═══════════════════════════════════════════════════════════════════════ -->
-<section class="slide" id="s7">
-  <span class="slide-number">07 / 09</span>
+<section class="slide" id="s10">
+  <span class="slide-number">10 / 13</span>
   <span class="slide-label">Live output · the report</span>
 
   <h2>Every finding has a severity, a Carbon reference, and a fix</h2>
@@ -672,10 +809,10 @@ Dev:   Custom pill  ← non-Carbon
 
 
 <!-- ═══════════════════════════════════════════════════════════════════════ -->
-<!-- SLIDE 8 — THE JIRA                                                      -->
+<!-- SLIDE 11 — THE JIRA                                                     -->
 <!-- ═══════════════════════════════════════════════════════════════════════ -->
-<section class="slide slide--dark" id="s8">
-  <span class="slide-number">08 / 09</span>
+<section class="slide slide--dark" id="s11">
+  <span class="slide-number">11 / 13</span>
   <span class="slide-label">Single source of truth · the Jira integration</span>
 
   <h2>The report isn't a one-time check — it's the team's compliance record</h2>
@@ -719,10 +856,68 @@ Dev:   Custom pill  ← non-Carbon
 
 
 <!-- ═══════════════════════════════════════════════════════════════════════ -->
-<!-- SLIDE 9 — SUPERPOWER                                                    -->
+<!-- SLIDE 12 — WHY DEFENSIBLE / COMPETITIVE ADVANTAGE (FRIDAY SLIDE 12)     -->
 <!-- ═══════════════════════════════════════════════════════════════════════ -->
-<section class="slide slide--accent" id="s9">
-  <span class="slide-number">09 / 09</span>
+<section class="slide slide--dark" id="s12">
+  <span class="slide-number">12 / 13</span>
+  <span class="slide-label">Competitive advantage</span>
+
+  <h2>Carbon-specific by design — that is not a constraint, it is the entire advantage</h2>
+
+  <table style="margin-top: 28px;">
+    <thead>
+      <tr>
+        <th style="width: 25%;"></th>
+        <th style="width: 35%;">Market tools</th>
+        <th style="width: 40%;">UI Reviewer</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Rule source</strong></td>
+        <td>Team-configured, static, goes stale</td>
+        <td>Carbon MCP — live, maintained by the Carbon team, never stale</td>
+      </tr>
+      <tr>
+        <td><strong>Component knowledge</strong></td>
+        <td>Generic design system abstractions</td>
+        <td>Carbon's full component inventory, usage guidelines, and variant rules</td>
+      </tr>
+      <tr>
+        <td><strong>Token knowledge</strong></td>
+        <td>Whatever the team loaded</td>
+        <td>Carbon's full token taxonomy and semantic intent</td>
+      </tr>
+      <tr>
+        <td><strong>Web component alternatives</strong></td>
+        <td>Not provided</td>
+        <td>Carbon Web Components named for every non-Carbon import</td>
+      </tr>
+      <tr>
+        <td><strong>Jira integration</strong></td>
+        <td>Not available in any surveyed tool</td>
+        <td>Built-in via Jira MCP</td>
+      </tr>
+      <tr>
+        <td><strong>Procurement</strong></td>
+        <td>Most require it or a BYOAK</td>
+        <td>Zero — everything runs through Bob</td>
+      </tr>
+      <tr>
+        <td><strong>Learning curve</strong></td>
+        <td>Plugin installs, dashboards, onboarding</td>
+        <td>Zero — same Bob conversation the team already uses</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- SLIDE 13 — SUPERPOWER                                                   -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<section class="slide slide--accent" id="s13">
+  <span class="slide-number">13 / 13</span>
   <span class="slide-label">The vision</span>
 
   <h2 style="max-width: 900px; color: #fff;">
